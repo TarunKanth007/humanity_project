@@ -191,10 +191,6 @@ const Onboarding = ({ user, setUser }) => {
       toast.error('Failed to set role');
     }
   };
-    } catch (error) {
-      toast.error('Failed to set role');
-    }
-  };
 
   return (
     <div className="onboarding-page">
