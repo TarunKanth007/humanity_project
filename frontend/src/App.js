@@ -1052,21 +1052,12 @@ const ResearcherDashboard = ({ user, logout }) => {
 };
 
 // Protected Route
-  const [questions, setQuestions] = useState([]);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [showAskDialog, setShowAskDialog] = useState(false);
-  const [showAnswerDialog, setShowAnswerDialog] = useState(false);
-  const [questionForm, setQuestionForm] = useState({
-    title: '',
-    content: '',
-    condition: '',
-    is_anonymous: true
-  });
-  const [answerForm, setAnswerForm] = useState({
-    content: '',
-    parent_id: null
-  });
+const ProtectedRoute = ({ children, user }) => {
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
 
   useEffect(() => {
     loadQuestions();
