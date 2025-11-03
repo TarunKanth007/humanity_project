@@ -223,6 +223,21 @@ class MeetingRequestCreate(BaseModel):
     expert_id: str
     message: str
 
+class QuestionCreateRequest(BaseModel):
+    title: str
+    content: str
+    condition: Optional[str] = None
+    is_anonymous: bool = True
+
+class AnswerCreateRequest(BaseModel):
+    question_id: str
+    content: str
+    parent_id: Optional[str] = None
+
+class VoteRequest(BaseModel):
+    answer_id: str
+    vote_type: str  # 'like' or 'dislike'
+
 # ============ Helper Functions ============
 
 async def get_current_user(session_token: Optional[str] = None, authorization: Optional[str] = None) -> Optional[User]:
