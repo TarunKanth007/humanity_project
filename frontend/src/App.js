@@ -1441,6 +1441,12 @@ function App() {
                   )}
                 </ProtectedRoute>
               } />
+              
+              <Route path="/qa-community" element={
+                <ProtectedRoute user={user}>
+                  <QACommunity user={user} logout={logout} />
+                </ProtectedRoute>
+              } />
             </Routes>
           )}
         </AuthContext>
