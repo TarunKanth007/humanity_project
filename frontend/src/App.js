@@ -1060,11 +1060,9 @@ const ProtectedRoute = ({ children, user }) => {
 };
 
 // Main App
-
 function App() {
-
   return (
-
+    <div className="App">
       <Toaster position="top-right" />
         </div>
       </nav>
