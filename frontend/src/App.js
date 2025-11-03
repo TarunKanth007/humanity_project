@@ -734,6 +734,7 @@ const PatientDashboard = ({ user, logout }) => {
 
 // Researcher Dashboard
 const ResearcherDashboard = ({ user, logout }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('collaborators');
   const [collaborators, setCollaborators] = useState([]);
   const [myTrials, setMyTrials] = useState([]);
