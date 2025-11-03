@@ -1160,6 +1160,12 @@ function App() {
                   <QACommunity user={user} logout={logout} />
                 </ProtectedRoute>
               } />
+              
+              <Route path="/notifications" element={
+                <ProtectedRoute user={user}>
+                  <Notifications user={user} logout={logout} />
+                </ProtectedRoute>
+              } />
             </Routes>
           )}
         </AuthContext>
