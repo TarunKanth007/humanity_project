@@ -1430,7 +1430,7 @@ function App() {
             <Routes>
               <Route path="/" element={
                 user ? (
-                  user.role ? <Navigate to="/dashboard" replace /> : <Navigate to="/onboarding" replace />
+                  user.roles && user.roles.length > 0 ? <Navigate to="/dashboard" replace /> : <Navigate to="/onboarding" replace />
                 ) : (
                   <LandingPage />
                 )
