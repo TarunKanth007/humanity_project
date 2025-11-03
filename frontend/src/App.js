@@ -178,7 +178,6 @@ const LandingPage = () => {
 
 // Onboarding
 const Onboarding = ({ user, setUser }) => {
-  const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
   const handleRoleSelect = async (selectedRole) => {
@@ -189,50 +188,47 @@ const Onboarding = ({ user, setUser }) => {
       setUser(response.data);
       navigate(`/profile-setup?role=${selectedRole}`);
     } catch (error) {
-      toast.error('Failed to set role');
+      if (error.response?.status === 400) {
+        toast.error('Role already set. Cannot change role.');
+      } else {
+        toast.error('Failed to set role');
+      }
     }
   };
+
+  // If user already has a role, redirect to dashboard
+  if (user.roles && user.roles.length > 0) {
+    navigate('/dashboard');
+    return null;
+  }
 
   return (
     <div className="onboarding-page">
       <div className="onboarding-container">
         <h1>Welcome to CuraLink!</h1>
-        <p className="onboarding-subtitle">Choose your role(s) - you can be both a patient and researcher</p>
+        <p className="onboarding-subtitle">Choose your role - this cannot be changed later</p>
 
         <div className="role-cards">
           <div 
             data-testid="patient-role-card"
-            className={`role-card ${user.roles?.includes('patient') ? 'selected' : ''}`}
+            className="role-card"
             onClick={() => handleRoleSelect('patient')}
           >
             <Stethoscope className="role-icon" />
             <h3>Patient or Caregiver</h3>
             <p>Find clinical trials, connect with health experts, and access research</p>
-            {user.roles?.includes('patient') && <Badge className="mt-4">Selected</Badge>}
           </div>
 
           <div 
             data-testid="researcher-role-card"
-            className={`role-card ${user.roles?.includes('researcher') ? 'selected' : ''}`}
+            className="role-card"
             onClick={() => handleRoleSelect('researcher')}
           >
             <Microscope className="role-icon" />
             <h3>Researcher</h3>
             <p>Manage trials, find collaborators, and engage with the community</p>
-            {user.roles?.includes('researcher') && <Badge className="mt-4">Selected</Badge>}
           </div>
         </div>
-        
-        {user.roles && user.roles.length > 0 && (
-          <Button 
-            data-testid="continue-btn"
-            className="mt-8" 
-            size="lg"
-            onClick={() => navigate('/dashboard')}
-          >
-            Continue to Dashboard
-          </Button>
-        )}
       </div>
     </div>
   );
