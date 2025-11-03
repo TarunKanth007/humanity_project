@@ -1210,33 +1210,33 @@ const QACommunity = ({ user, logout }) => {
               </div>
 
               {loading ? (
-                <div className=\"loading-state\">Loading questions...</div>
+                <div className="loading-state">Loading questions...</div>
               ) : questions.length === 0 ? (
-                <div className=\"empty-state\">
-                  <HelpCircle className=\"empty-icon\" />
+                <div className="empty-state">
+                  <HelpCircle className="empty-icon" />
                   <h3>No questions yet</h3>
                   <p>Be the first to ask a question</p>
                 </div>
               ) : (
-                <div className=\"items-grid\">
+                <div className="items-grid">
                   {questions.map((question) => (
                     <Card 
                       key={question.id} 
-                      className=\"item-card clickable\"
+                      className="item-card clickable"
                       onClick={() => loadQuestionDetail(question.id)}
                     >
                       <CardHeader>
-                        <CardTitle className=\"item-title\">{question.title}</CardTitle>
+                        <CardTitle className="item-title">{question.title}</CardTitle>
                         <CardDescription>
                           Anonymous • {new Date(question.created_at).toLocaleDateString()}
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className=\"item-description\">{question.content.slice(0, 150)}...</p>
+                        <p className="item-description">{question.content.slice(0, 150)}...</p>
                         {question.condition && (
-                          <Badge variant=\"secondary\" className=\"mt-2\">{question.condition}</Badge>
+                          <Badge variant="secondary" className="mt-2">{question.condition}</Badge>
                         )}
-                        <div className=\"item-meta mt-3\">
+                        <div className="item-meta mt-3">
                           <span>{question.answer_count || 0} answers</span>
                         </div>
                       </CardContent>
@@ -1248,59 +1248,59 @@ const QACommunity = ({ user, logout }) => {
           ) : (
             <>
               <Button 
-                variant=\"ghost\" 
-                className=\"mb-4\"
+                variant="ghost" 
+                className="mb-4"
                 onClick={() => setSelectedQuestion(null)}
               >
                 ← Back to Questions
               </Button>
 
-              <Card className=\"question-detail-card\">
+              <Card className="question-detail-card">
                 <CardHeader>
-                  <CardTitle className=\"text-2xl\">{selectedQuestion.title}</CardTitle>
+                  <CardTitle className="text-2xl">{selectedQuestion.title}</CardTitle>
                   <CardDescription>
                     Posted by Anonymous • {new Date(selectedQuestion.created_at).toLocaleDateString()}
                   </CardDescription>
                   {selectedQuestion.condition && (
-                    <Badge variant=\"secondary\" className=\"mt-2\">{selectedQuestion.condition}</Badge>
+                    <Badge variant="secondary" className="mt-2">{selectedQuestion.condition}</Badge>
                   )}
                 </CardHeader>
                 <CardContent>
-                  <p className=\"question-content\">{selectedQuestion.content}</p>
+                  <p className="question-content">{selectedQuestion.content}</p>
                 </CardContent>
               </Card>
 
               {isResearcher && (
-                <div className=\"mt-4\">
+                <div className="mt-4">
                   <Dialog open={showAnswerDialog} onOpenChange={setShowAnswerDialog}>
                     <DialogTrigger asChild>
-                      <Button data-testid=\"answer-question-btn\">
-                        <Send className=\"icon-sm\" />
+                      <Button data-testid="answer-question-btn">
+                        <Send className="icon-sm" />
                         Answer Question
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className=\"dialog-content\">
+                    <DialogContent className="dialog-content">
                       <DialogHeader>
                         <DialogTitle>Post Your Answer</DialogTitle>
                       </DialogHeader>
-                      <form data-testid=\"answer-form\" onSubmit={postAnswer} className=\"trial-form\">
+                      <form data-testid="answer-form" onSubmit={postAnswer} className="trial-form">
                         <Textarea
-                          data-testid=\"answer-content-input\"
-                          placeholder=\"Share your medical expertise and insights...\"
+                          data-testid="answer-content-input"
+                          placeholder="Share your medical expertise and insights..."
                           value={answerForm.content}
                           onChange={(e) => setAnswerForm({ ...answerForm, content: e.target.value })}
                           required
                           rows={6}
                         />
-                        <Button data-testid=\"submit-answer-btn\" type=\"submit\">Post Answer</Button>
+                        <Button data-testid="submit-answer-btn" type="submit">Post Answer</Button>
                       </form>
                     </DialogContent>
                   </Dialog>
                 </div>
               )}
 
-              <div className=\"answers-section mt-6\">
-                <h3 className=\"text-xl font-semibold mb-4\">
+              <div className="answers-section mt-6">
+                <h3 className="text-xl font-semibold mb-4">
                   {selectedQuestion.answers?.length || 0} Answers
                 </h3>
 
