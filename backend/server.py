@@ -162,6 +162,60 @@ class Vote(BaseModel):
     vote_type: str  # 'like' or 'dislike'
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class AppointmentRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    patient_id: str
+    patient_name: str
+    researcher_id: str
+    condition: str
+    location: str
+    duration_suffering: str
+    status: str = "pending"  # pending, accepted, rejected, completed
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Notification(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    type: str  # 'appointment_request', 'review_received'
+    title: str
+    content: str
+    link: Optional[str] = None
+    read: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ChatRoom(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    appointment_id: str
+    patient_id: str
+    researcher_id: str
+    status: str = "active"  # active, closed
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    closed_at: Optional[datetime] = None
+
+class ChatMessage(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    chat_room_id: str
+    sender_id: str
+    sender_name: str
+    sender_role: str
+    message_type: str  # 'text' or 'image'
+    content: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Review(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    appointment_id: str
+    patient_id: str
+    researcher_id: str
+    rating: int  # 1-5 stars
+    comment: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class Favorite(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
