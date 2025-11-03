@@ -1061,17 +1061,7 @@ const ProtectedRoute = ({ children, user }) => {
 
 // Main App
 
-  const loadQuestions = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/qa/questions');
-      setQuestions(res.data);
-    } catch (error) {
-      console.error('Failed to load questions:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+function App() {
 
   const loadQuestionDetail = async (questionId) => {
     try {
