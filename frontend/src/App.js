@@ -244,6 +244,10 @@ const Onboarding = ({ user, setUser }) => {
 // Profile Setup
 const ProfileSetup = ({ user }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const setupRole = searchParams.get('role'); // patient or researcher
+  
   const [formData, setFormData] = useState({
     conditions: [],
     location: '',
