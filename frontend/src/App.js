@@ -1450,10 +1450,13 @@ function App() {
               
               <Route path="/dashboard" element={
                 <ProtectedRoute user={user}>
-                  {user?.role === 'patient' ? (
+                  {user?.roles?.includes('patient') && !user?.roles?.includes('researcher') ? (
                     <PatientDashboard user={user} logout={logout} />
-                  ) : user?.role === 'researcher' ? (
+                  ) : user?.roles?.includes('researcher') && !user?.roles?.includes('patient') ? (
                     <ResearcherDashboard user={user} logout={logout} />
+                  ) : user?.roles?.length > 1 ? (
+                    // User has both roles - show patient dashboard with option to switch
+                    <PatientDashboard user={user} logout={logout} />
                   ) : (
                     <Navigate to="/onboarding" replace />
                   )}
