@@ -534,6 +534,21 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const requestAppointment = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/appointments/request', {
+        researcher_id: selectedExpert.user_id,
+        ...appointmentForm
+      });
+      toast.success('Appointment request sent!');
+      setShowAppointmentDialog(false);
+      setAppointmentForm({ patient_name: '', condition: '', location: '', duration_suffering: '' });
+    } catch (error) {
+      toast.error('Failed to send appointment request');
+    }
+  };
+
   return (
     <div className="dashboard">
       <nav className="dashboard-nav">
