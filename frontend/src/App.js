@@ -796,6 +796,45 @@ const PatientDashboard = ({ user, logout }) => {
           </Tabs>
         </div>
       </div>
+
+      {/* Appointment Request Dialog */}
+      <Dialog open={showAppointmentDialog} onOpenChange={setShowAppointmentDialog}>
+        <DialogContent className="dialog-content">
+          <DialogHeader>
+            <DialogTitle>Request Appointment</DialogTitle>
+            <DialogDescription>
+              Request a consultation with {selectedExpert?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={requestAppointment} className="trial-form">
+            <Input
+              placeholder="Your Name"
+              value={appointmentForm.patient_name}
+              onChange={(e) => setAppointmentForm({ ...appointmentForm, patient_name: e.target.value })}
+              required
+            />
+            <Input
+              placeholder="Condition or Medical Concern"
+              value={appointmentForm.condition}
+              onChange={(e) => setAppointmentForm({ ...appointmentForm, condition: e.target.value })}
+              required
+            />
+            <Input
+              placeholder="Your Location"
+              value={appointmentForm.location}
+              onChange={(e) => setAppointmentForm({ ...appointmentForm, location: e.target.value })}
+              required
+            />
+            <Input
+              placeholder="How long have you been experiencing this? (e.g., 6 months)"
+              value={appointmentForm.duration_suffering}
+              onChange={(e) => setAppointmentForm({ ...appointmentForm, duration_suffering: e.target.value })}
+              required
+            />
+            <Button type="submit">Send Request</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
