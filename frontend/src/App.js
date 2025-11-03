@@ -1065,24 +1065,58 @@ function App() {
     <div className="App">
       <Toaster position="top-right" />
       <BrowserRouter>
-                    <DialogTrigger asChild>
-                      <Button data-testid="ask-question-btn">
-                        <HelpCircle className="icon-sm" />
-                        Ask Question
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="dialog-content">
-                      <DialogHeader>
-                        <DialogTitle>Ask a Question</DialogTitle>
-                        <DialogDescription>
-                          Your question will be posted anonymously
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form data-testid="question-form" onSubmit={askQuestion} className="trial-form">
-                        <Input
-                          data-testid="question-title-input"
-                          placeholder="Question Title"
-                          value={questionForm.title}
+        <AuthContext>
+          {({ user, setUser, logout }) => (
+            <Routes>
+              <Route path="/" element={
+                user ? (
+                  user.roles && user.roles.length > 0 ? <Navigate to="/dashboard" replace /> : <Navigate to="/onboarding" replace />
+                ) : (
+                  <LandingPage />
+                )
+              } />
+              
+              <Route path="/onboarding" element={
+                <ProtectedRoute user={user}>
+                  <Onboarding user={user} setUser={setUser} />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/profile-setup" element={
+                <ProtectedRoute user={user}>
+                  <ProfileSetup user={user} />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard" element={
+                <ProtectedRoute user={user}>
+                  {user?.roles?.includes('patient') && !user?.roles?.includes('researcher') ? (
+                    <PatientDashboard user={user} logout={logout} />
+                  ) : user?.roles?.includes('researcher') && !user?.roles?.includes('patient') ? (
+                    <ResearcherDashboard user={user} logout={logout} />
+                  ) : user?.roles?.length > 1 ? (
+                    // User has both roles - show patient dashboard with option to switch
+                    <PatientDashboard user={user} logout={logout} />
+                  ) : (
+                    <Navigate to="/onboarding" replace />
+                  )}
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/qa-community" element={
+                <ProtectedRoute user={user}>
+                  <QACommunity user={user} logout={logout} />
+                </ProtectedRoute>
+              } />
+            </Routes>
+          )}
+        </AuthContext>
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
                           onChange={(e) => setQuestionForm({ ...questionForm, title: e.target.value })}
                           required
                         />
