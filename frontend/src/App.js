@@ -1117,27 +1117,6 @@ function App() {
 }
 
 export default App;
-                          onChange={(e) => setQuestionForm({ ...questionForm, title: e.target.value })}
-                          required
-                        />
-                        <Textarea
-                          data-testid="question-content-input"
-                          placeholder="Describe your question in detail..."
-                          value={questionForm.content}
-                          onChange={(e) => setQuestionForm({ ...questionForm, content: e.target.value })}
-                          required
-                          rows={6}
-                        />
-                        <Input
-                          data-testid="question-condition-input"
-                          placeholder="Related condition (optional)"
-                          value={questionForm.condition}
-                          onChange={(e) => setQuestionForm({ ...questionForm, condition: e.target.value })}
-                        />
-                        <Button data-testid="submit-question-btn" type="submit">Post Question</Button>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
                 )}
               </div>
 
