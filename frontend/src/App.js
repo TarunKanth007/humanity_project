@@ -451,6 +451,7 @@ const ProfileSetup = ({ user }) => {
 
 // Patient Dashboard
 const PatientDashboard = ({ user, logout }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('trials');
   const [clinicalTrials, setClinicalTrials] = useState([]);
   const [experts, setExperts] = useState([]);
