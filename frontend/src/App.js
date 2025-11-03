@@ -183,8 +183,14 @@ const Onboarding = ({ user, setUser }) => {
   const handleRoleSelect = async (selectedRole) => {
     try {
       await api.post('/auth/role', { role: selectedRole });
-      setUser({ ...user, role: selectedRole });
-      navigate(`/profile-setup`);
+      // Refresh user data
+      const response = await api.get('/auth/me');
+      setUser(response.data);
+      navigate(`/profile-setup?role=${selectedRole}`);
+    } catch (error) {
+      toast.error('Failed to set role');
+    }
+  };
     } catch (error) {
       toast.error('Failed to set role');
     }
