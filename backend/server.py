@@ -39,7 +39,7 @@ class User(BaseModel):
     email: str
     name: str
     picture: Optional[str] = None
-    role: Optional[str] = None  # 'patient' or 'researcher'
+    roles: List[str] = []  # Can be ['patient'], ['researcher'], or ['patient', 'researcher']
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserSession(BaseModel):
