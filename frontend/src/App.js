@@ -259,7 +259,7 @@ const ProfileSetup = ({ user }) => {
   const [specialtyInput, setSpecialtyInput] = useState('');
   const [interestInput, setInterestInput] = useState('');
 
-  const isPatient = user.role === 'patient';
+  const isPatient = setupRole === 'patient';
 
   const handleAddTag = (field, input, setInput) => {
     if (input.trim()) {
