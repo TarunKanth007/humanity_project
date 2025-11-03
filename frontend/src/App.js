@@ -51,8 +51,8 @@ const AuthContext = ({ children }) => {
       setUser(response.data.user);
       window.history.replaceState({}, document.title, window.location.pathname);
       
-      // Redirect based on role
-      if (response.data.user.role) {
+      // Redirect based on role status
+      if (response.data.user.roles && response.data.user.roles.length > 0) {
         navigate('/dashboard');
       } else {
         navigate('/onboarding');
@@ -60,6 +60,7 @@ const AuthContext = ({ children }) => {
     } catch (error) {
       console.error('Session processing failed:', error);
       toast.error('Authentication failed');
+      navigate('/');
     } finally {
       setLoading(false);
     }
