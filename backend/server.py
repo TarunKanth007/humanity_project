@@ -375,28 +375,26 @@ async def set_role(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Add role to user (patient and/or researcher)"""
+    """Set user role - can only be set once (patient OR researcher)"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Check if user already has a role
+    if user.roles and len(user.roles) > 0:
+        raise HTTPException(status_code=400, detail="Role already set. Cannot change role.")
     
     role = role_data.get("role")
     if role not in ["patient", "researcher"]:
         raise HTTPException(status_code=400, detail="Invalid role")
     
-    # Get current roles
-    user_doc = await db.users.find_one({"id": user.id}, {"_id": 0})
-    current_roles = user_doc.get("roles", [])
+    # Set the role (only one role allowed)
+    await db.users.update_one(
+        {"id": user.id},
+        {"$set": {"roles": [role]}}
+    )
     
-    # Add role if not already present
-    if role not in current_roles:
-        current_roles.append(role)
-        await db.users.update_one(
-            {"id": user.id},
-            {"$set": {"roles": current_roles}}
-        )
-    
-    return {"status": "success", "roles": current_roles}
+    return {"status": "success", "roles": [role]}
 
 @api_router.get("/auth/check-profile")
 async def check_profile(
