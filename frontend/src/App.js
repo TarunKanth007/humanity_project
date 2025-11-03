@@ -1117,27 +1117,6 @@ function App() {
 }
 
 export default App;
-                )}
-              </div>
-
-              {loading ? (
-                <div className="loading-state">Loading questions...</div>
-              ) : questions.length === 0 ? (
-                <div className="empty-state">
-                  <HelpCircle className="empty-icon" />
-                  <h3>No questions yet</h3>
-                  <p>Be the first to ask a question</p>
-                </div>
-              ) : (
-                <div className="items-grid">
-                  {questions.map((question) => (
-                    <Card 
-                      key={question.id} 
-                      className="item-card clickable"
-                      onClick={() => loadQuestionDetail(question.id)}
-                    >
-                      <CardHeader>
-                        <CardTitle className="item-title">{question.title}</CardTitle>
                         <CardDescription>
                           Anonymous • {new Date(question.created_at).toLocaleDateString()}
                         </CardDescription>
