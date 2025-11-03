@@ -1065,10 +1065,7 @@ function App() {
 
   return (
 
-  const isPatient = user.roles?.includes('patient');
-  const isResearcher = user.roles?.includes('researcher');
-
-  return (
+    <div className="App">
     <div className="dashboard">
       <nav className="dashboard-nav">
         <div className="nav-brand">
