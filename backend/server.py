@@ -719,7 +719,7 @@ async def create_forum(
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    if user.role != "researcher":
+    if "researcher" not in user.roles:
         raise HTTPException(status_code=403, detail="Only researchers can create forums")
     
     forum = Forum(
