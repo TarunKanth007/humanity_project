@@ -1064,20 +1064,7 @@ function App() {
   return (
     <div className="App">
       <Toaster position="top-right" />
-        </div>
-      </nav>
-
-      <div className="dashboard-container">
-        <div data-testid="qa-community" className="dashboard-content">
-          {!selectedQuestion ? (
-            <>
-              <div className="dashboard-header">
-                <div>
-                  <h1>Community Q&A</h1>
-                  <p className="dashboard-subtitle">Ask questions and get answers from medical researchers</p>
-                </div>
-                {isPatient && (
-                  <Dialog open={showAskDialog} onOpenChange={setShowAskDialog}>
+      <BrowserRouter>
                     <DialogTrigger asChild>
                       <Button data-testid="ask-question-btn">
                         <HelpCircle className="icon-sm" />
