@@ -484,7 +484,20 @@ const PatientDashboard = ({ user, logout }) => {
 
   useEffect(() => {
     loadData();
+    loadUnreadCount();
+    // Poll for notifications
+    const interval = setInterval(loadUnreadCount, 10000);
+    return () => clearInterval(interval);
   }, [activeTab]);
+
+  const loadUnreadCount = async () => {
+    try {
+      const res = await api.get('/notifications/unread-count');
+      setUnreadCount(res.data.count);
+    } catch (error) {
+      console.error('Failed to load unread count:', error);
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
