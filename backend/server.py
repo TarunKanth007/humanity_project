@@ -773,14 +773,16 @@ async def create_forum_post(
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     # Check if reply and user is patient
-    if post_data.parent_id and user.role == "patient":
+    if post_data.parent_id and "patient" in user.roles and "researcher" not in user.roles:
         raise HTTPException(status_code=403, detail="Patients cannot reply to posts")
+    
+    user_role = "researcher" if "researcher" in user.roles else "patient"
     
     post = ForumPost(
         forum_id=post_data.forum_id,
         user_id=user.id,
         user_name=user.name,
-        user_role=user.role or "user",
+        user_role=user_role,
         content=post_data.content,
         parent_id=post_data.parent_id
     )
@@ -797,6 +799,226 @@ async def create_forum_post(
         )
     
     return {"status": "success", "post": post.model_dump()}
+
+# ============ Q&A Community Endpoints ============
+
+@api_router.post("/qa/questions")
+async def create_question(
+    question_data: QuestionCreateRequest,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Create a question (patients only)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "patient" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only patients can ask questions")
+    
+    question = Question(
+        patient_id=user.id,
+        title=question_data.title,
+        content=question_data.content,
+        condition=question_data.condition,
+        is_anonymous=question_data.is_anonymous
+    )
+    
+    question_dict = question.model_dump()
+    question_dict['created_at'] = question_dict['created_at'].isoformat()
+    await db.questions.insert_one(question_dict)
+    
+    return {"status": "success", "question": question.model_dump()}
+
+@api_router.get("/qa/questions")
+async def get_questions(
+    condition: Optional[str] = None,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get all questions (public for authenticated users)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    query = {}
+    if condition:
+        query["condition"] = {"$regex": condition, "$options": "i"}
+    
+    questions = await db.questions.find(query, {"_id": 0, "patient_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Get answer counts for each question
+    for question in questions:
+        answer_count = await db.answers.count_documents({"question_id": question["id"], "parent_id": None})
+        question["answer_count"] = answer_count
+    
+    return questions
+
+@api_router.get("/qa/questions/{question_id}")
+async def get_question_detail(
+    question_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get question with all answers and replies"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    question = await db.questions.find_one({"id": question_id}, {"_id": 0, "patient_id": 0})
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    
+    # Get all answers (not replies)
+    answers = await db.answers.find(
+        {"question_id": question_id, "parent_id": None},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Get user's votes
+    user_votes = {}
+    votes = await db.votes.find({"user_id": user.id}, {"_id": 0}).to_list(1000)
+    for vote in votes:
+        user_votes[vote["answer_id"]] = vote["vote_type"]
+    
+    # Get replies for each answer
+    for answer in answers:
+        answer["user_vote"] = user_votes.get(answer["id"])
+        
+        replies = await db.answers.find(
+            {"question_id": question_id, "parent_id": answer["id"]},
+            {"_id": 0}
+        ).sort("created_at", 1).to_list(100)
+        
+        # Add user votes for replies
+        for reply in replies:
+            reply["user_vote"] = user_votes.get(reply["id"])
+        
+        answer["replies"] = replies
+    
+    question["answers"] = answers
+    
+    return question
+
+@api_router.post("/qa/answers")
+async def create_answer(
+    answer_data: AnswerCreateRequest,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Create an answer or reply (researchers only)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can answer")
+    
+    # Get researcher profile for specialty
+    researcher_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    specialty = None
+    if researcher_profile and researcher_profile.get("specialties"):
+        specialty = researcher_profile["specialties"][0]
+    
+    answer = Answer(
+        question_id=answer_data.question_id,
+        researcher_id=user.id,
+        researcher_name=user.name,
+        researcher_specialty=specialty,
+        content=answer_data.content,
+        parent_id=answer_data.parent_id
+    )
+    
+    answer_dict = answer.model_dump()
+    answer_dict['created_at'] = answer_dict['created_at'].isoformat()
+    await db.answers.insert_one(answer_dict)
+    
+    return {"status": "success", "answer": answer.model_dump()}
+
+@api_router.post("/qa/vote")
+async def vote_answer(
+    vote_data: VoteRequest,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Vote on an answer (like/dislike)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if vote_data.vote_type not in ["like", "dislike"]:
+        raise HTTPException(status_code=400, detail="Invalid vote type")
+    
+    # Check if user already voted
+    existing_vote = await db.votes.find_one({
+        "answer_id": vote_data.answer_id,
+        "user_id": user.id
+    })
+    
+    if existing_vote:
+        # Update vote
+        old_vote = existing_vote["vote_type"]
+        if old_vote != vote_data.vote_type:
+            # Change vote
+            await db.votes.update_one(
+                {"answer_id": vote_data.answer_id, "user_id": user.id},
+                {"$set": {"vote_type": vote_data.vote_type}}
+            )
+            
+            # Update answer counts
+            if old_vote == "like":
+                await db.answers.update_one(
+                    {"id": vote_data.answer_id},
+                    {"$inc": {"likes": -1, "dislikes": 1}}
+                )
+            else:
+                await db.answers.update_one(
+                    {"id": vote_data.answer_id},
+                    {"$inc": {"likes": 1, "dislikes": -1}}
+                )
+        else:
+            # Remove vote
+            await db.votes.delete_one({
+                "answer_id": vote_data.answer_id,
+                "user_id": user.id
+            })
+            
+            # Update answer counts
+            if vote_data.vote_type == "like":
+                await db.answers.update_one(
+                    {"id": vote_data.answer_id},
+                    {"$inc": {"likes": -1}}
+                )
+            else:
+                await db.answers.update_one(
+                    {"id": vote_data.answer_id},
+                    {"$inc": {"dislikes": -1}}
+                )
+    else:
+        # New vote
+        vote = Vote(
+            answer_id=vote_data.answer_id,
+            user_id=user.id,
+            vote_type=vote_data.vote_type
+        )
+        
+        vote_dict = vote.model_dump()
+        vote_dict['created_at'] = vote_dict['created_at'].isoformat()
+        await db.votes.insert_one(vote_dict)
+        
+        # Update answer counts
+        if vote_data.vote_type == "like":
+            await db.answers.update_one(
+                {"id": vote_data.answer_id},
+                {"$inc": {"likes": 1}}
+            )
+        else:
+            await db.answers.update_one(
+                {"id": vote_data.answer_id},
+                {"$inc": {"dislikes": 1}}
+            )
+    
+    return {"status": "success"}
 
 @api_router.get("/favorites")
 async def get_favorites(
