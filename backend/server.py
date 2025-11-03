@@ -371,11 +371,11 @@ async def logout(
 
 @api_router.post("/auth/role")
 async def set_role(
-    role_data: Dict[str, str],
+    role_data: Dict[str, Any],
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Set user role (patient or researcher)"""
+    """Add role to user (patient and/or researcher)"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -384,12 +384,44 @@ async def set_role(
     if role not in ["patient", "researcher"]:
         raise HTTPException(status_code=400, detail="Invalid role")
     
-    await db.users.update_one(
-        {"id": user.id},
-        {"$set": {"role": role}}
-    )
+    # Get current roles
+    user_doc = await db.users.find_one({"id": user.id}, {"_id": 0})
+    current_roles = user_doc.get("roles", [])
     
-    return {"status": "success", "role": role}
+    # Add role if not already present
+    if role not in current_roles:
+        current_roles.append(role)
+        await db.users.update_one(
+            {"id": user.id},
+            {"$set": {"roles": current_roles}}
+        )
+    
+    return {"status": "success", "roles": current_roles}
+
+@api_router.get("/auth/check-profile")
+async def check_profile(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Check if user has completed profiles for their roles"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    result = {
+        "roles": user.roles,
+        "profiles": {}
+    }
+    
+    if "patient" in user.roles:
+        patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
+        result["profiles"]["patient"] = patient_profile is not None
+    
+    if "researcher" in user.roles:
+        researcher_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+        result["profiles"]["researcher"] = researcher_profile is not None
+    
+    return result
 
 # ============ Patient Endpoints ============
 
