@@ -590,3 +590,73 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
   }
 }
+
+/* Q&A Community */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.question-detail-card {
+  border: 1px solid #E2E8F0;
+}
+
+.question-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #475569;
+  white-space: pre-wrap;
+}
+
+.answers-section {
+  margin-top: 32px;
+}
+
+.answer-card {
+  border: 1px solid #E2E8F0;
+}
+
+.answer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.answer-content {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  white-space: pre-wrap;
+}
+
+.answer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.vote-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.replies-section {
+  margin-left: 24px;
+  padding-left: 24px;
+  border-left: 2px solid #E2E8F0;
+}
+
+.reply-card {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  margin-top: 12px;
+}
+
+.role-card.selected {
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.05);
+}
