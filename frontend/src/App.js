@@ -472,6 +472,15 @@ const PatientDashboard = ({ user, logout }) => {
   const [forums, setForums] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
+  const [selectedExpert, setSelectedExpert] = useState(null);
+  const [appointmentForm, setAppointmentForm] = useState({
+    patient_name: '',
+    condition: '',
+    location: '',
+    duration_suffering: ''
+  });
 
   useEffect(() => {
     loadData();
