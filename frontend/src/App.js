@@ -81,10 +81,13 @@ const AuthContext = ({ children }) => {
     try {
       await api.post('/auth/logout');
       setUser(null);
-      navigate('/');
+      navigate('/', { replace: true });
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout failed:', error);
+      // Force logout even if API fails
+      setUser(null);
+      navigate('/', { replace: true });
     }
   };
 
