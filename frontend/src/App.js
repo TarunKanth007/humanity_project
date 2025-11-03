@@ -1065,24 +1065,7 @@ function App() {
 
   return (
 
-    <div className="App">
-    <div className="dashboard">
-      <nav className="dashboard-nav">
-        <div className="nav-brand">
-          <Microscope className="brand-icon" />
-          <span>CuraLink</span>
-        </div>
-        <div className="nav-actions">
-          <Button variant="ghost" onClick={() => window.location.href = '/dashboard'}>
-            Dashboard
-          </Button>
-          <div className="nav-user">
-            <img src={user.picture} alt={user.name} className="user-avatar" />
-            <span>{user.name}</span>
-            <Button data-testid="logout-btn" variant="ghost" size="sm" onClick={logout}>
-              <LogOut className="icon-sm" />
-            </Button>
-          </div>
+      <Toaster position="top-right" />
         </div>
       </nav>
 
