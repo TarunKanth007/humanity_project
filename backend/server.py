@@ -1173,6 +1173,401 @@ async def remove_favorite(
     await db.favorites.delete_one({"id": favorite_id, "user_id": user.id})
     return {"status": "success"}
 
+# ============ Appointment System Endpoints ============
+
+@api_router.post("/appointments/request")
+async def create_appointment_request(
+    request_data: AppointmentRequestCreate,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Create appointment request (patients only)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "patient" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only patients can request appointments")
+    
+    # Create appointment request
+    appointment = AppointmentRequest(
+        patient_id=user.id,
+        patient_name=request_data.patient_name,
+        researcher_id=request_data.researcher_id,
+        condition=request_data.condition,
+        location=request_data.location,
+        duration_suffering=request_data.duration_suffering
+    )
+    
+    appointment_dict = appointment.model_dump()
+    appointment_dict['created_at'] = appointment_dict['created_at'].isoformat()
+    await db.appointments.insert_one(appointment_dict)
+    
+    # Create notification for researcher
+    researcher = await db.users.find_one({"id": request_data.researcher_id}, {"_id": 0})
+    if researcher:
+        notification = Notification(
+            user_id=request_data.researcher_id,
+            type="appointment_request",
+            title="New Appointment Request",
+            content=f"{request_data.patient_name} has requested an appointment for {request_data.condition}",
+            link=f"/notifications"
+        )
+        notif_dict = notification.model_dump()
+        notif_dict['created_at'] = notif_dict['created_at'].isoformat()
+        await db.notifications.insert_one(notif_dict)
+    
+    return {"status": "success", "appointment": appointment.model_dump()}
+
+@api_router.get("/appointments")
+async def get_appointments(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get user's appointments"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    query = {}
+    if "patient" in user.roles:
+        query["patient_id"] = user.id
+    elif "researcher" in user.roles:
+        query["researcher_id"] = user.id
+    
+    appointments = await db.appointments.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return appointments
+
+@api_router.post("/appointments/{appointment_id}/accept")
+async def accept_appointment(
+    appointment_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Accept appointment request (researchers only)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can accept appointments")
+    
+    appointment = await db.appointments.find_one({"id": appointment_id, "researcher_id": user.id}, {"_id": 0})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Update appointment status
+    await db.appointments.update_one(
+        {"id": appointment_id},
+        {"$set": {"status": "accepted"}}
+    )
+    
+    # Create chat room
+    chat_room = ChatRoom(
+        appointment_id=appointment_id,
+        patient_id=appointment["patient_id"],
+        researcher_id=user.id
+    )
+    
+    room_dict = chat_room.model_dump()
+    room_dict['created_at'] = room_dict['created_at'].isoformat()
+    await db.chat_rooms.insert_one(room_dict)
+    
+    return {"status": "success", "chat_room_id": chat_room.id}
+
+@api_router.post("/appointments/{appointment_id}/reject")
+async def reject_appointment(
+    appointment_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Reject appointment request (researchers only)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can reject appointments")
+    
+    await db.appointments.update_one(
+        {"id": appointment_id, "researcher_id": user.id},
+        {"$set": {"status": "rejected"}}
+    )
+    
+    return {"status": "success"}
+
+# ============ Notification Endpoints ============
+
+@api_router.get("/notifications")
+async def get_notifications(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get user notifications"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    notifications = await db.notifications.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(50).to_list(50)
+    
+    return notifications
+
+@api_router.post("/notifications/read")
+async def mark_notification_read(
+    notif_data: NotificationRead,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Mark notification as read"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    await db.notifications.update_one(
+        {"id": notif_data.notification_id, "user_id": user.id},
+        {"$set": {"read": True}}
+    )
+    
+    return {"status": "success"}
+
+@api_router.get("/notifications/unread-count")
+async def get_unread_count(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get unread notification count"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    count = await db.notifications.count_documents({"user_id": user.id, "read": False})
+    return {"count": count}
+
+# ============ Chat Room Endpoints ============
+
+@api_router.get("/chat-rooms")
+async def get_chat_rooms(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get user's chat rooms"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    query = {"status": "active"}
+    if "patient" in user.roles:
+        query["patient_id"] = user.id
+    elif "researcher" in user.roles:
+        query["researcher_id"] = user.id
+    
+    rooms = await db.chat_rooms.find(query, {"_id": 0}).to_list(100)
+    
+    # Enrich with appointment and user data
+    for room in rooms:
+        appointment = await db.appointments.find_one({"id": room["appointment_id"]}, {"_id": 0})
+        if appointment:
+            room["appointment"] = appointment
+        
+        # Get other user info
+        other_user_id = room["researcher_id"] if "patient" in user.roles else room["patient_id"]
+        other_user = await db.users.find_one({"id": other_user_id}, {"_id": 0})
+        if other_user:
+            room["other_user"] = {
+                "id": other_user["id"],
+                "name": other_user["name"],
+                "picture": other_user.get("picture")
+            }
+    
+    return rooms
+
+@api_router.get("/chat-rooms/{room_id}/messages")
+async def get_chat_messages(
+    room_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get chat messages"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user has access to this chat room
+    room = await db.chat_rooms.find_one({"id": room_id}, {"_id": 0})
+    if not room:
+        raise HTTPException(status_code=404, detail="Chat room not found")
+    
+    if room["patient_id"] != user.id and room["researcher_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    messages = await db.chat_messages.find(
+        {"chat_room_id": room_id},
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(1000)
+    
+    return messages
+
+@api_router.post("/chat-rooms/{room_id}/messages")
+async def send_chat_message(
+    room_id: str,
+    message_data: ChatMessageCreate,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Send chat message"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user has access
+    room = await db.chat_rooms.find_one({"id": room_id}, {"_id": 0})
+    if not room:
+        raise HTTPException(status_code=404, detail="Chat room not found")
+    
+    if room["patient_id"] != user.id and room["researcher_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    if room["status"] != "active":
+        raise HTTPException(status_code=400, detail="Chat room is closed")
+    
+    # Create message
+    user_role = "researcher" if "researcher" in user.roles else "patient"
+    message = ChatMessage(
+        chat_room_id=room_id,
+        sender_id=user.id,
+        sender_name=user.name,
+        sender_role=user_role,
+        message_type=message_data.message_type,
+        content=message_data.content
+    )
+    
+    msg_dict = message.model_dump()
+    msg_dict['created_at'] = msg_dict['created_at'].isoformat()
+    await db.chat_messages.insert_one(msg_dict)
+    
+    return {"status": "success", "message": message.model_dump()}
+
+@api_router.post("/chat-rooms/{room_id}/close")
+async def close_chat_room(
+    room_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Close chat room and delete messages"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user has access
+    room = await db.chat_rooms.find_one({"id": room_id}, {"_id": 0})
+    if not room:
+        raise HTTPException(status_code=404, detail="Chat room not found")
+    
+    if room["patient_id"] != user.id and room["researcher_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Close room
+    await db.chat_rooms.update_one(
+        {"id": room_id},
+        {"$set": {"status": "closed", "closed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Mark appointment as completed
+    await db.appointments.update_one(
+        {"id": room["appointment_id"]},
+        {"$set": {"status": "completed"}}
+    )
+    
+    # Delete all messages
+    await db.chat_messages.delete_many({"chat_room_id": room_id})
+    
+    return {"status": "success"}
+
+# ============ Review Endpoints ============
+
+@api_router.post("/reviews")
+async def create_review(
+    review_data: ReviewCreate,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Create review (patients only)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "patient" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only patients can leave reviews")
+    
+    # Get appointment
+    appointment = await db.appointments.find_one({"id": review_data.appointment_id}, {"_id": 0})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    if appointment["patient_id"] != user.id:
+        raise HTTPException(status_code=403, detail="Not your appointment")
+    
+    if appointment["status"] != "completed":
+        raise HTTPException(status_code=400, detail="Appointment not completed yet")
+    
+    # Create review
+    review = Review(
+        appointment_id=review_data.appointment_id,
+        patient_id=user.id,
+        researcher_id=appointment["researcher_id"],
+        rating=review_data.rating,
+        comment=review_data.comment
+    )
+    
+    review_dict = review.model_dump()
+    review_dict['created_at'] = review_dict['created_at'].isoformat()
+    await db.reviews.insert_one(review_dict)
+    
+    # Create notification for researcher
+    notification = Notification(
+        user_id=appointment["researcher_id"],
+        type="review_received",
+        title="New Review Received",
+        content=f"You received a {review_data.rating}-star review from a patient",
+        link="/notifications"
+    )
+    notif_dict = notification.model_dump()
+    notif_dict['created_at'] = notif_dict['created_at'].isoformat()
+    await db.notifications.insert_one(notif_dict)
+    
+    return {"status": "success", "review": review.model_dump()}
+
+@api_router.get("/reviews/researcher/{researcher_id}")
+async def get_researcher_reviews(
+    researcher_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get reviews for a researcher"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    reviews = await db.reviews.find(
+        {"researcher_id": researcher_id},
+        {"_id": 0, "patient_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Calculate average rating
+    if reviews:
+        avg_rating = sum(r["rating"] for r in reviews) / len(reviews)
+    else:
+        avg_rating = 0
+    
+    return {
+        "reviews": reviews,
+        "average_rating": round(avg_rating, 1),
+        "total_reviews": len(reviews)
+    }
+
 # ============ Seed Data Endpoint ============
 
 @api_router.post("/seed")
