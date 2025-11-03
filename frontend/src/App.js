@@ -1059,9 +1059,7 @@ const ProtectedRoute = ({ children, user }) => {
   return children;
 };
 
-  useEffect(() => {
-    loadQuestions();
-  }, []);
+// Main App
 
   const loadQuestions = async () => {
     setLoading(true);
