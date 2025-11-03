@@ -809,12 +809,18 @@ const ResearcherDashboard = ({ user, logout }) => {
           <Microscope className="brand-icon" />
           <span>CuraLink</span>
         </div>
-        <div className="nav-user">
-          <img src={user.picture} alt={user.name} className="user-avatar" />
-          <span>{user.name}</span>
-          <Button data-testid="logout-btn" variant="ghost" size="sm" onClick={logout}>
-            <LogOut className="icon-sm" />
+        <div className="nav-actions">
+          <Button variant="ghost" onClick={() => navigate('/qa-community')}>
+            <HelpCircle className="icon-sm" />
+            Q&A Community
           </Button>
+          <div className="nav-user">
+            <img src={user.picture} alt={user.name} className="user-avatar" />
+            <span>{user.name}</span>
+            <Button data-testid="logout-btn" variant="ghost" size="sm" onClick={logout}>
+              <LogOut className="icon-sm" />
+            </Button>
+          </div>
         </div>
       </nav>
 
