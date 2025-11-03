@@ -292,6 +292,26 @@ class VoteRequest(BaseModel):
     answer_id: str
     vote_type: str  # 'like' or 'dislike'
 
+class AppointmentRequestCreate(BaseModel):
+    researcher_id: str
+    patient_name: str
+    condition: str
+    location: str
+    duration_suffering: str
+
+class NotificationRead(BaseModel):
+    notification_id: str
+
+class ChatMessageCreate(BaseModel):
+    chat_room_id: str
+    message_type: str  # 'text' or 'image'
+    content: str
+
+class ReviewCreate(BaseModel):
+    appointment_id: str
+    rating: int
+    comment: str
+
 # ============ Helper Functions ============
 
 async def get_current_user(session_token: Optional[str] = None, authorization: Optional[str] = None) -> Optional[User]:
