@@ -1051,8 +1051,7 @@ const ResearcherDashboard = ({ user, logout }) => {
   );
 };
 
-// Q&A Community Page
-const QACommunity = ({ user, logout }) => {
+// Protected Route
   const [questions, setQuestions] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
