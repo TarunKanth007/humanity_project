@@ -131,6 +131,37 @@ class ForumPost(BaseModel):
     parent_id: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class Question(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    patient_id: str
+    title: str
+    content: str
+    condition: Optional[str] = None
+    is_anonymous: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Answer(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    question_id: str
+    researcher_id: str
+    researcher_name: str
+    researcher_specialty: Optional[str] = None
+    content: str
+    likes: int = 0
+    dislikes: int = 0
+    parent_id: Optional[str] = None  # For researcher replies to other researchers
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Vote(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    answer_id: str
+    user_id: str
+    vote_type: str  # 'like' or 'dislike'
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class Favorite(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
