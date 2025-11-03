@@ -618,10 +618,13 @@ async def get_collaborators(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get potential collaborators"""
+    """Get potential collaborators (only visible to researchers)"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can view collaborators")
     
     query = {"user_id": {"$ne": user.id}}
     if specialty:
