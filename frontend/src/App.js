@@ -1063,53 +1063,7 @@ const ProtectedRoute = ({ children, user }) => {
 
 function App() {
 
-  const loadQuestionDetail = async (questionId) => {
-    try {
-      const res = await api.get(`/qa/questions/${questionId}`);
-      setSelectedQuestion(res.data);
-    } catch (error) {
-      console.error('Failed to load question detail:', error);
-    }
-  };
-
-  const askQuestion = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/qa/questions', questionForm);
-      toast.success('Question posted successfully');
-      setShowAskDialog(false);
-      setQuestionForm({ title: '', content: '', condition: '', is_anonymous: true });
-      loadQuestions();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to post question');
-    }
-  };
-
-  const postAnswer = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/qa/answers', {
-        question_id: selectedQuestion.id,
-        content: answerForm.content,
-        parent_id: answerForm.parent_id
-      });
-      toast.success('Answer posted successfully');
-      setShowAnswerDialog(false);
-      setAnswerForm({ content: '', parent_id: null });
-      loadQuestionDetail(selectedQuestion.id);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to post answer');
-    }
-  };
-
-  const handleVote = async (answerId, voteType) => {
-    try {
-      await api.post('/qa/vote', { answer_id: answerId, vote_type: voteType });
-      loadQuestionDetail(selectedQuestion.id);
-    } catch (error) {
-      toast.error('Failed to vote');
-    }
-  };
+  return (
 
   const isPatient = user.roles?.includes('patient');
   const isResearcher = user.roles?.includes('researcher');
