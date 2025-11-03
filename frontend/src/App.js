@@ -683,6 +683,18 @@ const PatientDashboard = ({ user, logout }) => {
                             <Badge key={idx} variant="secondary">{area}</Badge>
                           ))}
                         </div>
+                        {expert.is_platform_member && (
+                          <Button 
+                            className="w-full mt-3"
+                            onClick={() => {
+                              setSelectedExpert(expert);
+                              setShowAppointmentDialog(true);
+                            }}
+                          >
+                            <Calendar className="icon-sm mr-1" />
+                            Request Appointment
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
