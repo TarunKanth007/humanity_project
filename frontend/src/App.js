@@ -565,10 +565,23 @@ const PatientDashboard = ({ user, logout }) => {
   useEffect(() => {
     loadData();
     loadUnreadCount();
+    loadActiveChatRooms();
     // Poll for notifications
-    const interval = setInterval(loadUnreadCount, 10000);
+    const interval = setInterval(() => {
+      loadUnreadCount();
+      loadActiveChatRooms();
+    }, 10000);
     return () => clearInterval(interval);
   }, [activeTab]);
+
+  const loadActiveChatRooms = async () => {
+    try {
+      const res = await api.get('/chat-rooms');
+      setActiveChatRooms(res.data);
+    } catch (error) {
+      console.error('Failed to load chat rooms:', error);
+    }
+  };
 
   const loadUnreadCount = async () => {
     try {
