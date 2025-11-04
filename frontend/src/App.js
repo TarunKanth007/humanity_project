@@ -513,6 +513,8 @@ const PatientDashboard = ({ user, logout }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
   const [selectedExpert, setSelectedExpert] = useState(null);
+  const [showExpertDetails, setShowExpertDetails] = useState(false);
+  const [expertReviews, setExpertReviews] = useState([]);
   const [appointmentForm, setAppointmentForm] = useState({
     patient_name: '',
     condition: '',
