@@ -576,7 +576,7 @@ async def get_health_experts(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get health experts"""
+    """Get health experts with ratings"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -588,6 +588,23 @@ async def get_health_experts(
         query["location"] = {"$regex": location, "$options": "i"}
     
     experts = await db.health_experts.find(query, {"_id": 0}).limit(50).to_list(50)
+    
+    # Add ratings for platform members
+    for expert in experts:
+        if expert.get("is_platform_member") and expert.get("user_id"):
+            reviews = await db.reviews.find(
+                {"researcher_id": expert["user_id"]},
+                {"_id": 0}
+            ).to_list(100)
+            
+            if reviews:
+                avg_rating = sum(r["rating"] for r in reviews) / len(reviews)
+                expert["average_rating"] = round(avg_rating, 1)
+                expert["total_reviews"] = len(reviews)
+            else:
+                expert["average_rating"] = 0
+                expert["total_reviews"] = 0
+    
     return experts
 
 @api_router.get("/patient/publications")
