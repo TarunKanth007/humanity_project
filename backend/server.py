@@ -247,11 +247,13 @@ class ProfileUpdateRequest(BaseModel):
     conditions: Optional[List[str]] = None
     location: Optional[str] = None
     interests: Optional[List[str]] = None
+    name: Optional[str] = None
     specialties: Optional[List[str]] = None
     research_interests: Optional[List[str]] = None
     age: Optional[int] = None
     years_experience: Optional[int] = None
     sector: Optional[str] = None
+    available_hours: Optional[str] = None
     orcid: Optional[str] = None
     researchgate: Optional[str] = None
     available_for_meetings: Optional[bool] = None
