@@ -749,13 +749,10 @@ const PatientDashboard = ({ user, logout }) => {
                         {expert.is_platform_member && (
                           <Button 
                             className="w-full mt-3"
-                            onClick={() => {
-                              setSelectedExpert(expert);
-                              setShowAppointmentDialog(true);
-                            }}
+                            onClick={() => viewExpertDetails(expert)}
                           >
                             <Calendar className="icon-sm mr-1" />
-                            Request Appointment
+                            View Details & Book
                           </Button>
                         )}
                       </CardContent>
