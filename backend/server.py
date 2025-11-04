@@ -247,6 +247,9 @@ class ProfileUpdateRequest(BaseModel):
     interests: Optional[List[str]] = None
     specialties: Optional[List[str]] = None
     research_interests: Optional[List[str]] = None
+    age: Optional[int] = None
+    years_experience: Optional[int] = None
+    sector: Optional[str] = None
     orcid: Optional[str] = None
     researchgate: Optional[str] = None
     available_for_meetings: Optional[bool] = None
