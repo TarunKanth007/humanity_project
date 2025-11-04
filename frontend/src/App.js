@@ -583,10 +583,25 @@ const PatientDashboard = ({ user, logout }) => {
       });
       toast.success('Appointment request sent!');
       setShowAppointmentDialog(false);
+      setShowExpertDetails(false);
       setAppointmentForm({ patient_name: '', condition: '', location: '', duration_suffering: '' });
     } catch (error) {
       toast.error('Failed to send appointment request');
     }
+  };
+
+  const viewExpertDetails = async (expert) => {
+    setSelectedExpert(expert);
+    // Load reviews
+    if (expert.user_id) {
+      try {
+        const res = await api.get(`/reviews/researcher/${expert.user_id}`);
+        setExpertReviews(res.data.reviews || []);
+      } catch (error) {
+        console.error('Failed to load reviews:', error);
+      }
+    }
+    setShowExpertDetails(true);
   };
 
   return (
