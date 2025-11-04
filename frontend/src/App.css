@@ -964,3 +964,31 @@ h1, h2, h3, h4, h5, h6 {
   color: #475569;
   margin: 0;
 }
+
+/* Active Consultations */
+.active-consultations {
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #10B981;
+}
+
+.consultations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+}
+
+.consultation-card {
+  background: white;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+}
+
+.consultation-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #10B981;
+}
