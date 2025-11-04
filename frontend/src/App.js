@@ -194,13 +194,18 @@ const Onboarding = ({ user, setUser }) => {
   }, [user, navigate]);
 
   const handleRoleSelect = async (selectedRole) => {
+    console.log('Selecting role:', selectedRole);
     try {
       await api.post('/auth/role', { role: selectedRole });
       // Refresh user data
       const response = await api.get('/auth/me');
+      console.log('User after role set:', response.data);
       setUser(response.data);
-      navigate('/profile-setup?role=' + selectedRole, { replace: true });
+      const targetUrl = '/profile-setup?role=' + selectedRole;
+      console.log('Navigating to:', targetUrl);
+      navigate(targetUrl, { replace: true });
     } catch (error) {
+      console.error('Role selection error:', error);
       if (error.response?.status === 400) {
         toast.error('Role already set. Cannot change role.');
         // Refresh user and redirect to dashboard
