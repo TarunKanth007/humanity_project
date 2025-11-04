@@ -6,38 +6,32 @@
   box-sizing: border-box;
 }
 
-/* Anime-inspired color palette */
+/* Rich Anime-inspired color palette */
 :root {
-  --anime-primary: #FF6B9D;
-  --anime-secondary: #C44569;
-  --anime-accent: #FFC312;
-  --anime-blue: #00D2FF;
-  --anime-purple: #B06AB3;
-  --anime-green: #4FACFE;
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
+  --deep-purple: #6B4CE6;
+  --royal-blue: #4A90E2;
+  --teal: #2DBFB8;
+  --coral: #FF6B6B;
+  --sunset-orange: #FF8E53;
+  --soft-pink: #FFB6C1;
+  --deep-navy: #1A1F3A;
+  --rich-violet: #8B5CF6;
+  --emerald: #10B981;
+  --amber: #F59E0B;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
 }
 
 body {
   font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  color: #2D3748;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  color: #1A1F3A;
   min-height: 100vh;
-  overflow-x: hidden;
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Glassmorphism Base */
