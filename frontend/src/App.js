@@ -275,6 +275,13 @@ const ProfileSetup = ({ user }) => {
 
   const isPatient = setupRole === 'patient';
 
+  console.log('ProfileSetup Debug:', {
+    setupRole,
+    isPatient,
+    userRoles: user?.roles,
+    searchParams: location.search
+  });
+
   const handleAddTag = (field, input, setInput) => {
     if (input.trim()) {
       setFormData(prev => ({
