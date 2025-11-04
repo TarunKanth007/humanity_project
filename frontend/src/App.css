@@ -6,26 +6,19 @@
   box-sizing: border-box;
 }
 
-/* Rich Anime-inspired color palette */
+/* Clean Green & White palette */
 :root {
-  --deep-purple: #6B4CE6;
-  --royal-blue: #4A90E2;
-  --teal: #2DBFB8;
-  --coral: #FF6B6B;
-  --sunset-orange: #FF8E53;
-  --soft-pink: #FFB6C1;
-  --deep-navy: #1A1F3A;
-  --rich-violet: #8B5CF6;
-  --emerald: #10B981;
-  --amber: #F59E0B;
+  --primary-green: #10B981;
+  --dark-green: #059669;
+  --light-green: #34D399;
   --glass-bg: rgba(255, 255, 255, 0.12);
   --glass-border: rgba(255, 255, 255, 0.18);
 }
 
 body {
   font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  color: #1A1F3A;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+  color: #1F2937;
   min-height: 100vh;
 }
 
@@ -36,18 +29,18 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Glassmorphism Base */
 .glass-card {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
 }
 
-/* Anime Button Styles */
+/* Button Styles */
 .anime-button {
   position: relative;
-  background: linear-gradient(135deg, var(--anime-primary), var(--anime-secondary));
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
   border: none;
   border-radius: 50px;
   color: white;
@@ -57,7 +50,7 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -69,7 +62,7 @@ h1, h2, h3, h4, h5, h6 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s;
 }
 
@@ -78,53 +71,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .anime-button:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(255, 107, 157, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 .anime-button:active {
-  transform: translateY(-1px) scale(1.02);
+  transform: translateY(-1px);
 }
 
 /* Floating Animation */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  50% { transform: translateY(-15px); }
 }
 
 .floating {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Pulse Animation */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.pulse {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-/* Sparkle Effect */
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
-.sparkle {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: white;
-  border-radius: 50%;
-  animation: sparkle 1.5s ease-in-out infinite;
-}
-
 .icon-sm {
   width: 20px;
   height: 20px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .icon-xs {
@@ -138,19 +105,16 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
 }
 
 .spinner {
   width: 60px;
   height: 60px;
-  border: 5px solid rgba(255, 255, 255, 0.3);
-  border-top-color: var(--anime-primary);
+  border: 5px solid rgba(16, 185, 129, 0.2);
+  border-top-color: var(--primary-green);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
 }
 
 @keyframes spin {
