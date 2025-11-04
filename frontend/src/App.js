@@ -1236,6 +1236,12 @@ function App() {
                   <Notifications user={user} logout={logout} />
                 </ProtectedRoute>
               } />
+              
+              <Route path="/chat/:roomId" element={
+                <ProtectedRoute user={user}>
+                  <ChatRoom user={user} logout={logout} />
+                </ProtectedRoute>
+              } />
             </Routes>
           )}
         </AuthContext>
