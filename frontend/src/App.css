@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
 
 * {
   margin: 0;
@@ -6,18 +6,15 @@
   box-sizing: border-box;
 }
 
-/* Clean Green & White palette */
 :root {
   --primary-green: #10B981;
   --dark-green: #059669;
-  --light-green: #34D399;
-  --glass-bg: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.18);
+  --light-green: #ECFDF5;
 }
 
 body {
-  font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+  font-family: 'Inter', sans-serif;
+  background: #F9FAFB;
   color: #1F2937;
   min-height: 100vh;
 }
@@ -25,68 +22,6 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-}
-
-/* Glassmorphism Base */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px;
-  border: 2px solid rgba(16, 185, 129, 0.2);
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
-}
-
-/* Button Styles */
-.anime-button {
-  position: relative;
-  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
-  border: none;
-  border-radius: 50px;
-  color: white;
-  font-weight: 700;
-  padding: 14px 32px;
-  font-size: 16px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.anime-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s;
-}
-
-.anime-button:hover::before {
-  left: 100%;
-}
-
-.anime-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-}
-
-.anime-button:active {
-  transform: translateY(-1px);
-}
-
-/* Floating Animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
-}
-
-.floating {
-  animation: float 3s ease-in-out infinite;
 }
 
 .icon-sm {
@@ -105,13 +40,13 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+  background: #F9FAFB;
 }
 
 .spinner {
-  width: 60px;
-  height: 60px;
-  border: 5px solid rgba(16, 185, 129, 0.2);
+  width: 48px;
+  height: 48px;
+  border: 4px solid #E5E7EB;
   border-top-color: var(--primary-green);
   border-radius: 50%;
   animation: spin 1s linear infinite;
