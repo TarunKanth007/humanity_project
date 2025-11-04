@@ -660,3 +660,153 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #10B981;
   background: rgba(16, 185, 129, 0.05);
 }
+
+/* Notifications */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #EF4444;
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notification-card.unread {
+  background: #F0F9FF;
+  border-left: 3px solid #10B981;
+}
+
+.notification-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-card {
+  border: 1px solid #E2E8F0;
+}
+
+/* Chat Room */
+.chat-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  background: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #E2E8F0;
+}
+
+.chat-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #10B981;
+}
+
+.chat-messages {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  border: 1px solid #E2E8F0;
+}
+
+.message {
+  margin-bottom: 16px;
+  display: flex;
+}
+
+.message-sent {
+  justify-content: flex-end;
+}
+
+.message-received {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+}
+
+.message-sent .message-bubble {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+}
+
+.message-received .message-bubble {
+  background: #F3F4F6;
+  color: #1F2937;
+}
+
+.message-sender {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+.message-content {
+  margin: 0;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.message-image {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.message-time {
+  font-size: 10px;
+  opacity: 0.6;
+  margin-top: 4px;
+  display: block;
+}
+
+.chat-input-form {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  gap: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.star-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.star-button:hover {
+  transform: scale(1.1);
+}
