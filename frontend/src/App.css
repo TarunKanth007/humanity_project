@@ -810,3 +810,27 @@ h1, h2, h3, h4, h5, h6 {
 .star-button:hover {
   transform: scale(1.1);
 }
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 8px 12px;
+  background: #FEF3C7;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.star-filled {
+  width: 16px;
+  height: 16px;
+  fill: #F59E0B;
+  color: #F59E0B;
+}
+
+.rating-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400E;
+}
