@@ -678,6 +678,14 @@ const PatientDashboard = ({ user, logout }) => {
                             <Badge variant="default">Platform Member</Badge>
                           )}
                         </div>
+                        {expert.average_rating > 0 && (
+                          <div className="rating-display">
+                            <Star className="star-filled" />
+                            <span className="rating-text">
+                              {expert.average_rating} ({expert.total_reviews} reviews)
+                            </span>
+                          </div>
+                        )}
                         <div className="tags">
                           {expert.research_areas.map((area, idx) => (
                             <Badge key={idx} variant="secondary">{area}</Badge>
