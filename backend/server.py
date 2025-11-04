@@ -60,14 +60,16 @@ class PatientProfile(BaseModel):
 class ResearcherProfile(BaseModel):
     model_config = ConfigDict(extra="ignore")
     user_id: str
+    name: str
     specialties: List[str] = []
     research_interests: List[str] = []
-    age: Optional[int] = None
-    years_experience: Optional[int] = None
-    sector: Optional[str] = None
+    age: int
+    years_experience: int
+    sector: str
+    available_hours: str  # e.g., "9 AM - 5 PM" or "Flexible"
     orcid: Optional[str] = None
     researchgate: Optional[str] = None
-    available_for_meetings: bool = False
+    available_for_meetings: bool = True
     bio: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
