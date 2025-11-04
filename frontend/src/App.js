@@ -312,7 +312,19 @@ const ProfileSetup = ({ user }) => {
       }, 1000);
     } catch (error) {
       console.error('Profile creation error:', error);
-      toast.error(error.response?.data?.detail || 'Failed to create profile');
+      
+      // Extract error message properly
+      let errorMessage = 'Failed to create profile';
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.detail)) {
+          // Handle validation errors array
+          errorMessage = error.response.data.detail.map(err => err.msg || JSON.stringify(err)).join(', ');
+        }
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
