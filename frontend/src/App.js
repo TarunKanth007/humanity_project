@@ -186,13 +186,6 @@ const LandingPage = () => {
 const Onboarding = ({ user, setUser }) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // If user already has a role, redirect to dashboard
-    if (user?.roles && user.roles.length > 0) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [user, navigate]);
-
   const handleRoleSelect = async (selectedRole) => {
     console.log('Selecting role:', selectedRole);
     try {
@@ -201,6 +194,8 @@ const Onboarding = ({ user, setUser }) => {
       const response = await api.get('/auth/me');
       console.log('User after role set:', response.data);
       setUser(response.data);
+      
+      // ALWAYS go to profile setup after role selection
       const targetUrl = '/profile-setup?role=' + selectedRole;
       console.log('Navigating to:', targetUrl);
       navigate(targetUrl, { replace: true });
@@ -208,20 +203,12 @@ const Onboarding = ({ user, setUser }) => {
       console.error('Role selection error:', error);
       if (error.response?.status === 400) {
         toast.error('Role already set. Cannot change role.');
-        // Refresh user and redirect to dashboard
-        const response = await api.get('/auth/me');
-        setUser(response.data);
         navigate('/dashboard', { replace: true });
       } else {
         toast.error('Failed to set role');
       }
     }
   };
-
-  // Don't render if user already has role
-  if (user?.roles && user.roles.length > 0) {
-    return null;
-  }
 
   return (
     <div className="onboarding-page">
