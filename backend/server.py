@@ -1358,6 +1358,21 @@ async def accept_appointment(
     room_dict['created_at'] = room_dict['created_at'].isoformat()
     await db.chat_rooms.insert_one(room_dict)
     
+    # ✅ CREATE NOTIFICATION FOR PATIENT
+    notification = Notification(
+        user_id=appointment["patient_id"],
+        type="appointment_accepted",
+        title="Appointment Accepted!",
+        content=f"Your appointment request has been accepted. You can now join the consultation.",
+        link=f"/chat/{chat_room.id}"
+    )
+    notif_dict = notification.model_dump()
+    notif_dict['created_at'] = notif_dict['created_at'].isoformat()
+    await db.notifications.insert_one(notif_dict)
+    
+    logging.info(f"✅ Chat room created: {chat_room.id} for patient {appointment['patient_id']}")
+    logging.info(f"✅ Notification sent to patient {appointment['patient_id']}")
+    
     return {"status": "success", "chat_room_id": chat_room.id}
 
 @api_router.post("/appointments/{appointment_id}/reject")
