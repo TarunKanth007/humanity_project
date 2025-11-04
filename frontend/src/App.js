@@ -260,11 +260,13 @@ const ProfileSetup = ({ user }) => {
   const [formData, setFormData] = useState({
     conditions: [],
     location: '',
+    name: '',
     specialties: [],
     research_interests: [],
     age: '',
     years_experience: '',
     sector: '',
+    available_hours: '',
     bio: ''
   });
   const [conditionInput, setConditionInput] = useState('');
