@@ -62,6 +62,9 @@ class ResearcherProfile(BaseModel):
     user_id: str
     specialties: List[str] = []
     research_interests: List[str] = []
+    age: Optional[int] = None
+    years_experience: Optional[int] = None
+    sector: Optional[str] = None
     orcid: Optional[str] = None
     researchgate: Optional[str] = None
     available_for_meetings: bool = False
