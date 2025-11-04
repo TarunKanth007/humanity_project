@@ -293,13 +293,26 @@ const ProfileSetup = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Submitting profile:', formData);
     try {
       const endpoint = isPatient ? '/patient/profile' : '/researcher/profile';
-      await api.post(endpoint, formData);
-      toast.success('Profile created successfully!');
-      navigate('/dashboard');
+      const response = await api.post(endpoint, formData);
+      console.log('Profile creation response:', response.data);
+      
+      if (!isPatient) {
+        // For researchers, show success message about being added to health experts
+        toast.success('Profile created! You are now listed in Health Experts directory.');
+      } else {
+        toast.success('Profile created successfully!');
+      }
+      
+      // Navigate to dashboard after successful profile creation
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 1000);
     } catch (error) {
-      toast.error('Failed to create profile');
+      console.error('Profile creation error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to create profile');
     }
   };
 
