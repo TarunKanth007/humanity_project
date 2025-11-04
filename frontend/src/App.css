@@ -398,71 +398,128 @@ h1, h2, h3, h4, h5, h6 {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Onboarding */
+/* Onboarding - Anime Style */
 .onboarding-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.onboarding-page::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 107, 157, 0.3), transparent);
+  border-radius: 50%;
+  top: 10%;
+  left: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.onboarding-page::after {
+  content: '';
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.3), transparent);
+  border-radius: 50%;
+  bottom: 10%;
+  right: 10%;
+  animation: float 8s ease-in-out infinite reverse;
 }
 
 .onboarding-container {
-  max-width: 800px;
+  max-width: 900px;
   width: 100%;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .onboarding-container h1 {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 12px;
+  font-size: 52px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  color: white;
+  text-shadow: 0 0 20px rgba(255, 107, 157, 0.5), 3px 3px 6px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .onboarding-subtitle {
-  font-size: 18px;
-  color: #64748B;
-  margin-bottom: 48px;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 56px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
 }
 
 .role-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
 }
 
 .role-card {
-  background: white;
-  padding: 48px 32px;
-  border-radius: 16px;
-  border: 2px solid #E2E8F0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  padding: 52px 36px;
+  border-radius: 28px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(0, 210, 255, 0.1));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.role-card:hover::before {
+  opacity: 1;
 }
 
 .role-card:hover {
-  border-color: #10B981;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.15);
+  border-color: var(--anime-primary);
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 0 20px 60px rgba(255, 107, 157, 0.4);
 }
 
 .role-icon {
-  width: 64px;
-  height: 64px;
-  color: #10B981;
-  margin: 0 auto 24px;
+  width: 80px;
+  height: 80px;
+  color: var(--anime-primary);
+  margin: 0 auto 28px;
+  filter: drop-shadow(0 8px 16px rgba(255, 107, 157, 0.3));
+  animation: float 3s ease-in-out infinite;
 }
 
 .role-card h3 {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #0F172A;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .role-card p {
-  color: #64748B;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Profile Setup */
