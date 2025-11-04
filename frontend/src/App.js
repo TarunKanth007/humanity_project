@@ -923,6 +923,12 @@ const PatientDashboard = ({ user, logout }) => {
                     <span className="info-label">Location:</span>
                     <span className="info-value">{selectedExpert.location}</span>
                   </div>
+                  {selectedExpert.available_hours && (
+                    <div className="info-item">
+                      <span className="info-label">Available Hours:</span>
+                      <span className="info-value">{selectedExpert.available_hours}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
