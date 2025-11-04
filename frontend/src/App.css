@@ -925,8 +925,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .role-card.selected {
-  border-color: #10B981;
-  background: rgba(16, 185, 129, 0.05);
+  border-color: #FFC312;
+  background: rgba(255, 195, 18, 0.2);
+  box-shadow: 0 0 30px rgba(255, 195, 18, 0.5);
 }
 
 /* Notifications */
