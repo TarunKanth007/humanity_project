@@ -857,6 +857,121 @@ const PatientDashboard = ({ user, logout }) => {
         </div>
       </div>
 
+      {/* Expert Details Dialog */}
+      <Dialog open={showExpertDetails} onOpenChange={setShowExpertDetails}>
+        <DialogContent className="expert-details-dialog">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{selectedExpert?.name}</DialogTitle>
+            <CardDescription>{selectedExpert?.specialty}</CardDescription>
+          </DialogHeader>
+          
+          {selectedExpert && (
+            <div className="expert-details-content">
+              <div className="expert-info-section">
+                <h3 className="section-title">Professional Information</h3>
+                <div className="info-grid">
+                  {selectedExpert.age && (
+                    <div className="info-item">
+                      <span className="info-label">Age:</span>
+                      <span className="info-value">{selectedExpert.age} years</span>
+                    </div>
+                  )}
+                  {selectedExpert.years_experience && (
+                    <div className="info-item">
+                      <span className="info-label">Experience:</span>
+                      <span className="info-value">{selectedExpert.years_experience} years</span>
+                    </div>
+                  )}
+                  {selectedExpert.sector && (
+                    <div className="info-item">
+                      <span className="info-label">Sector:</span>
+                      <span className="info-value">{selectedExpert.sector}</span>
+                    </div>
+                  )}
+                  <div className="info-item">
+                    <span className="info-label">Email:</span>
+                    <span className="info-value">{selectedExpert.email}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Location:</span>
+                    <span className="info-value">{selectedExpert.location}</span>
+                  </div>
+                </div>
+              </div>
+
+              {selectedExpert.bio && (
+                <div className="expert-info-section">
+                  <h3 className="section-title">About</h3>
+                  <p className="bio-text">{selectedExpert.bio}</p>
+                </div>
+              )}
+
+              {selectedExpert.research_areas && selectedExpert.research_areas.length > 0 && (
+                <div className="expert-info-section">
+                  <h3 className="section-title">Research Areas</h3>
+                  <div className="tags">
+                    {selectedExpert.research_areas.map((area, idx) => (
+                      <Badge key={idx} variant="secondary">{area}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedExpert.average_rating > 0 && (
+                <div className="expert-info-section">
+                  <h3 className="section-title">Rating</h3>
+                  <div className="rating-display-large">
+                    <Star className="star-large-filled" />
+                    <span className="rating-text-large">
+                      {selectedExpert.average_rating} / 5.0
+                    </span>
+                    <span className="rating-count">({selectedExpert.total_reviews} reviews)</span>
+                  </div>
+                </div>
+              )}
+
+              {expertReviews.length > 0 && (
+                <div className="expert-info-section">
+                  <h3 className="section-title">Patient Reviews</h3>
+                  <div className="reviews-list">
+                    {expertReviews.slice(0, 3).map((review, idx) => (
+                      <Card key={idx} className="review-card">
+                        <CardContent className="pt-4">
+                          <div className="review-rating">
+                            {[...Array(5)].map((_, i) => (
+                              <Star 
+                                key={i} 
+                                className={`review-star ${i < review.rating ? 'filled' : ''}`}
+                              />
+                            ))}
+                            <span className="review-date">
+                              {new Date(review.created_at).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <p className="review-comment">{review.comment}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Button 
+                className="w-full mt-4" 
+                size="lg"
+                onClick={() => {
+                  setShowExpertDetails(false);
+                  setShowAppointmentDialog(true);
+                }}
+              >
+                <Calendar className="icon-sm mr-2" />
+                Request Appointment
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Appointment Request Dialog */}
       <Dialog open={showAppointmentDialog} onOpenChange={setShowAppointmentDialog}>
         <DialogContent className="dialog-content">
