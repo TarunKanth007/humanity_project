@@ -694,6 +694,42 @@ const PatientDashboard = ({ user, logout }) => {
             </div>
           </div>
 
+          {/* Active Consultations Section */}
+          {activeChatRooms.length > 0 && (
+            <div className="active-consultations mb-6">
+              <h2 className="text-xl font-semibold mb-4">🟢 Active Consultations</h2>
+              <div className="consultations-grid">
+                {activeChatRooms.map((room) => (
+                  <Card key={room.id} className="consultation-card">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={room.other_user?.picture || 'https://via.placeholder.com/40'} 
+                            alt={room.other_user?.name}
+                            className="consultation-avatar"
+                          />
+                          <div>
+                            <h4 className="font-semibold">{room.other_user?.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {room.appointment?.condition}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => navigate(`/chat/${room.id}`)}
+                          data-testid="join-consultation-btn"
+                        >
+                          Join Chat
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="dashboard-tabs">
             <TabsList>
               <TabsTrigger data-testid="trials-tab" value="trials">
