@@ -550,6 +550,7 @@ const PatientDashboard = ({ user, logout }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [activeChatRooms, setActiveChatRooms] = useState([]);
   const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
   const [selectedExpert, setSelectedExpert] = useState(null);
   const [showExpertDetails, setShowExpertDetails] = useState(false);
