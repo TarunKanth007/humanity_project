@@ -639,7 +639,7 @@ async def create_researcher_profile(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Create/update researcher profile"""
+    """Create/update researcher profile and add to health experts"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -652,6 +652,8 @@ async def create_researcher_profile(
             {"user_id": user.id},
             {"$set": update_data}
         )
+        # Get updated profile
+        profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
     else:
         profile = ResearcherProfile(
             user_id=user.id,
@@ -665,6 +667,46 @@ async def create_researcher_profile(
         profile_dict = profile.model_dump()
         profile_dict['created_at'] = profile_dict['created_at'].isoformat()
         await db.researcher_profiles.insert_one(profile_dict)
+        profile = profile_dict
+    
+    # Update or create health expert entry
+    specialty = profile.get("specialties", ["General"])[0] if profile.get("specialties") else "General"
+    
+    expert_data = {
+        "name": user.name,
+        "specialty": specialty,
+        "location": "Global",  # Can be updated later
+        "email": user.email,
+        "is_platform_member": True,
+        "research_areas": profile.get("research_interests", []),
+        "bio": profile.get("bio", ""),
+        "user_id": user.id
+    }
+    
+    # Check if expert entry exists
+    existing_expert = await db.health_experts.find_one({"user_id": user.id})
+    
+    if existing_expert:
+        # Update existing expert
+        await db.health_experts.update_one(
+            {"user_id": user.id},
+            {"$set": expert_data}
+        )
+    else:
+        # Create new expert entry
+        expert = HealthExpert(
+            id=str(uuid.uuid4()),
+            name=user.name,
+            specialty=specialty,
+            location="Global",
+            email=user.email,
+            is_platform_member=True,
+            research_areas=profile.get("research_interests", []),
+            bio=profile.get("bio", ""),
+            user_id=user.id
+        )
+        expert_dict = expert.model_dump()
+        await db.health_experts.insert_one(expert_dict)
     
     return {"status": "success"}
 
