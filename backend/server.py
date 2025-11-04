@@ -682,6 +682,9 @@ async def create_researcher_profile(
             user_id=user.id,
             specialties=profile_data.specialties or [],
             research_interests=profile_data.research_interests or [],
+            age=profile_data.age,
+            years_experience=profile_data.years_experience,
+            sector=profile_data.sector,
             orcid=profile_data.orcid,
             researchgate=profile_data.researchgate,
             available_for_meetings=profile_data.available_for_meetings or False,
@@ -693,17 +696,21 @@ async def create_researcher_profile(
         profile = profile_dict
     
     # Update or create health expert entry
-    specialty = profile.get("specialties", ["General"])[0] if profile.get("specialties") else "General"
+    specialty_text = profile.get("specialties", ["General"])[0] if profile.get("specialties") else "General"
+    sector_text = profile.get("sector", "Medical Research")
     
     expert_data = {
         "name": user.name,
-        "specialty": specialty,
-        "location": "Global",  # Can be updated later
+        "specialty": f"{specialty_text} - {sector_text}",
+        "location": "Global",
         "email": user.email,
         "is_platform_member": True,
         "research_areas": profile.get("research_interests", []),
         "bio": profile.get("bio", ""),
-        "user_id": user.id
+        "user_id": user.id,
+        "age": profile.get("age"),
+        "years_experience": profile.get("years_experience"),
+        "sector": sector_text
     }
     
     # Check if expert entry exists
@@ -715,23 +722,15 @@ async def create_researcher_profile(
             {"user_id": user.id},
             {"$set": expert_data}
         )
+        logging.info(f"Updated health expert for user {user.id}")
     else:
         # Create new expert entry
-        expert = HealthExpert(
-            id=str(uuid.uuid4()),
-            name=user.name,
-            specialty=specialty,
-            location="Global",
-            email=user.email,
-            is_platform_member=True,
-            research_areas=profile.get("research_interests", []),
-            bio=profile.get("bio", ""),
-            user_id=user.id
-        )
-        expert_dict = expert.model_dump()
-        await db.health_experts.insert_one(expert_dict)
+        expert_id = str(uuid.uuid4())
+        expert_data["id"] = expert_id
+        await db.health_experts.insert_one(expert_data)
+        logging.info(f"Created new health expert {expert_id} for user {user.id}")
     
-    return {"status": "success"}
+    return {"status": "success", "message": "Profile created and added to health experts"}
 
 @api_router.get("/researcher/profile")
 async def get_researcher_profile(
