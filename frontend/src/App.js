@@ -444,6 +444,41 @@ const ProfileSetup = ({ user }) => {
               </div>
 
               <div className="form-group">
+                <label>Age</label>
+                <Input
+                  data-testid="age-input"
+                  type="number"
+                  placeholder="Your age"
+                  value={formData.age}
+                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Years of Experience</label>
+                <Input
+                  data-testid="experience-input"
+                  type="number"
+                  placeholder="Years in medical research"
+                  value={formData.years_experience}
+                  onChange={(e) => setFormData({ ...formData, years_experience: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Sector/Expertise Area</label>
+                <Input
+                  data-testid="sector-input"
+                  placeholder="e.g., Clinical Research, Oncology, Neuroscience"
+                  value={formData.sector}
+                  onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
                 <label>Bio</label>
                 <Textarea
                   data-testid="bio-input"
