@@ -666,46 +666,52 @@ async def create_researcher_profile(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Create/update researcher profile and add to health experts"""
+    """Create/update researcher profile and IMMEDIATELY add to health experts"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
+    # Validate required fields
+    if not profile_data.age or not profile_data.years_experience or not profile_data.sector or not profile_data.name:
+        raise HTTPException(status_code=400, detail="Name, age, experience, and sector are required")
+    
     existing = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
     
     if existing:
+        # Update existing profile
         update_data = {k: v for k, v in profile_data.model_dump().items() if v is not None}
         await db.researcher_profiles.update_one(
             {"user_id": user.id},
             {"$set": update_data}
         )
-        # Get updated profile
         profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
     else:
+        # Create new profile
         profile = ResearcherProfile(
             user_id=user.id,
+            name=profile_data.name,
             specialties=profile_data.specialties or [],
             research_interests=profile_data.research_interests or [],
             age=profile_data.age,
             years_experience=profile_data.years_experience,
             sector=profile_data.sector,
+            available_hours=profile_data.available_hours or "Flexible",
             orcid=profile_data.orcid,
             researchgate=profile_data.researchgate,
-            available_for_meetings=profile_data.available_for_meetings or False,
-            bio=profile_data.bio
+            available_for_meetings=True,
+            bio=profile_data.bio or ""
         )
         profile_dict = profile.model_dump()
         profile_dict['created_at'] = profile_dict['created_at'].isoformat()
         await db.researcher_profiles.insert_one(profile_dict)
         profile = profile_dict
     
-    # Update or create health expert entry
-    specialty_text = profile.get("specialties", ["General"])[0] if profile.get("specialties") else "General"
-    sector_text = profile.get("sector", "Medical Research")
+    # IMMEDIATELY create/update health expert entry
+    specialty_display = profile.get("specialties", ["General"])[0] if profile.get("specialties") else profile.get("sector", "General")
     
     expert_data = {
-        "name": user.name,
-        "specialty": f"{specialty_text} - {sector_text}",
+        "name": profile.get("name"),
+        "specialty": f"{specialty_display} - {profile.get('sector')}",
         "location": "Global",
         "email": user.email,
         "is_platform_member": True,
@@ -714,27 +720,38 @@ async def create_researcher_profile(
         "user_id": user.id,
         "age": profile.get("age"),
         "years_experience": profile.get("years_experience"),
-        "sector": sector_text
+        "sector": profile.get("sector"),
+        "available_hours": profile.get("available_hours", "Flexible")
     }
     
     # Check if expert entry exists
     existing_expert = await db.health_experts.find_one({"user_id": user.id})
     
     if existing_expert:
-        # Update existing expert
+        # Update existing
         await db.health_experts.update_one(
             {"user_id": user.id},
             {"$set": expert_data}
         )
-        logging.info(f"Updated health expert for user {user.id}")
+        logging.info(f"✅ Updated health expert for researcher: {profile.get('name')} (user_id: {user.id})")
     else:
         # Create new expert entry
-        expert_id = str(uuid.uuid4())
-        expert_data["id"] = expert_id
+        expert_data["id"] = str(uuid.uuid4())
         await db.health_experts.insert_one(expert_data)
-        logging.info(f"Created new health expert {expert_id} for user {user.id}")
+        logging.info(f"✅ Created NEW health expert: {profile.get('name')} (user_id: {user.id}, expert_id: {expert_data['id']})")
     
-    return {"status": "success", "message": "Profile created and added to health experts"}
+    # Verify it was created
+    verify = await db.health_experts.find_one({"user_id": user.id})
+    if verify:
+        logging.info(f"✅ VERIFIED: Expert exists in database with id: {verify.get('id')}")
+    else:
+        logging.error(f"❌ ERROR: Expert NOT found in database after creation!")
+    
+    return {
+        "status": "success", 
+        "message": "Profile saved and added to Health Experts directory",
+        "expert_created": True
+    }
 
 @api_router.get("/researcher/profile")
 async def get_researcher_profile(
