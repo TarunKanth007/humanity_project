@@ -262,6 +262,9 @@ const ProfileSetup = ({ user }) => {
     location: '',
     specialties: [],
     research_interests: [],
+    age: '',
+    years_experience: '',
+    sector: '',
     bio: ''
   });
   const [conditionInput, setConditionInput] = useState('');
