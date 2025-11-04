@@ -934,6 +934,12 @@ const ResearcherDashboard = ({ user, logout }) => {
             <HelpCircle className="icon-sm" />
             Q&A Community
           </Button>
+          <Button variant="ghost" onClick={() => navigate('/notifications')} className="relative">
+            <Bell className="icon-sm" />
+            {unreadCount > 0 && (
+              <Badge className="notification-badge">{unreadCount}</Badge>
+            )}
+          </Button>
           <div className="nav-user">
             <img src={user.picture} alt={user.name} className="user-avatar" />
             <span>{user.name}</span>
