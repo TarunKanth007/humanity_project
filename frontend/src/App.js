@@ -369,8 +369,67 @@ const ProfileSetup = ({ user }) => {
           ) : (
             <>
               <div className="form-group">
+                <label>Full Name *</label>
+                <Input
+                  data-testid="name-input"
+                  placeholder="Your full name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Age *</label>
+                <Input
+                  data-testid="age-input"
+                  type="number"
+                  placeholder="Your age"
+                  value={formData.age}
+                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Years of Experience *</label>
+                <Input
+                  data-testid="experience-input"
+                  type="number"
+                  placeholder="Years in medical research/practice"
+                  value={formData.years_experience}
+                  onChange={(e) => setFormData({ ...formData, years_experience: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Sector / Expertise Title *</label>
+                <p className="field-hint">Your primary area of expertise (shown as your title)</p>
+                <Input
+                  data-testid="sector-input"
+                  placeholder="e.g., Clinical Oncologist, Neuroscience Researcher, Cardiologist"
+                  value={formData.sector}
+                  onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Available Hours *</label>
+                <p className="field-hint">When are you available for consultations?</p>
+                <Input
+                  data-testid="hours-input"
+                  placeholder="e.g., 9 AM - 5 PM EST, Flexible, Weekends Only"
+                  value={formData.available_hours}
+                  onChange={(e) => setFormData({ ...formData, available_hours: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
                 <label>Specialties</label>
-                <p className="field-hint">Your areas of medical expertise</p>
+                <p className="field-hint">Your areas of medical expertise (optional)</p>
                 <div className="tag-input">
                   <Input
                     data-testid="specialty-input"
@@ -409,6 +468,7 @@ const ProfileSetup = ({ user }) => {
 
               <div className="form-group">
                 <label>Research Interests</label>
+                <p className="field-hint">Your research focus areas (optional)</p>
                 <div className="tag-input">
                   <Input
                     data-testid="interest-input"
@@ -446,45 +506,10 @@ const ProfileSetup = ({ user }) => {
               </div>
 
               <div className="form-group">
-                <label>Age</label>
-                <Input
-                  data-testid="age-input"
-                  type="number"
-                  placeholder="Your age"
-                  value={formData.age}
-                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Years of Experience</label>
-                <Input
-                  data-testid="experience-input"
-                  type="number"
-                  placeholder="Years in medical research"
-                  value={formData.years_experience}
-                  onChange={(e) => setFormData({ ...formData, years_experience: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Sector/Expertise Area</label>
-                <Input
-                  data-testid="sector-input"
-                  placeholder="e.g., Clinical Research, Oncology, Neuroscience"
-                  value={formData.sector}
-                  onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Bio</label>
+                <label>Bio (Optional)</label>
                 <Textarea
                   data-testid="bio-input"
-                  placeholder="Brief description of your research and expertise"
+                  placeholder="Brief description of your background and expertise"
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   rows={4}
