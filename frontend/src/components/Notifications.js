@@ -180,6 +180,21 @@ export const Notifications = ({ user, logout }) => {
                         <span className="text-xs text-muted-foreground mt-2 block">
                           {new Date(notif.created_at).toLocaleString()}
                         </span>
+                        
+                        {/* Join Chat Button for Accepted Appointments */}
+                        {notif.type === 'appointment_accepted' && notif.link && (
+                          <Button
+                            className="mt-3"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(notif.link);
+                            }}
+                            data-testid="join-chat-btn"
+                          >
+                            Join Consultation Chat
+                          </Button>
+                        )}
                       </div>
                       {!notif.read && (
                         <Badge variant="default" className="ml-2">New</Badge>
