@@ -109,7 +109,8 @@ export const ChatRoom = ({ user, logout }) => {
 
   const handleCall = () => {
     // Open external call service (can be replaced with actual WebRTC implementation)
-    const callUrl = `https://meet.jit.si/curalink-${roomId}`;
+    const jitsiDomain = process.env.REACT_APP_JITSI_DOMAIN || 'meet.jit.si';
+    const callUrl = `https://${jitsiDomain}/safecure-${roomId}`;
     window.open(callUrl, '_blank');
     toast.info('Opening video call in new window');
   };
