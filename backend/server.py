@@ -371,8 +371,9 @@ async def process_session(data: SessionDataRequest, response: Response):
     """Process session_id from Emergent Auth"""
     try:
         # Call Emergent Auth to get session data
+        auth_backend_url = os.environ.get('EMERGENT_AUTH_BACKEND_URL', 'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data')
         auth_response = requests.get(
-            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+            auth_backend_url,
             headers={"X-Session-ID": data.session_id},
             timeout=10
         )
