@@ -101,3 +101,49 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Address deployment warnings for CuraLink application: 1) Fix hardcoded Jitsi Meet URL in ChatRoom component by moving to environment variables, 2) Fix CORS configuration to use explicit allowed origins instead of wildcard '*', 3) Prepare for Emergent deployment with 'safecure' as the production URL name."
+
+backend:
+  - task: "CORS Configuration - Explicit Origins"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py, /app/backend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated backend/.env to include explicit CORS origins: localhost:3000, medmatch-7.preview.emergentagent.com, safecure.preview.emergentagent.com. CORS middleware in server.py already configured to read from CORS_ORIGINS env variable and split by comma."
+
+frontend:
+  - task: "Jitsi Meet URL - Environment Variable"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/ChatRoom.js, /app/frontend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added REACT_APP_JITSI_DOMAIN=meet.jit.si to frontend/.env. Updated ChatRoom.js handleCall() function to read from environment variable instead of hardcoded URL. Room name prefix changed to 'safecure' for production branding."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "CORS Configuration - Explicit Origins"
+    - "Jitsi Meet URL - Environment Variable"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Fixed deployment warnings: 1) CORS now uses explicit origins from environment variable instead of '*', 2) Jitsi Meet domain moved to REACT_APP_JITSI_DOMAIN environment variable. Both .env files updated and services restarted. Ready for backend testing to verify CORS works correctly with allowed origins."
