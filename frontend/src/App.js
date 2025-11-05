@@ -296,30 +296,50 @@ const ProfileSetup = ({ user }) => {
     console.log('Submitting profile:', formData);
     try {
       const endpoint = isPatient ? '/patient/profile' : '/researcher/profile';
-      const response = await api.post(endpoint, formData);
+      
+      // Prepare data based on role
+      let dataToSend;
+      if (isPatient) {
+        // Only send patient-specific fields
+        dataToSend = {
+          conditions: formData.conditions,
+          location: formData.location,
+          interests: formData.interests
+        };
+      } else {
+        // Send researcher-specific fields with proper type conversion
+        dataToSend = {
+          name: formData.name,
+          age: formData.age ? parseInt(formData.age) : undefined,
+          years_experience: formData.years_experience ? parseInt(formData.years_experience) : undefined,
+          sector: formData.sector,
+          available_hours: formData.available_hours,
+          specialties: formData.specialties,
+          research_interests: formData.research_interests,
+          bio: formData.bio
+        };
+      }
+      
+      const response = await api.post(endpoint, dataToSend);
       console.log('Profile creation response:', response.data);
       
       if (!isPatient) {
-        // For researchers, show success message about being added to health experts
         toast.success('Profile created! You are now listed in Health Experts directory.');
       } else {
         toast.success('Profile created successfully!');
       }
       
-      // Navigate to dashboard after successful profile creation
       setTimeout(() => {
         navigate('/dashboard', { replace: true });
       }, 1000);
     } catch (error) {
       console.error('Profile creation error:', error);
       
-      // Extract error message properly
       let errorMessage = 'Failed to create profile';
       if (error.response?.data?.detail) {
         if (typeof error.response.data.detail === 'string') {
           errorMessage = error.response.data.detail;
         } else if (Array.isArray(error.response.data.detail)) {
-          // Handle validation errors array
           errorMessage = error.response.data.detail.map(err => err.msg || JSON.stringify(err)).join(', ');
         }
       }
