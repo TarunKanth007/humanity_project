@@ -108,6 +108,66 @@ const AuthContext = ({ children }) => {
 // Landing Page
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const testimonials = [
+    {
+      id: 1,
+      name: "Dr. Sarah Mitchell",
+      role: "Oncology Researcher",
+      image: "https://images.unsplash.com/photo-1759353888906-adb3e0041693",
+      rating: 5,
+      text: "CuraLink has revolutionized how I connect with patients for clinical trials. The platform's intuitive interface and AI-powered matching have significantly improved our recruitment process."
+    },
+    {
+      id: 2,
+      name: "Robert Thompson",
+      role: "Cancer Patient & Advocate",
+      image: "https://images.unsplash.com/photo-1698465281093-9f09159733b9",
+      rating: 5,
+      text: "Finding the right clinical trial seemed impossible until I discovered CuraLink. Within weeks, I was connected with a specialist who changed my treatment journey. This platform is a game-changer."
+    },
+    {
+      id: 3,
+      name: "Dr. Emily Chen",
+      role: "Neurological Research Lead",
+      image: "https://images.unsplash.com/photo-1659353888922-7c7b1ad21650",
+      rating: 5,
+      text: "As a researcher, I've tried multiple platforms, but CuraLink stands out. The ability to engage directly with patients and share research findings has enhanced our study outcomes tremendously."
+    },
+    {
+      id: 4,
+      name: "Maria Rodriguez",
+      role: "Caregiver",
+      image: "https://images.unsplash.com/photo-1592393532405-fb1f165c4a1f",
+      rating: 5,
+      text: "Caring for my mother with Alzheimer's was overwhelming. CuraLink helped us find cutting-edge research and connect with experts who provided invaluable guidance and hope."
+    },
+    {
+      id: 5,
+      name: "Dr. James Patterson",
+      role: "Clinical Trial Coordinator",
+      image: "https://images.unsplash.com/photo-1758691461516-7e716e0ca135",
+      rating: 5,
+      text: "The Q&A community and one-on-one consultation features have transformed patient engagement. CuraLink bridges the gap between research and real-world patient needs beautifully."
+    },
+    {
+      id: 6,
+      name: "Lisa Anderson",
+      role: "Diabetes Patient",
+      image: "https://images.pexels.com/photos/5215017/pexels-photo-5215017.jpeg",
+      rating: 4,
+      text: "I was skeptical at first, but CuraLink exceeded my expectations. The platform made it easy to understand complex research and connect with experts who genuinely care about patient outcomes."
+    }
+  ];
+
+  const nextTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
 
   return (
     <div className="landing-page">
@@ -176,6 +236,67 @@ const LandingPage = () => {
             </div>
             <h3>Latest Research</h3>
             <p>Stay updated with cutting-edge medical publications</p>
+          </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className="testimonials-section">
+          <h2 className="section-title">What Our Community Says</h2>
+          <p className="section-subtitle">
+            Trusted by patients and researchers worldwide
+          </p>
+
+          <div className="testimonials-carousel">
+            <button 
+              className="carousel-btn carousel-btn-prev"
+              onClick={prevTestimonial}
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft />
+            </button>
+
+            <div className="testimonial-card">
+              <div className="testimonial-header">
+                <img 
+                  src={testimonials[currentTestimonial].image} 
+                  alt={testimonials[currentTestimonial].name}
+                  className="testimonial-avatar"
+                />
+                <div className="testimonial-info">
+                  <h4 className="testimonial-name">{testimonials[currentTestimonial].name}</h4>
+                  <p className="testimonial-role">{testimonials[currentTestimonial].role}</p>
+                  <div className="testimonial-rating">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i}
+                        className={`star-icon ${i < testimonials[currentTestimonial].rating ? 'star-filled' : 'star-empty'}`}
+                        fill={i < testimonials[currentTestimonial].rating ? 'currentColor' : 'none'}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="testimonial-text">"{testimonials[currentTestimonial].text}"</p>
+              
+              <div className="testimonial-dots">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`dot ${index === currentTestimonial ? 'dot-active' : ''}`}
+                    onClick={() => setCurrentTestimonial(index)}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <button 
+              className="carousel-btn carousel-btn-next"
+              onClick={nextTestimonial}
+              aria-label="Next testimonial"
+            >
+              <ChevronRight />
+            </button>
           </div>
         </div>
       </div>
