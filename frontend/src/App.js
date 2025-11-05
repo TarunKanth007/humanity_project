@@ -115,7 +115,7 @@ const LandingPage = () => {
       id: 1,
       name: "Dr. Sarah Mitchell",
       role: "Oncology Researcher",
-      image: "https://images.unsplash.com/photo-1759353888906-adb3e0041693",
+      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400",
       rating: 5,
       text: "CuraLink has revolutionized how I connect with patients for clinical trials. The platform's intuitive interface and AI-powered matching have significantly improved our recruitment process."
     },
