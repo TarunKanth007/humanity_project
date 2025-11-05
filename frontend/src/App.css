@@ -1196,4 +1196,41 @@ h1, h2, h3, h4, h5, h6 {
   .nav-user span {
     display: none;
   }
+
+  /* Testimonials responsive */
+  .testimonials-carousel {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .carousel-btn {
+    display: none;
+  }
+
+  .testimonial-card {
+    padding: 32px 24px;
+    min-height: auto;
+  }
+
+  .testimonial-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .testimonial-info {
+    text-align: center;
+  }
+
+  .testimonial-rating {
+    justify-content: center;
+  }
+
+  .testimonial-text {
+    text-align: center;
+  }
+
+  .testimonials-section {
+    margin-top: 80px;
+    padding: 40px 0;
+  }
 }
