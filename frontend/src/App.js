@@ -259,11 +259,11 @@ const LandingPage = () => {
         </div>
 
         {/* What We Do Section */}
-        <div className="what-we-do-section">
+        <div className="what-we-do-section scroll-animate scroll-fade-up">
           <h2 className="section-title">What We Do</h2>
           
           <div className="what-we-do-grid">
-            <div className="what-we-do-card">
+            <div className="what-we-do-card scroll-animate scroll-scale">
               <div className="what-icon">
                 <Star className="w-8 h-8" />
               </div>
@@ -271,7 +271,7 @@ const LandingPage = () => {
               <p>Human-friendly summaries of clinical trials and publications so both patients and researchers grasp the essentials quickly.</p>
             </div>
 
-            <div className="what-we-do-card">
+            <div className="what-we-do-card scroll-animate scroll-scale">
               <div className="what-icon">
                 <Search className="w-8 h-8" />
               </div>
@@ -279,7 +279,7 @@ const LandingPage = () => {
               <p>Search and filter trials by condition, phase, and location with personalized recommendations based on your profile.</p>
             </div>
 
-            <div className="what-we-do-card">
+            <div className="what-we-do-card scroll-animate scroll-scale">
               <div className="what-icon">
                 <Users className="w-8 h-8" />
               </div>
