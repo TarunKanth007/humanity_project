@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 CuraLink Backend Testing Suite
-Focus: CORS Configuration and Core API Endpoints
+Focus: Forum Create/Delete Feature Testing
 """
 
 import requests
 import json
 import sys
+import uuid
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
