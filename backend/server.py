@@ -136,6 +136,17 @@ class ForumPost(BaseModel):
     parent_id: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class ForumMembership(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    forum_id: str
+    forum_name: str
+    user_id: str
+    user_name: str
+    specialty: str  # The researcher's specialty that matches this forum
+    is_moderator: bool = False
+    joined_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class Question(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
