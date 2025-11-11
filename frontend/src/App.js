@@ -213,6 +213,57 @@ const LandingPage = () => {
           </div>
         </div>
 
+        {/* What We Do Section */}
+        <div className="what-we-do-section">
+          <h2 className="section-title">What We Do</h2>
+          
+          <div className="what-we-do-grid">
+            <div className="what-we-do-card">
+              <div className="what-icon">
+                <Star className="w-8 h-8" />
+              </div>
+              <h3>AI Summaries</h3>
+              <p>Human-friendly summaries of clinical trials and publications so both patients and researchers grasp the essentials quickly.</p>
+            </div>
+
+            <div className="what-we-do-card">
+              <div className="what-icon">
+                <Search className="w-8 h-8" />
+              </div>
+              <h3>Find Trials</h3>
+              <p>Search and filter trials by condition, phase, and location with personalized recommendations based on your profile.</p>
+            </div>
+
+            <div className="what-we-do-card">
+              <div className="what-icon">
+                <Users className="w-8 h-8" />
+              </div>
+              <h3>Connect with Experts</h3>
+              <p>Discover specialists, follow their work, and request meetings when available on the platform.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Trusted By Section */}
+        <div className="trusted-by-section">
+          <div className="trusted-content">
+            <h2 className="trusted-title">Trusted by clinicians & patients</h2>
+            <p className="trusted-description">
+              Evidence-driven matches and clear summaries to support informed decisions.
+            </p>
+          </div>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-number">1.2k+</div>
+              <div className="stat-label">Trials surfaced</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">800+</div>
+              <div className="stat-label">Experts in network</div>
+            </div>
+          </div>
+        </div>
+
         <div className="feature-grid">
           <div className="feature-card">
             <div className="feature-icon">
