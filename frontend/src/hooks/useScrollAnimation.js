@@ -1,26 +1,53 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 
-export const useScrollAnimation = (options = {}) => {
-  const elementRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
+// Global scroll animation setup
+export const useScrollAnimation = () => {
   useEffect(() => {
-    const element = elementRef.current;
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        } else {
+          entry.target.classList.remove('visible');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all animated elements
+    const animatedElements = document.querySelectorAll('.scroll-animate');
+    animatedElements.forEach(el => observer.observe(el));
+
+    return () => {
+      animatedElements.forEach(el => observer.unobserve(el));
+    };
+  }, []);
+};
+
+// Hook for individual element animation
+export const useElementAnimation = (ref, options = {}) => {
+  useEffect(() => {
+    const element = ref.current;
     if (!element) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
+    const observerOptions = {
+      threshold: options.threshold || 0.1,
+      rootMargin: options.rootMargin || '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          // Once visible, stop observing
-          observer.unobserve(element);
+          entry.target.classList.add('visible');
+        } else {
+          entry.target.classList.remove('visible');
         }
-      },
-      {
-        threshold: options.threshold || 0.1,
-        rootMargin: options.rootMargin || '0px 0px -100px 0px',
-      }
-    );
+      });
+    }, observerOptions);
 
     observer.observe(element);
 
@@ -29,7 +56,5 @@ export const useScrollAnimation = (options = {}) => {
         observer.unobserve(element);
       }
     };
-  }, [options.threshold, options.rootMargin]);
-
-  return [elementRef, isVisible];
+  }, [ref, options.threshold, options.rootMargin]);
 };
