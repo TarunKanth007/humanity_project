@@ -1303,7 +1303,7 @@ const PatientDashboard = ({ user, logout }) => {
                               marginTop: '8px',
                               fontStyle: 'italic'
                             }}>
-                              Only researchers with matching specialties can join and post
+                              Join this group to ask questions and share your experiences with images
                             </p>
                           )}
                         </CardContent>
@@ -1945,7 +1945,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                               marginTop: '8px',
                               fontStyle: 'italic'
                             }}>
-                              Only researchers with matching specialties can join and post
+                              Join this group to ask questions and share your experiences with images
                             </p>
                           )}
                         </CardContent>
