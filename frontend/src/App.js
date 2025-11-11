@@ -2168,6 +2168,15 @@ const ResearcherDashboard = ({ user, logout }) => {
       } else if (activeTab === 'favorites') {
         const res = await api.get('/favorites');
         setFavorites(res.data);
+      } else if (activeTab === 'profile') {
+        // Load profile data
+        const profileRes = await api.get('/researcher/profile');
+        setProfileData(profileRes.data);
+        setEditedProfile(profileRes.data || {});
+        
+        // Load activity data
+        const activityRes = await api.get('/profile/activity');
+        setUserActivity(activityRes.data);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
