@@ -1540,6 +1540,7 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [myTrials, setMyTrials] = useState([]);
   const [forums, setForums] = useState([]);
   const [forumMemberships, setForumMemberships] = useState({});
+  const [forumFavorites, setForumFavorites] = useState({});
   const [selectedForum, setSelectedForum] = useState(null);
   const [showCreateForum, setShowCreateForum] = useState(false);
   const [newForum, setNewForum] = useState({ name: '', description: '', category: '' });
