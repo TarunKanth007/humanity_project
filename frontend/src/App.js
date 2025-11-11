@@ -802,6 +802,7 @@ const PatientDashboard = ({ user, logout }) => {
   const [publications, setPublications] = useState([]);
   const [forums, setForums] = useState([]);
   const [forumMemberships, setForumMemberships] = useState({});
+  const [selectedForum, setSelectedForum] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
