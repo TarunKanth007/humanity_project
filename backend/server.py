@@ -936,14 +936,27 @@ async def create_forum_post(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Create forum post"""
+    """Create forum post - only group members can post"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    # Check if reply and user is patient
+    # Patients can only create top-level posts (questions), not replies
     if post_data.parent_id and "patient" in user.roles and "researcher" not in user.roles:
         raise HTTPException(status_code=403, detail="Patients cannot reply to posts")
+    
+    # For researchers: check group membership before allowing post/comment
+    if "researcher" in user.roles:
+        membership = await db.forum_memberships.find_one({
+            "forum_id": post_data.forum_id,
+            "user_id": user.id
+        })
+        
+        if not membership:
+            raise HTTPException(
+                status_code=403, 
+                detail="You must join this forum group to post or comment. Only researchers with matching specialties can join."
+            )
     
     user_role = "researcher" if "researcher" in user.roles else "patient"
     
