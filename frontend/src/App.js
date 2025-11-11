@@ -1706,12 +1706,19 @@ const ProtectedRoute = ({ children, user }) => {
 };
 
 // Main App
+// Global Animation Wrapper Component
+const AnimatedRouteWrapper = ({ children }) => {
+  useScrollAnimation();
+  return <>{children}</>;
+};
+
 function App() {
   return (
     <div className="App">
       <Toaster position="top-right" />
       <BrowserRouter>
-        <AuthContext>
+        <AnimatedRouteWrapper>
+          <AuthContext>
           {({ user, setUser, logout }) => (
             <Routes>
               <Route path="/" element={
