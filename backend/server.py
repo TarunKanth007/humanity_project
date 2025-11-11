@@ -1475,6 +1475,29 @@ async def remove_favorite(
     await db.favorites.delete_one({"id": favorite_id, "user_id": user.id})
     return {"status": "success"}
 
+@api_router.get("/favorites/check/{item_type}/{item_id}")
+async def check_favorite(
+    item_type: str,
+    item_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Check if item is favorited"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    favorite = await db.favorites.find_one({
+        "user_id": user.id,
+        "item_type": item_type,
+        "item_id": item_id
+    }, {"_id": 0})
+    
+    return {
+        "is_favorited": favorite is not None,
+        "favorite_id": favorite["id"] if favorite else None
+    }
+
 # ============ Appointment System Endpoints ============
 
 @api_router.post("/appointments/request")
