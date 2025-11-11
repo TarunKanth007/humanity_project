@@ -1199,6 +1199,17 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 1;
 }
 
+/* Parallax scroll effect for tabs */
+@media (prefers-reduced-motion: no-preference) {
+  .dashboard-tabs [role="tablist"] {
+    will-change: transform;
+  }
+  
+  .dashboard-tabs [role="tab"] {
+    will-change: transform;
+  }
+}
+
 .tab-header {
   margin-bottom: 24px;
   display: flex;
