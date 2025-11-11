@@ -1702,6 +1702,43 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
+  const loadForumFavorites = async (forumsList) => {
+    try {
+      const favStatus = {};
+      for (const forum of forumsList) {
+        const res = await api.get(`/favorites/check/forum/${forum.id}`);
+        favStatus[forum.id] = res.data;
+      }
+      setForumFavorites(favStatus);
+    } catch (error) {
+      console.error('Failed to load forum favorites:', error);
+    }
+  };
+
+  const handleToggleFavorite = async (forumId) => {
+    try {
+      const currentFav = forumFavorites[forumId];
+      
+      if (currentFav?.is_favorited) {
+        // Remove from favorites
+        await api.delete(`/favorites/${currentFav.favorite_id}`);
+        toast.success('Removed from favorites');
+      } else {
+        // Add to favorites
+        await api.post('/favorites', {
+          item_type: 'forum',
+          item_id: forumId
+        });
+        toast.success('Added to favorites');
+      }
+      
+      // Reload favorites status
+      await loadForumFavorites(forums);
+    } catch (error) {
+      toast.error('Failed to update favorites');
+    }
+  };
+
   const createTrial = async (e) => {
     e.preventDefault();
     try {
