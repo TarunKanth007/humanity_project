@@ -156,6 +156,118 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-2px);
 }
 
+/* What We Do Section */
+.what-we-do-section {
+  margin-top: 100px;
+  text-align: center;
+  padding: 60px 0;
+}
+
+.what-we-do-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  margin-top: 60px;
+}
+
+.what-we-do-card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 20px;
+  border: 2px solid rgba(85, 107, 47, 0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.what-we-do-card:hover {
+  border-color: var(--olive);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(85, 107, 47, 0.15);
+}
+
+.what-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--olive) 0%, #6B8E3D 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: var(--cream);
+}
+
+.what-we-do-card h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--taupe);
+}
+
+.what-we-do-card p {
+  color: var(--taupe);
+  line-height: 1.7;
+  opacity: 0.85;
+  font-size: 15px;
+}
+
+/* Trusted By Section */
+.trusted-by-section {
+  margin-top: 80px;
+  padding: 80px 60px;
+  background: linear-gradient(135deg, var(--olive) 0%, #6B8E3D 100%);
+  border-radius: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
+  box-shadow: 0 20px 60px rgba(85, 107, 47, 0.2);
+}
+
+.trusted-content {
+  flex: 1;
+  text-align: left;
+}
+
+.trusted-title {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 800;
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+
+.trusted-description {
+  font-size: 18px;
+  color: var(--cream);
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.stats-grid {
+  display: flex;
+  gap: 40px;
+}
+
+.stat-card {
+  text-align: center;
+  min-width: 160px;
+}
+
+.stat-number {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--cream);
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 16px;
+  color: var(--cream);
+  opacity: 0.85;
+  font-weight: 500;
+}
+
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
