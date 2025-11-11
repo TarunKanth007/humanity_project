@@ -969,7 +969,8 @@ async def create_forum_post(
         user_name=user.name,
         user_role=user_role,
         content=post_data.content,
-        parent_id=post_data.parent_id
+        parent_id=post_data.parent_id,
+        image_url=post_data.image_url
     )
     
     post_dict = post.model_dump()
