@@ -138,33 +138,39 @@ backend:
 frontend:
   - task: "Create Forum UI"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added 'Create Forum' button above forums grid in ResearcherDashboard. Implemented modal dialog with form fields for name, category/specialty, and description. Connected to POST /api/forums/create endpoint. Shows success/error toasts."
+      - working: false
+        agent: "testing"
+        comment: "❌ CANNOT TEST: Authentication required to access researcher dashboard and forum features. Application properly redirects unauthenticated users to landing page. UI components are implemented in code (create-forum-btn, forum-name-input, forum-category-input, forum-description-input, submit-forum-btn) but cannot be tested without valid authentication session. Backend endpoints are confirmed working from previous tests."
   
   - task: "Delete Forum UI"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added delete button (trash icon) on forum cards for forums owned by logged-in researcher. Shows 'Owner' badge on owned forums. Includes confirmation dialog before deletion. Connected to DELETE /api/forums/{forum_id} endpoint."
+      - working: false
+        agent: "testing"
+        comment: "❌ CANNOT TEST: Authentication required to access researcher dashboard and forum features. Application properly redirects unauthenticated users to landing page. UI components are implemented in code (delete-forum-btn-{id}, handleDeleteForum function, confirmation dialog) but cannot be tested without valid authentication session. Backend endpoints are confirmed working from previous tests."
   
   - task: "Onboarding & Profile Setup Forms Not Visible Bug Fix"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "critical"
     needs_retesting: false
     status_history:
@@ -174,6 +180,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "FIXED: The issue was caused by scroll-animate CSS classes that set opacity:0 by default and wait for IntersectionObserver to add .visible class. On onboarding/profile pages, elements were in viewport on load but observer wasn't triggering properly. Removed scroll-animate classes from Onboarding and ProfileSetup components. Role selection cards and profile forms now immediately visible."
+      - working: false
+        agent: "testing"
+        comment: "❌ PARTIAL FIX ONLY: Main agent correctly removed scroll-animate classes from Onboarding and ProfileSetup components (✅ verified), but the root CSS issue remains. Landing page still has 12 elements with scroll-animate class that have opacity:0 on load. IntersectionObserver works (adds visible class after scroll) but elements are invisible on initial load. The CSS rule '.scroll-animate { opacity: 0; }' in App.css is still causing visibility issues. Onboarding/Profile pages are protected by authentication so cannot verify the actual fix without login credentials."
 
 metadata:
   created_by: "main_agent"
