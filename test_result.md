@@ -157,19 +157,19 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 2
+  test_sequence: 3
   run_ui: false
 
 test_plan:
   current_focus:
-    - "CORS Configuration - Explicit Origins"
-    - "Jitsi Meet URL - Environment Variable"
+    - "Create Forum Endpoint"
+    - "Delete Forum Endpoint"
+    - "Create Forum UI"
+    - "Delete Forum UI"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
-    message: "Fixed deployment warnings: 1) CORS now uses explicit origins from environment variable instead of '*', 2) Jitsi Meet domain moved to REACT_APP_JITSI_DOMAIN environment variable. Both .env files updated and services restarted. Ready for backend testing to verify CORS works correctly with allowed origins."
-  - agent: "testing"
-    message: "✅ BACKEND TESTING COMPLETE: All 13 tests passed successfully. CORS configuration is secure and deployment-ready. Key findings: 1) CORS properly returns specific origins (not '*') for all allowed domains, 2) Correctly rejects unauthorized origins, 3) Preflight requests work with credentials, 4) Authentication endpoints function properly, 5) Core API endpoints are accessible. No security issues found. Backend is ready for production deployment."
+    message: "Implemented Create and Delete Forum feature for researchers. Frontend now includes: 1) 'Create Forum' button with modal dialog form (name, category, description), 2) Delete button on owned forums with confirmation dialog, 3) 'Owner' badge on created forums. Backend endpoints already existed and are ready for testing. Need to test full create/delete flow including authentication, validation, and UI feedback."
