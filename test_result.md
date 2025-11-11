@@ -192,13 +192,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Create Forum Endpoint"
-    - "Delete Forum Endpoint"
-    - "Create Forum UI"
-    - "Delete Forum UI"
-  stuck_tasks: []
+    - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
+  stuck_tasks: 
+    - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
