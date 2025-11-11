@@ -1590,30 +1590,290 @@ const PatientDashboard = ({ user, logout }) => {
               )}
             </TabsContent>
             <TabsContent value="profile">
-              <div className="profile-content">
-                <Card className="profile-card">
-                  <CardHeader>
-                    <CardTitle>My Profile</CardTitle>
-                    <CardDescription>Manage your account information and preferences</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="profile-info">
-                      <div className="profile-avatar">
-                        <img src={user.picture} alt={user.name} className="user-avatar-large" />
+              {loading ? (
+                <div className="loading-state">Loading profile...</div>
+              ) : (
+                <div style={{display: 'grid', gap: '24px'}}>
+                  {/* Profile Information Card */}
+                  <Card>
+                    <CardHeader>
+                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <div>
+                          <CardTitle>Profile Information</CardTitle>
+                          <CardDescription>Your personal details and contact information</CardDescription>
+                        </div>
+                        {!isEditingProfile ? (
+                          <Button onClick={() => setIsEditingProfile(true)} variant="outline">
+                            <Edit className="icon-sm" /> Edit Profile
+                          </Button>
+                        ) : (
+                          <div style={{display: 'flex', gap: '8px'}}>
+                            <Button onClick={handleSaveProfile}>
+                              <Save className="icon-sm" /> Save
+                            </Button>
+                            <Button onClick={() => {
+                              setIsEditingProfile(false);
+                              setEditedProfile(profileData || {});
+                            }} variant="outline">
+                              <X className="icon-sm" /> Cancel
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                      <div className="profile-details">
-                        <h3>{user.name}</h3>
-                        <p>{user.email}</p>
-                        <Badge variant="secondary">Patient</Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <div style={{display: 'flex', gap: '24px', marginBottom: '24px'}}>
+                        <img src={user.picture} alt={user.name} style={{width: '80px', height: '80px', borderRadius: '50%'}} />
+                        <div>
+                          <h3 style={{fontSize: '20px', fontWeight: '600', marginBottom: '4px'}}>{user.name}</h3>
+                          <p style={{color: 'var(--taupe)', marginBottom: '8px'}}>{user.email}</p>
+                          <Badge>Patient/Caregiver</Badge>
+                        </div>
                       </div>
-                    </div>
-                    <div className="profile-actions">
-                      <Button variant="outline">Edit Profile</Button>
-                      <Button variant="outline">Account Settings</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+
+                      <div style={{display: 'grid', gap: '16px'}}>
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Phone Number</label>
+                          {isEditingProfile ? (
+                            <Input
+                              placeholder="Enter phone number"
+                              value={editedProfile.phone_number || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, phone_number: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.phone_number || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Location</label>
+                          {isEditingProfile ? (
+                            <Input
+                              placeholder="Enter location"
+                              value={editedProfile.location || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, location: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.location || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Medical Conditions</label>
+                          {isEditingProfile ? (
+                            <>
+                              <div style={{display: 'flex', gap: '8px', marginBottom: '8px'}}>
+                                <Input
+                                  placeholder="Add condition"
+                                  value={conditionInput}
+                                  onChange={(e) => setConditionInput(e.target.value)}
+                                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCondition())}
+                                />
+                                <Button onClick={handleAddCondition} type="button">Add</Button>
+                              </div>
+                              <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                                {(editedProfile.conditions || []).map((condition, idx) => (
+                                  <Badge key={idx} variant="secondary">
+                                    {condition}
+                                    <button
+                                      onClick={() => handleRemoveCondition(idx)}
+                                      style={{marginLeft: '8px', cursor: 'pointer', background: 'none', border: 'none'}}
+                                    >×</button>
+                                  </Badge>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                              {(profileData?.conditions || []).length > 0 ? (
+                                profileData.conditions.map((condition, idx) => (
+                                  <Badge key={idx} variant="secondary">{condition}</Badge>
+                                ))
+                              ) : (
+                                <p>No conditions listed</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Progress Tracker Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Your Journey</CardTitle>
+                      <CardDescription>Track your progress on CuraLink</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          <CheckCircle style={{color: 'var(--olive)', width: '24px', height: '24px'}} />
+                          <div>
+                            <p style={{fontWeight: '600'}}>Signed Up</p>
+                            <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Welcome to CuraLink!</p>
+                          </div>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          <CheckCircle style={{color: 'var(--olive)', width: '24px', height: '24px'}} />
+                          <div>
+                            <p style={{fontWeight: '600'}}>Profile Created</p>
+                            <p style={{fontSize: '14px', color: 'var(--taupe)'}}>You're all set up</p>
+                          </div>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          {userActivity?.forums_joined?.length > 0 ? (
+                            <CheckCircle style={{color: 'var(--olive)', width: '24px', height: '24px'}} />
+                          ) : (
+                            <Clock style={{color: 'var(--taupe)', opacity: 0.5, width: '24px', height: '24px'}} />
+                          )}
+                          <div>
+                            <p style={{fontWeight: '600'}}>Joined Forums</p>
+                            <p style={{fontSize: '14px', color: 'var(--taupe)'}}>
+                              {userActivity?.forums_joined?.length > 0 
+                                ? `${userActivity.forums_joined.length} forums joined`
+                                : 'Join forums to connect with others'}
+                            </p>
+                          </div>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          {userActivity?.favorites_count > 0 ? (
+                            <CheckCircle style={{color: 'var(--olive)', width: '24px', height: '24px'}} />
+                          ) : (
+                            <Clock style={{color: 'var(--taupe)', opacity: 0.5, width: '24px', height: '24px'}} />
+                          )}
+                          <div>
+                            <p style={{fontWeight: '600'}}>Saved Favorites</p>
+                            <p style={{fontSize: '14px', color: 'var(--taupe)'}}>
+                              {userActivity?.favorites_count > 0
+                                ? `${userActivity.favorites_count} items saved`
+                                : 'Save trials, experts, or forums'}
+                            </p>
+                          </div>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          {userActivity?.appointments?.length > 0 ? (
+                            <CheckCircle style={{color: 'var(--olive)', width: '24px', height: '24px'}} />
+                          ) : (
+                            <Clock style={{color: 'var(--taupe)', opacity: 0.5, width: '24px', height: '24px'}} />
+                          )}
+                          <div>
+                            <p style={{fontWeight: '600'}}>Booked Appointment</p>
+                            <p style={{fontSize: '14px', color: 'var(--taupe)'}}>
+                              {userActivity?.appointments?.length > 0
+                                ? `${userActivity.appointments.length} appointments`
+                                : 'Connect with health experts'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Activity History Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Activity History</CardTitle>
+                      <CardDescription>Your recent activity on CuraLink</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Tabs defaultValue="appointments" className="activity-tabs">
+                        <TabsList>
+                          <TabsTrigger value="appointments">
+                            <Calendar className="icon-sm" /> Appointments ({userActivity?.appointments?.length || 0})
+                          </TabsTrigger>
+                          <TabsTrigger value="forums">
+                            <MessageSquare className="icon-sm" /> Forums ({userActivity?.forums_joined?.length || 0})
+                          </TabsTrigger>
+                          <TabsTrigger value="reviews">
+                            <Star className="icon-sm" /> Reviews ({userActivity?.reviews_given?.length || 0})
+                          </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="appointments">
+                          {userActivity?.appointments?.length > 0 ? (
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                              {userActivity.appointments.map((appt) => (
+                                <Card key={appt.id} style={{padding: '16px'}}>
+                                  <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div>
+                                      <p style={{fontWeight: '600'}}>{appt.researcher_name || 'Researcher'}</p>
+                                      <p style={{fontSize: '14px', color: 'var(--taupe)'}}>{appt.researcher_specialty}</p>
+                                      <p style={{fontSize: '14px', marginTop: '4px'}}>{appt.condition}</p>
+                                    </div>
+                                    <Badge variant={
+                                      appt.status === 'accepted' ? 'default' :
+                                      appt.status === 'pending' ? 'secondary' :
+                                      appt.status === 'completed' ? 'outline' : 'destructive'
+                                    }>
+                                      {appt.status}
+                                    </Badge>
+                                  </div>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No appointments yet
+                            </p>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="forums">
+                          {userActivity?.forums_joined?.length > 0 ? (
+                            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '12px'}}>
+                              {userActivity.forums_joined.map((membership) => (
+                                <Card key={membership.forum_id} style={{padding: '16px'}}>
+                                  <p style={{fontWeight: '600', marginBottom: '4px'}}>
+                                    {membership.forum_details?.name || 'Forum'}
+                                  </p>
+                                  <Badge variant="outline">{membership.forum_details?.category}</Badge>
+                                  <p style={{fontSize: '12px', marginTop: '8px', color: 'var(--taupe)'}}>
+                                    Joined {new Date(membership.joined_at).toLocaleDateString()}
+                                  </p>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No forums joined yet
+                            </p>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="reviews">
+                          {userActivity?.reviews_given?.length > 0 ? (
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                              {userActivity.reviews_given.map((review) => (
+                                <Card key={review.id} style={{padding: '16px'}}>
+                                  <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        className="icon-xs"
+                                        fill={i < review.rating ? 'var(--olive)' : 'none'}
+                                        color={i < review.rating ? 'var(--olive)' : 'var(--taupe)'}
+                                      />
+                                    ))}
+                                  </div>
+                                  <p style={{fontSize: '14px'}}>{review.text}</p>
+                                  <p style={{fontSize: '12px', marginTop: '8px', color: 'var(--taupe)'}}>
+                                    {new Date(review.created_at).toLocaleDateString()}
+                                  </p>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No reviews yet
+                            </p>
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
