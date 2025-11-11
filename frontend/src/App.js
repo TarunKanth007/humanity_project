@@ -993,6 +993,49 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleSaveProfile = async () => {
+    try {
+      await api.put('/researcher/profile', editedProfile);
+      toast.success('Profile updated successfully!');
+      setIsEditingProfile(false);
+      setProfileData(editedProfile);
+    } catch (error) {
+      toast.error('Failed to update profile');
+    }
+  };
+
+  const handleAddSpecialty = () => {
+    if (specialtyInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        specialties: [...(editedProfile.specialties || []), specialtyInput.trim()]
+      });
+      setSpecialtyInput('');
+    }
+  };
+
+  const handleRemoveSpecialty = (index) => {
+    const updated = [...(editedProfile.specialties || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, specialties: updated });
+  };
+
+  const handleAddInterest = () => {
+    if (interestInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        research_interests: [...(editedProfile.research_interests || []), interestInput.trim()]
+      });
+      setInterestInput('');
+    }
+  };
+
+  const handleRemoveInterest = (index) => {
+    const updated = [...(editedProfile.research_interests || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, research_interests: updated });
+  };
+
   const handleToggleFavorite = async (forumId) => {
     try {
       const currentFav = forumFavorites[forumId];
@@ -2239,6 +2282,49 @@ const ResearcherDashboard = ({ user, logout }) => {
     } catch (error) {
       console.error('Failed to load forum favorites:', error);
     }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      await api.put('/researcher/profile', editedProfile);
+      toast.success('Profile updated successfully!');
+      setIsEditingProfile(false);
+      setProfileData(editedProfile);
+    } catch (error) {
+      toast.error('Failed to update profile');
+    }
+  };
+
+  const handleAddSpecialty = () => {
+    if (specialtyInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        specialties: [...(editedProfile.specialties || []), specialtyInput.trim()]
+      });
+      setSpecialtyInput('');
+    }
+  };
+
+  const handleRemoveSpecialty = (index) => {
+    const updated = [...(editedProfile.specialties || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, specialties: updated });
+  };
+
+  const handleAddInterest = () => {
+    if (interestInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        research_interests: [...(editedProfile.research_interests || []), interestInput.trim()]
+      });
+      setInterestInput('');
+    }
+  };
+
+  const handleRemoveInterest = (index) => {
+    const updated = [...(editedProfile.research_interests || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, research_interests: updated });
   };
 
   const handleToggleFavorite = async (forumId) => {
