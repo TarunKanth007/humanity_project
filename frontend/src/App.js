@@ -1710,14 +1710,16 @@ const ProtectedRoute = ({ children, user }) => {
 const AnimatedRouteWrapper = ({ children }) => {
   useScrollAnimation();
   
-  // Auto-add scroll-animate classes to common elements
+  // Only auto-add animations to landing page elements
   useEffect(() => {
+    // Don't auto-animate dashboard content
+    if (window.location.pathname.includes('/dashboard')) {
+      return;
+    }
+    
     const autoAnimateSelectors = [
-      '.item-card',
-      '.role-card',
-      '.profile-form',
-      '.dashboard-header',
-      '.tab-content'
+      '.landing-page .role-card',
+      '.onboarding-page .role-card'
     ];
     
     const addAnimationClasses = () => {
@@ -1732,12 +1734,8 @@ const AnimatedRouteWrapper = ({ children }) => {
       });
     };
     
-    // Run on mount and after route changes
+    // Run on mount
     addAnimationClasses();
-    const observer = new MutationObserver(addAnimationClasses);
-    observer.observe(document.body, { childList: true, subtree: true });
-    
-    return () => observer.disconnect();
   }, []);
   
   return <>{children}</>;
