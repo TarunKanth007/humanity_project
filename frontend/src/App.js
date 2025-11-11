@@ -2942,6 +2942,365 @@ const ResearcherDashboard = ({ user, logout }) => {
                 </div>
               )}
             </TabsContent>
+
+            <TabsContent value="profile">
+              {loading ? (
+                <div className="loading-state">Loading profile...</div>
+              ) : (
+                <div style={{display: 'grid', gap: '24px'}}>
+                  {/* Profile Information Card */}
+                  <Card>
+                    <CardHeader>
+                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <div>
+                          <CardTitle>Profile Information</CardTitle>
+                          <CardDescription>Your professional details and research information</CardDescription>
+                        </div>
+                        {!isEditingProfile ? (
+                          <Button onClick={() => setIsEditingProfile(true)} variant="outline">
+                            <Edit className="icon-sm" /> Edit Profile
+                          </Button>
+                        ) : (
+                          <div style={{display: 'flex', gap: '8px'}}>
+                            <Button onClick={handleSaveProfile}>
+                              <Save className="icon-sm" /> Save
+                            </Button>
+                            <Button onClick={() => {
+                              setIsEditingProfile(false);
+                              setEditedProfile(profileData || {});
+                            }} variant="outline">
+                              <X className="icon-sm" /> Cancel
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div style={{display: 'flex', gap: '24px', marginBottom: '24px'}}>
+                        <img src={user.picture} alt={user.name} style={{width: '80px', height: '80px', borderRadius: '50%'}} />
+                        <div>
+                          <h3 style={{fontSize: '20px', fontWeight: '600', marginBottom: '4px'}}>{profileData?.name || user.name}</h3>
+                          <p style={{color: 'var(--taupe)', marginBottom: '8px'}}>{user.email}</p>
+                          <Badge>Researcher</Badge>
+                        </div>
+                      </div>
+
+                      <div style={{display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(2, 1fr)'}}>
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Full Name</label>
+                          {isEditingProfile ? (
+                            <Input
+                              value={editedProfile.name || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, name: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.name || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Phone Number</label>
+                          {isEditingProfile ? (
+                            <Input
+                              placeholder="Enter phone number"
+                              value={editedProfile.phone_number || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, phone_number: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.phone_number || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Age</label>
+                          {isEditingProfile ? (
+                            <Input
+                              type="number"
+                              value={editedProfile.age || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, age: parseInt(e.target.value)})}
+                            />
+                          ) : (
+                            <p>{profileData?.age || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Years of Experience</label>
+                          {isEditingProfile ? (
+                            <Input
+                              type="number"
+                              value={editedProfile.years_experience || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, years_experience: parseInt(e.target.value)})}
+                            />
+                          ) : (
+                            <p>{profileData?.years_experience || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Sector / Expertise</label>
+                          {isEditingProfile ? (
+                            <Input
+                              placeholder="e.g., Clinical Oncologist"
+                              value={editedProfile.sector || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, sector: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.sector || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Available Hours</label>
+                          {isEditingProfile ? (
+                            <Input
+                              placeholder="e.g., 9 AM - 5 PM EST"
+                              value={editedProfile.available_hours || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, available_hours: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.available_hours || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Specialties</label>
+                          {isEditingProfile ? (
+                            <>
+                              <div style={{display: 'flex', gap: '8px', marginBottom: '8px'}}>
+                                <Input
+                                  placeholder="Add specialty"
+                                  value={specialtyInput}
+                                  onChange={(e) => setSpecialtyInput(e.target.value)}
+                                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSpecialty())}
+                                />
+                                <Button onClick={handleAddSpecialty} type="button">Add</Button>
+                              </div>
+                              <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                                {(editedProfile.specialties || []).map((spec, idx) => (
+                                  <Badge key={idx} variant="secondary">
+                                    {spec}
+                                    <button
+                                      onClick={() => handleRemoveSpecialty(idx)}
+                                      style={{marginLeft: '8px', cursor: 'pointer', background: 'none', border: 'none'}}
+                                    >×</button>
+                                  </Badge>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                              {(profileData?.specialties || []).length > 0 ? (
+                                profileData.specialties.map((spec, idx) => (
+                                  <Badge key={idx} variant="secondary">{spec}</Badge>
+                                ))
+                              ) : (
+                                <p>No specialties listed</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Research Interests</label>
+                          {isEditingProfile ? (
+                            <>
+                              <div style={{display: 'flex', gap: '8px', marginBottom: '8px'}}>
+                                <Input
+                                  placeholder="Add research interest"
+                                  value={interestInput}
+                                  onChange={(e) => setInterestInput(e.target.value)}
+                                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddInterest())}
+                                />
+                                <Button onClick={handleAddInterest} type="button">Add</Button>
+                              </div>
+                              <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                                {(editedProfile.research_interests || []).map((interest, idx) => (
+                                  <Badge key={idx} variant="outline">
+                                    {interest}
+                                    <button
+                                      onClick={() => handleRemoveInterest(idx)}
+                                      style={{marginLeft: '8px', cursor: 'pointer', background: 'none', border: 'none'}}
+                                    >×</button>
+                                  </Badge>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                              {(profileData?.research_interests || []).length > 0 ? (
+                                profileData.research_interests.map((interest, idx) => (
+                                  <Badge key={idx} variant="outline">{interest}</Badge>
+                                ))
+                              ) : (
+                                <p>No research interests listed</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>About / Bio</label>
+                          {isEditingProfile ? (
+                            <Textarea
+                              placeholder="Tell us about yourself..."
+                              value={editedProfile.bio || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, bio: e.target.value})}
+                              rows={4}
+                            />
+                          ) : (
+                            <p>{profileData?.bio || 'No bio provided'}</p>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Activity History Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Activity History</CardTitle>
+                      <CardDescription>Your contributions and engagement on CuraLink</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Tabs defaultValue="appointments" className="activity-tabs">
+                        <TabsList>
+                          <TabsTrigger value="appointments">
+                            <Calendar className="icon-sm" /> Appointments ({userActivity?.appointments?.length || 0})
+                          </TabsTrigger>
+                          <TabsTrigger value="forums">
+                            <MessageSquare className="icon-sm" /> Forums Created ({userActivity?.forums_created?.length || 0})
+                          </TabsTrigger>
+                          <TabsTrigger value="trials">
+                            <Activity className="icon-sm" /> Trials ({userActivity?.trials_created?.length || 0})
+                          </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="appointments">
+                          {userActivity?.appointments?.length > 0 ? (
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                              {userActivity.appointments.map((appt) => (
+                                <Card key={appt.id} style={{padding: '16px'}}>
+                                  <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div>
+                                      <p style={{fontWeight: '600'}}>Patient: {appt.patient_name}</p>
+                                      <p style={{fontSize: '14px', marginTop: '4px'}}>{appt.condition}</p>
+                                      <p style={{fontSize: '12px', color: 'var(--taupe)', marginTop: '4px'}}>
+                                        {appt.location} • Suffering for {appt.duration_suffering}
+                                      </p>
+                                    </div>
+                                    <Badge variant={
+                                      appt.status === 'accepted' ? 'default' :
+                                      appt.status === 'pending' ? 'secondary' :
+                                      appt.status === 'completed' ? 'outline' : 'destructive'
+                                    }>
+                                      {appt.status}
+                                    </Badge>
+                                  </div>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No appointments yet
+                            </p>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="forums">
+                          {userActivity?.forums_created?.length > 0 ? (
+                            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '12px'}}>
+                              {userActivity.forums_created.map((forum) => (
+                                <Card key={forum.id} style={{padding: '16px'}}>
+                                  <p style={{fontWeight: '600', marginBottom: '4px'}}>{forum.name}</p>
+                                  <Badge variant="outline">{forum.category}</Badge>
+                                  <p style={{fontSize: '12px', marginTop: '8px', color: 'var(--taupe)'}}>
+                                    {forum.post_count || 0} posts
+                                  </p>
+                                  <p style={{fontSize: '12px', marginTop: '4px', color: 'var(--taupe)'}}>
+                                    Created {new Date(forum.created_at).toLocaleDateString()}
+                                  </p>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No forums created yet
+                            </p>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="trials">
+                          {userActivity?.trials_created?.length > 0 ? (
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                              {userActivity.trials_created.map((trial) => (
+                                <Card key={trial.id} style={{padding: '16px'}}>
+                                  <div style={{marginBottom: '8px'}}>
+                                    <p style={{fontWeight: '600'}}>{trial.title}</p>
+                                    <div style={{display: 'flex', gap: '8px', marginTop: '4px'}}>
+                                      <Badge variant="outline">{trial.phase}</Badge>
+                                      <Badge>{trial.status}</Badge>
+                                    </div>
+                                  </div>
+                                  <p style={{fontSize: '14px', color: 'var(--taupe)'}}>{trial.location}</p>
+                                  <p style={{fontSize: '12px', marginTop: '8px', color: 'var(--taupe)'}}>
+                                    Created {new Date(trial.created_at).toLocaleDateString()}
+                                  </p>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No trials created yet
+                            </p>
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+
+                  {/* Stats Summary Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Your Impact</CardTitle>
+                      <CardDescription>Summary of your contributions</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px'}}>
+                        <div style={{textAlign: 'center'}}>
+                          <Activity style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
+                          <p style={{fontSize: '24px', fontWeight: '700', color: 'var(--olive)'}}>
+                            {userActivity?.forums_created?.length || 0}
+                          </p>
+                          <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Forums Created</p>
+                        </div>
+                        <div style={{textAlign: 'center'}}>
+                          <Search style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
+                          <p style={{fontSize: '24px', fontWeight: '700', color: 'var(--olive)'}}>
+                            {userActivity?.trials_created?.length || 0}
+                          </p>
+                          <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Trials Created</p>
+                        </div>
+                        <div style={{textAlign: 'center'}}>
+                          <Calendar style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
+                          <p style={{fontSize: '24px', fontWeight: '700', color: 'var(--olive)'}}>
+                            {userActivity?.appointments?.length || 0}
+                          </p>
+                          <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Appointments</p>
+                        </div>
+                        <div style={{textAlign: 'center'}}>
+                          <Star style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
+                          <p style={{fontSize: '24px', fontWeight: '700', color: 'var(--olive)'}}>
+                            {userActivity?.favorites_count || 0}
+                          </p>
+                          <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Favorites</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </TabsContent>
           </Tabs>
         </div>
       </div>
