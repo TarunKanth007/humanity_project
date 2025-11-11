@@ -2068,6 +2068,12 @@ const ResearcherDashboard = ({ user, logout }) => {
     disease_areas: [],
     contact_email: ''
   });
+  const [profileData, setProfileData] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editedProfile, setEditedProfile] = useState({});
+  const [userActivity, setUserActivity] = useState(null);
+  const [specialtyInput, setSpecialtyInput] = useState('');
+  const [interestInput, setInterestInput] = useState('');
 
   useEffect(() => {
     loadData();
