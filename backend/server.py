@@ -55,6 +55,7 @@ class PatientProfile(BaseModel):
     conditions: List[str] = []
     location: Optional[str] = None
     interests: List[str] = []
+    phone_number: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ResearcherProfile(BaseModel):
