@@ -1395,6 +1395,16 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
   }
 
+  .signin-section {
+    margin-top: 32px;
+    padding: 0 16px;
+  }
+
+  .signin-button {
+    font-size: 14px;
+    padding: 14px 24px;
+  }
+
   .feature-grid {
     grid-template-columns: 1fr;
   }
