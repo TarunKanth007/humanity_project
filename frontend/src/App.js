@@ -569,7 +569,7 @@ const ProfileSetup = ({ user }) => {
 
   return (
     <div className="profile-setup-page">
-      <div className="profile-setup-container">
+      <div className="profile-setup-container scroll-animate scroll-fade-up">
         <h1>Set Up Your Profile</h1>
         <p className="profile-subtitle">
           {isPatient 
@@ -577,7 +577,7 @@ const ProfileSetup = ({ user }) => {
             : 'Share your expertise to connect with collaborators and patients'}
         </p>
 
-        <form data-testid="profile-setup-form" onSubmit={handleSubmit} className="profile-form">
+        <form data-testid="profile-setup-form" onSubmit={handleSubmit} className="profile-form scroll-animate scroll-scale">
           {isPatient ? (
             <>
               <div className="form-group">
