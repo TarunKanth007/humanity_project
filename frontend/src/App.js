@@ -1448,6 +1448,65 @@ const ResearcherDashboard = ({ user, logout }) => {
     return () => clearInterval(interval);
   }, [activeTab]);
 
+  // Magnetic cursor effect and parallax scroll for tabs
+  useEffect(() => {
+    const tabs = document.querySelectorAll('.dashboard-tabs [role="tab"]');
+    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
+    
+    // Magnetic cursor effect - text moves slightly with cursor
+    const handleMouseMove = (e) => {
+      tabs.forEach(tab => {
+        const rect = tab.getBoundingClientRect();
+        const tabCenterX = rect.left + rect.width / 2;
+        const tabCenterY = rect.top + rect.height / 2;
+        
+        // Calculate distance from cursor to tab center
+        const deltaX = (e.clientX - tabCenterX) / 30; // Gentle movement
+        const deltaY = (e.clientY - tabCenterY) / 30;
+        
+        const distance = Math.sqrt(
+          Math.pow(e.clientX - tabCenterX, 2) + 
+          Math.pow(e.clientY - tabCenterY, 2)
+        );
+        
+        // Apply magnetic effect within 200px radius
+        if (distance < 200) {
+          tab.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        } else {
+          tab.style.transform = '';
+        }
+      });
+    };
+    
+    const handleMouseLeave = () => {
+      tabs.forEach(tab => {
+        tab.style.transform = '';
+      });
+    };
+    
+    // Parallax scroll effect - text shifts smoothly with scroll
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (tabList) {
+        // Smooth parallax movement based on scroll
+        const parallaxOffset = scrollY * 0.03; // Subtle movement
+        tabList.style.transform = `translateY(${parallaxOffset}px)`;
+      }
+    };
+    
+    if (tabList) {
+      tabList.addEventListener('mousemove', handleMouseMove);
+      tabList.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      return () => {
+        tabList.removeEventListener('mousemove', handleMouseMove);
+        tabList.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
+
   const loadUnreadCount = async () => {
     try {
       const res = await api.get('/notifications/unread-count');
