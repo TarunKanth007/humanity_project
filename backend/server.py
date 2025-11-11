@@ -872,7 +872,7 @@ async def get_forums(
     user = None
     try:
         user = await get_current_user(session_token, authorization)
-    except:
+    except Exception:
         pass
     
     forums = await db.forums.find({}, {"_id": 0}).to_list(100)
