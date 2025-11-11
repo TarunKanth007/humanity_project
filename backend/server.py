@@ -121,8 +121,9 @@ class Forum(BaseModel):
     name: str
     description: str
     category: str
-    created_by: str
     post_count: int = 0
+    created_by: Optional[str] = None  # User ID of creator
+    created_by_name: Optional[str] = None  # Name of creator
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ForumPost(BaseModel):
