@@ -364,12 +364,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .cta-primary {
-  background: var(--olive);
+  background: var(--accent-gradient);
   color: var(--cream);
+  border: none;
+  box-shadow: var(--glow-olive);
+  position: relative;
+  overflow: hidden;
   padding: 16px 36px;
   font-size: 16px;
   font-weight: 600;
-  border: none;
   border-radius: 12px;
   cursor: pointer;
   display: inline-flex;
@@ -378,15 +381,34 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.3s ease;
 }
 
+.cta-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.cta-primary:hover::before {
+  left: 100%;
+}
+
 .cta-primary:hover {
-  background: #6B7F3A;
-  transform: translateY(-2px);
+  background: var(--accent-gradient-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--glow-olive-strong);
 }
 
 .cta-secondary {
   background: transparent;
-  color: var(--taupe);
-  border: 2px solid var(--taupe);
+  color: var(--olive);
+  border: 2px solid var(--olive);
+  box-shadow: 0 2px 8px rgba(85, 107, 47, 0.15);
+  position: relative;
+  overflow: hidden;
   padding: 16px 36px;
   font-size: 16px;
   font-weight: 600;
@@ -398,10 +420,27 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.3s ease;
 }
 
+.cta-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: var(--accent-gradient);
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.cta-secondary:hover::before {
+  width: 100%;
+}
+
 .cta-secondary:hover {
-  background: var(--olive);
   color: var(--cream);
-  transform: scale(1.05);
+  border-color: var(--olive-dark);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--glow-olive);
 }
 
 /* Sign In Section */
