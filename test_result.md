@@ -159,6 +159,21 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Added delete button (trash icon) on forum cards for forums owned by logged-in researcher. Shows 'Owner' badge on owned forums. Includes confirmation dialog before deletion. Connected to DELETE /api/forums/{forum_id} endpoint."
+  
+  - task: "Onboarding & Profile Setup Forms Not Visible Bug Fix"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported that during new login with email, the role selection and profile setup forms are not visible. Only titles are showing."
+      - working: true
+        agent: "main"
+        comment: "FIXED: The issue was caused by scroll-animate CSS classes that set opacity:0 by default and wait for IntersectionObserver to add .visible class. On onboarding/profile pages, elements were in viewport on load but observer wasn't triggering properly. Removed scroll-animate classes from Onboarding and ProfileSetup components. Role selection cards and profile forms now immediately visible."
 
 metadata:
   created_by: "main_agent"
