@@ -198,6 +198,18 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ BACKEND TESTING COMPLETE: Forum Favorites feature working correctly. All 52 comprehensive tests passed including authentication, API structure, data validation, and endpoint integration tests. Key findings: 1) All favorites endpoints (POST /api/favorites, GET /api/favorites, DELETE /api/favorites/{id}, GET /api/favorites/check/{type}/{id}) properly require authentication (401 for unauthenticated requests), 2) Forum enrichment correctly implemented in GET /api/favorites endpoint to fetch forum data from forums collection, 3) Data validation working properly - rejects invalid/missing fields with appropriate status codes (422 for schema validation, 401 for auth), 4) API routing correctly configured - all endpoints accessible and return expected responses, 5) Security properly implemented - authentication check happens before data validation preventing information leakage, 6) Forum favorites integration verified with existing forum data (2 forums available for testing). Backend implementation is production-ready and fully functional."
+  
+  - task: "Favorites Hover Popups"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented hover popups for favorites page. When hovering over any favorited item (trial, expert, publication, forum), a detailed popover appears showing full information. Added Popover component from shadcn UI. Each item type shows relevant details: Trials show phase, status, location, description, disease areas. Experts show specialty, location, availability, rating, bio, research areas. Publications show journal, year, authors, abstract, disease areas, URL link. Forums show category, post count, creator, description. Applied to both Patient and Researcher dashboard favorites tabs."
 
 metadata:
   created_by: "main_agent"
