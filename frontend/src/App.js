@@ -1389,64 +1389,6 @@ const ResearcherDashboard = ({ user, logout }) => {
     return () => clearInterval(interval);
   }, [activeTab]);
 
-  // Magnetic cursor effect and parallax scroll for tabs
-  useEffect(() => {
-    const tabs = document.querySelectorAll('.dashboard-tabs [role="tab"]');
-    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
-    
-    // Magnetic cursor effect
-    const handleMouseMove = (e) => {
-      tabs.forEach(tab => {
-        const rect = tab.getBoundingClientRect();
-        const tabCenterX = rect.left + rect.width / 2;
-        const tabCenterY = rect.top + rect.height / 2;
-        
-        const deltaX = (e.clientX - tabCenterX) / 20;
-        const deltaY = (e.clientY - tabCenterY) / 20;
-        
-        const distance = Math.sqrt(
-          Math.pow(e.clientX - tabCenterX, 2) + 
-          Math.pow(e.clientY - tabCenterY, 2)
-        );
-        
-        // Apply magnetic effect within 150px radius
-        if (distance < 150) {
-          tab.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.05)`;
-        } else {
-          tab.style.transform = '';
-        }
-      });
-    };
-    
-    const handleMouseLeave = () => {
-      tabs.forEach(tab => {
-        tab.style.transform = '';
-      });
-    };
-    
-    // Parallax scroll effect
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      if (tabList) {
-        // Subtle parallax movement based on scroll
-        const parallaxOffset = scrollY * 0.05;
-        tabList.style.transform = `translateY(${parallaxOffset}px)`;
-      }
-    };
-    
-    if (tabList) {
-      tabList.addEventListener('mousemove', handleMouseMove);
-      tabList.addEventListener('mouseleave', handleMouseLeave);
-      window.addEventListener('scroll', handleScroll);
-      
-      return () => {
-        tabList.removeEventListener('mousemove', handleMouseMove);
-        tabList.removeEventListener('mouseleave', handleMouseLeave);
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, []);
-
   const loadUnreadCount = async () => {
     try {
       const res = await api.get('/notifications/unread-count');
