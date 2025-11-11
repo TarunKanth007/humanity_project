@@ -2124,6 +2124,24 @@ const ResearcherDashboard = ({ user, logout }) => {
                                   </Button>
                                 )}
                                 
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  data-testid={`favorite-forum-btn-${forum.id}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleFavorite(forum.id);
+                                  }}
+                                  style={{
+                                    color: forumFavorites[forum.id]?.is_favorited ? 'var(--olive)' : 'var(--taupe)'
+                                  }}
+                                >
+                                  <Heart 
+                                    className="icon-sm" 
+                                    fill={forumFavorites[forum.id]?.is_favorited ? 'var(--olive)' : 'none'}
+                                  />
+                                </Button>
+                                
                                 {isOwner && (
                                   <Button 
                                     variant="destructive" 
