@@ -969,6 +969,132 @@ async def create_forum_post(
     
     return {"status": "success", "post": post.model_dump()}
 
+# ============ Forum Membership Endpoints ============
+
+@api_router.post("/forums/{forum_id}/join")
+async def join_forum_group(
+    forum_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Join a forum group (researchers only, must match specialty)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can join forum groups")
+    
+    # Get forum details
+    forum = await db.forums.find_one({"id": forum_id}, {"_id": 0})
+    if not forum:
+        raise HTTPException(status_code=404, detail="Forum not found")
+    
+    # Get researcher profile
+    researcher = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    if not researcher:
+        raise HTTPException(status_code=404, detail="Researcher profile not found")
+    
+    # Check if researcher's specialty matches forum category
+    forum_category = forum.get("category", "").lower()
+    researcher_specialties = [s.lower() for s in researcher.get("specialties", [])]
+    
+    # Simple matching logic - can be made more sophisticated
+    has_matching_specialty = any(
+        specialty in forum_category or forum_category in specialty
+        for specialty in researcher_specialties
+    )
+    
+    if not has_matching_specialty:
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Your specialties do not match this forum's category ({forum['category']})"
+        )
+    
+    # Check if already a member
+    existing = await db.forum_memberships.find_one({
+        "forum_id": forum_id,
+        "user_id": user.id
+    })
+    
+    if existing:
+        return {"status": "already_member", "message": "Already a member of this group"}
+    
+    # Create membership
+    membership = ForumMembership(
+        forum_id=forum_id,
+        forum_name=forum["name"],
+        user_id=user.id,
+        user_name=user.name,
+        specialty=", ".join(researcher["specialties"][:2])  # First 2 specialties
+    )
+    
+    membership_dict = membership.model_dump()
+    membership_dict['joined_at'] = membership_dict['joined_at'].isoformat()
+    await db.forum_memberships.insert_one(membership_dict)
+    
+    return {"status": "success", "message": "Successfully joined the group"}
+
+@api_router.delete("/forums/{forum_id}/leave")
+async def leave_forum_group(
+    forum_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Leave a forum group"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    result = await db.forum_memberships.delete_one({
+        "forum_id": forum_id,
+        "user_id": user.id
+    })
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Membership not found")
+    
+    return {"status": "success", "message": "Successfully left the group"}
+
+@api_router.get("/forums/{forum_id}/membership")
+async def check_forum_membership(
+    forum_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Check if user is a member of this forum"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    membership = await db.forum_memberships.find_one({
+        "forum_id": forum_id,
+        "user_id": user.id
+    }, {"_id": 0})
+    
+    return {
+        "is_member": membership is not None,
+        "membership": membership
+    }
+
+@api_router.get("/forums/{forum_id}/members")
+async def get_forum_members(
+    forum_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get all members of a forum group"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    members = await db.forum_memberships.find(
+        {"forum_id": forum_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    return {"members": members, "count": len(members)}
+
 # ============ Q&A Community Endpoints ============
 
 @api_router.post("/qa/questions")
