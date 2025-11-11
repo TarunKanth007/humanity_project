@@ -1046,6 +1046,33 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleSaveProfile = async () => {
+    try {
+      await api.put('/patient/profile', editedProfile);
+      toast.success('Profile updated successfully!');
+      setIsEditingProfile(false);
+      setProfileData(editedProfile);
+    } catch (error) {
+      toast.error('Failed to update profile');
+    }
+  };
+
+  const handleAddCondition = () => {
+    if (conditionInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        conditions: [...(editedProfile.conditions || []), conditionInput.trim()]
+      });
+      setConditionInput('');
+    }
+  };
+
+  const handleRemoveCondition = (index) => {
+    const updated = [...(editedProfile.conditions || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, conditions: updated });
+  };
+
   const viewExpertDetails = async (expert) => {
     setSelectedExpert(expert);
     // Load reviews
