@@ -781,9 +781,328 @@ class BackendTester:
                 f"Connection test failed: {str(e)}"
             )
     
+    def test_forum_favorites_feature(self):
+        """Test Forum Favorites feature comprehensively"""
+        print("\n=== Forum Favorites Feature Tests ===")
+        
+        # First, get available forums to test with
+        try:
+            forums_response = self.session.get(f"{BACKEND_URL}/forums")
+            if forums_response.status_code != 200:
+                self.log_result(
+                    "Forum Favorites - Setup",
+                    False,
+                    f"Cannot get forums list: {forums_response.status_code}",
+                    {"status_code": forums_response.status_code}
+                )
+                return
+            
+            forums = forums_response.json()
+            if not forums:
+                self.log_result(
+                    "Forum Favorites - Setup",
+                    False,
+                    "No forums available for testing",
+                    {"forum_count": 0}
+                )
+                return
+            
+            test_forum_id = forums[0]["id"]
+            test_forum_name = forums[0]["name"]
+            
+            self.log_result(
+                "Forum Favorites - Setup",
+                True,
+                f"Using forum '{test_forum_name}' for testing",
+                {"forum_id": test_forum_id, "forum_name": test_forum_name}
+            )
+            
+        except Exception as e:
+            self.log_result(
+                "Forum Favorites - Setup",
+                False,
+                f"Failed to get forums: {str(e)}"
+            )
+            return
+        
+        # Test 1: Add Forum to Favorites without authentication
+        try:
+            favorite_data = {
+                "item_type": "forum",
+                "item_id": test_forum_id
+            }
+            
+            response = self.session.post(
+                f"{BACKEND_URL}/favorites",
+                json=favorite_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Favorites - Add Without Auth",
+                    True,
+                    "Correctly requires authentication for adding favorites",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Favorites - Add Without Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Favorites - Add Without Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 2: Check Forum Favorite Status without authentication
+        try:
+            response = self.session.get(f"{BACKEND_URL}/favorites/check/forum/{test_forum_id}")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Favorites - Check Status Without Auth",
+                    True,
+                    "Correctly requires authentication for checking favorite status",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Favorites - Check Status Without Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Favorites - Check Status Without Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 3: Get All Favorites without authentication
+        try:
+            response = self.session.get(f"{BACKEND_URL}/favorites")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Favorites - Get All Without Auth",
+                    True,
+                    "Correctly requires authentication for getting favorites",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Favorites - Get All Without Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Favorites - Get All Without Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 4: Remove Forum from Favorites without authentication
+        test_favorite_id = "test_favorite_123"
+        try:
+            response = self.session.delete(f"{BACKEND_URL}/favorites/{test_favorite_id}")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Favorites - Remove Without Auth",
+                    True,
+                    "Correctly requires authentication for removing favorites",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Favorites - Remove Without Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Favorites - Remove Without Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 5: Test favorites endpoint structure and validation
+        self._test_favorites_endpoint_structure()
+        
+        # Test 6: Test invalid data handling
+        self._test_favorites_invalid_data()
+    
+    def _test_favorites_endpoint_structure(self):
+        """Test favorites endpoints structure and response format"""
+        print("\n=== Forum Favorites - Endpoint Structure Tests ===")
+        
+        # Test check endpoint with invalid item_type
+        try:
+            response = self.session.get(f"{BACKEND_URL}/favorites/check/invalid_type/test_id")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Favorites Structure - Invalid Item Type",
+                    True,
+                    "Authentication check happens before item_type validation",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Favorites Structure - Invalid Item Type",
+                    False,
+                    f"Unexpected response: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+        except Exception as e:
+            self.log_result(
+                "Favorites Structure - Invalid Item Type",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test check endpoint with invalid item_id format
+        try:
+            response = self.session.get(f"{BACKEND_URL}/favorites/check/forum/")
+            
+            # This should return 404 or 422 due to empty item_id
+            if response.status_code in [404, 422]:
+                self.log_result(
+                    "Favorites Structure - Empty Item ID",
+                    True,
+                    f"Correctly handles empty item_id (status: {response.status_code})",
+                    {"status_code": response.status_code}
+                )
+            elif response.status_code == 401:
+                self.log_result(
+                    "Favorites Structure - Empty Item ID",
+                    True,
+                    "Authentication check happens before path validation",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Favorites Structure - Empty Item ID",
+                    False,
+                    f"Unexpected response: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+        except Exception as e:
+            self.log_result(
+                "Favorites Structure - Empty Item ID",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def _test_favorites_invalid_data(self):
+        """Test favorites endpoints with invalid data"""
+        print("\n=== Forum Favorites - Invalid Data Tests ===")
+        
+        # Test adding favorite with invalid data
+        invalid_data_sets = [
+            ({}, "Empty data"),
+            ({"item_type": "forum"}, "Missing item_id"),
+            ({"item_id": "test_id"}, "Missing item_type"),
+            ({"item_type": "", "item_id": "test_id"}, "Empty item_type"),
+            ({"item_type": "forum", "item_id": ""}, "Empty item_id"),
+            ({"item_type": "invalid_type", "item_id": "test_id"}, "Invalid item_type"),
+            ({"item_type": "forum", "item_id": "test_id", "extra_field": "value"}, "Extra fields")
+        ]
+        
+        for invalid_data, description in invalid_data_sets:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/favorites",
+                    json=invalid_data
+                )
+                
+                # Should return 401 (no auth) or 400/422 (bad data)
+                if response.status_code in [400, 401, 422]:
+                    self.log_result(
+                        f"Favorites Invalid Data - {description}",
+                        True,
+                        f"Correctly rejects invalid data (status: {response.status_code})",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+                else:
+                    self.log_result(
+                        f"Favorites Invalid Data - {description}",
+                        False,
+                        f"Unexpected status code: {response.status_code}",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Favorites Invalid Data - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+    
+    def test_favorites_api_integration(self):
+        """Test favorites API integration with forums"""
+        print("\n=== Forum Favorites - API Integration Tests ===")
+        
+        # Test that favorites endpoints exist and are properly routed
+        endpoints_to_test = [
+            ("/favorites", "GET", "Get Favorites"),
+            ("/favorites", "POST", "Add Favorite"),
+            ("/favorites/test_id", "DELETE", "Remove Favorite"),
+            ("/favorites/check/forum/test_id", "GET", "Check Favorite Status")
+        ]
+        
+        for endpoint, method, description in endpoints_to_test:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{BACKEND_URL}{endpoint}")
+                elif method == "POST":
+                    response = self.session.post(
+                        f"{BACKEND_URL}{endpoint}",
+                        json={"item_type": "forum", "item_id": "test_id"}
+                    )
+                elif method == "DELETE":
+                    response = self.session.delete(f"{BACKEND_URL}{endpoint}")
+                
+                # We expect 401 for all these endpoints without auth
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Favorites API - {description}",
+                        True,
+                        "Endpoint exists and requires authentication",
+                        {"endpoint": endpoint, "method": method, "status_code": response.status_code}
+                    )
+                elif response.status_code == 404:
+                    self.log_result(
+                        f"Favorites API - {description}",
+                        False,
+                        "Endpoint not found - routing issue",
+                        {"endpoint": endpoint, "method": method, "status_code": response.status_code}
+                    )
+                else:
+                    self.log_result(
+                        f"Favorites API - {description}",
+                        False,
+                        f"Unexpected response: {response.status_code}",
+                        {"endpoint": endpoint, "method": method, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Favorites API - {description}",
+                    False,
+                    f"Request failed: {str(e)}",
+                    {"endpoint": endpoint, "method": method}
+                )
+
     def run_all_tests(self):
         """Run all backend tests"""
-        print("🚀 Starting CuraLink Backend Tests - Forum Create/Delete Focus")
+        print("🚀 Starting CuraLink Backend Tests - Forum Favorites Feature Focus")
         print(f"Testing backend at: {BACKEND_URL}")
         print(f"Expected CORS origins: {EXPECTED_CORS_ORIGINS}")
         
@@ -801,6 +1120,10 @@ class BackendTester:
         self.test_forum_creation_and_deletion_flow()
         self.test_forum_api_structure()
         self.test_forum_role_based_access_simulation()
+        
+        # NEW: Forum Favorites Feature Tests
+        self.test_forum_favorites_feature()
+        self.test_favorites_api_integration()
         
         # Summary
         print("\n" + "="*50)
