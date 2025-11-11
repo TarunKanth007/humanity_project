@@ -960,6 +960,19 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const loadForumMemberships = async (forumsList) => {
+    try {
+      const memberships = {};
+      for (const forum of forumsList) {
+        const res = await api.get(`/forums/${forum.id}/membership`);
+        memberships[forum.id] = res.data;
+      }
+      setForumMemberships(memberships);
+    } catch (error) {
+      console.error('Failed to load memberships:', error);
+    }
+  };
+
   const requestAppointment = async (e) => {
     e.preventDefault();
     try {
