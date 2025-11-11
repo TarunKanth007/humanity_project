@@ -922,8 +922,9 @@ const PatientDashboard = ({ user, logout }) => {
       } else if (activeTab === 'forums') {
         const res = await api.get('/forums');
         setForums(res.data);
-        // Load membership status for each forum
+        // Load membership status and favorites for each forum
         await loadForumMemberships(res.data);
+        await loadForumFavorites(res.data);
       } else if (activeTab === 'favorites') {
         const res = await api.get('/favorites');
         setFavorites(res.data);
