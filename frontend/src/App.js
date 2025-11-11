@@ -309,8 +309,8 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="feature-grid">
-          <div className="feature-card">
+        <div className="feature-grid scroll-animate scroll-fade-up">
+          <div className="feature-card scroll-animate scroll-scale">
             <div className="feature-icon">
               <Search />
             </div>
@@ -318,7 +318,7 @@ const LandingPage = () => {
             <p>Access thousands of clinical trials tailored to your condition</p>
           </div>
           
-          <div className="feature-card">
+          <div className="feature-card scroll-animate scroll-scale">
             <div className="feature-icon">
               <Users />
             </div>
@@ -326,7 +326,7 @@ const LandingPage = () => {
             <p>Reach health experts and researchers in your area of interest</p>
           </div>
           
-          <div className="feature-card">
+          <div className="feature-card scroll-animate scroll-scale">
             <div className="feature-icon">
               <BookOpen />
             </div>
@@ -336,7 +336,7 @@ const LandingPage = () => {
         </div>
 
         {/* Testimonials Section */}
-        <div className="testimonials-section">
+        <div className="testimonials-section scroll-animate scroll-fade-up">
           <h2 className="section-title">What Our Community Says</h2>
           <p className="section-subtitle">
             Trusted by patients and researchers worldwide
