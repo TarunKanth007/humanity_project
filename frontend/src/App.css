@@ -1119,6 +1119,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 24px;
 }
 
+/* Make all grid items animate on scroll */
+.items-grid > .item-card {
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 .item-card {
   border: 2px solid rgba(91, 70, 54, 0.15);
   transition: all 0.2s ease;
