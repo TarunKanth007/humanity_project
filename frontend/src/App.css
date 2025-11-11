@@ -451,6 +451,9 @@ h1, h2, h3, h4, h5, h6 {
 .stats-grid {
   display: flex;
   gap: 40px;
+  animation: slideInRight 0.8s ease forwards;
+  animation-delay: 1.1s;
+  opacity: 0;
 }
 
 .stat-card {
