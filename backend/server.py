@@ -238,7 +238,7 @@ class Favorite(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
-    item_type: str  # 'trial', 'publication', 'expert', 'collaborator'
+    item_type: str  # 'trial', 'publication', 'expert', 'collaborator', 'forum'
     item_id: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
