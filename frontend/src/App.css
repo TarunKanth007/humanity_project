@@ -10,6 +10,14 @@
   --cream: #FFF8F0;
   --taupe: #5B4636;
   --olive: #556B2F;
+  --olive-light: #6B8E3D;
+  --olive-dark: #4A5C28;
+  --accent-gradient: linear-gradient(135deg, #556B2F 0%, #6B8E3D 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #4A5C28 0%, #556B2F 100%);
+  --glow-olive: 0 4px 20px rgba(85, 107, 47, 0.25);
+  --glow-olive-strong: 0 8px 30px rgba(85, 107, 47, 0.4);
+  --card-shadow: 0 2px 8px rgba(91, 70, 54, 0.08);
+  --card-shadow-hover: 0 8px 24px rgba(91, 70, 54, 0.12);
 }
 
 .App {
