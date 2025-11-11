@@ -2260,13 +2260,37 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
-  // handleAddSpecialty removed from PatientDashboard
+  const handleAddSpecialty = () => {
+    if (specialtyInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        specialties: [...(editedProfile.specialties || []), specialtyInput.trim()]
+      });
+      setSpecialtyInput('');
+    }
+  };
 
-  // handleRemoveSpecialty removed from PatientDashboard
+  const handleRemoveSpecialty = (index) => {
+    const updated = [...(editedProfile.specialties || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, specialties: updated });
+  };
 
-  // handleAddInterest removed from PatientDashboard
+  const handleAddInterest = () => {
+    if (interestInput.trim()) {
+      setEditedProfile({
+        ...editedProfile,
+        research_interests: [...(editedProfile.research_interests || []), interestInput.trim()]
+      });
+      setInterestInput('');
+    }
+  };
 
-  // handleRemoveInterest removed from PatientDashboard
+  const handleRemoveInterest = (index) => {
+    const updated = [...(editedProfile.research_interests || [])];
+    updated.splice(index, 1);
+    setEditedProfile({ ...editedProfile, research_interests: updated });
+  };
 
   const handleToggleFavorite = async (forumId) => {
     try {
