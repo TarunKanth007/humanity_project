@@ -237,32 +237,289 @@ class BackendTester:
                 f"Request failed: {str(e)}"
             )
     
-    def create_test_user_and_get_token(self, role: str = "researcher") -> Optional[str]:
-        """Create a test user and return session token"""
+    def test_forum_creation_and_deletion_flow(self):
+        """Test complete forum creation and deletion flow without authentication"""
+        print("\n=== Forum Creation & Deletion Flow Tests ===")
+        
+        # Test 1: Verify we can get current forums list
         try:
-            # Create a mock session (this would normally come from Emergent Auth)
-            # For testing, we'll create a user directly and simulate the session
-            test_email = f"test_{role}@curalink.test"
-            test_name = f"Test {role.title()}"
-            
-            # First, try to create a user session using the auth endpoint
-            # Note: This is a simplified approach for testing
-            session_data = {
-                "session_id": f"test_session_{role}_123456"
-            }
-            
+            response = self.session.get(f"{BACKEND_URL}/forums")
+            if response.status_code == 200:
+                initial_forums = response.json()
+                initial_count = len(initial_forums)
+                self.log_result(
+                    "Forum Flow - Initial Forums List",
+                    True,
+                    f"Successfully retrieved {initial_count} existing forums",
+                    {"initial_forum_count": initial_count}
+                )
+            else:
+                self.log_result(
+                    "Forum Flow - Initial Forums List",
+                    False,
+                    f"Failed to get forums list: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+                return
+        except Exception as e:
+            self.log_result(
+                "Forum Flow - Initial Forums List",
+                False,
+                f"Request failed: {str(e)}"
+            )
+            return
+        
+        # Test 2: Attempt forum creation without auth (should fail)
+        test_forum_data = {
+            "name": f"Test Forum {uuid.uuid4().hex[:8]}",
+            "description": "A test forum for automated testing",
+            "category": "Testing"
+        }
+        
+        try:
             response = self.session.post(
-                f"{BACKEND_URL}/auth/session",
-                json=session_data
+                f"{BACKEND_URL}/forums/create",
+                json=test_forum_data
             )
             
-            # If this fails (expected), we'll need to use a different approach
-            # For now, return None to indicate we need manual token setup
-            return None
-            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Flow - Creation Without Auth",
+                    True,
+                    "Correctly blocks forum creation without authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Flow - Creation Without Auth",
+                    False,
+                    f"Unexpected response to unauthenticated creation: {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
         except Exception as e:
-            print(f"Could not create test user: {e}")
-            return None
+            self.log_result(
+                "Forum Flow - Creation Without Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 3: Attempt forum deletion without auth (should fail)
+        # Use one of the existing forums for this test
+        if initial_forums:
+            test_forum_id = initial_forums[0]["id"]
+            try:
+                response = self.session.delete(f"{BACKEND_URL}/forums/{test_forum_id}")
+                
+                if response.status_code == 401:
+                    self.log_result(
+                        "Forum Flow - Deletion Without Auth",
+                        True,
+                        "Correctly blocks forum deletion without authentication",
+                        {"status_code": response.status_code, "forum_id": test_forum_id}
+                    )
+                else:
+                    self.log_result(
+                        "Forum Flow - Deletion Without Auth",
+                        False,
+                        f"Unexpected response to unauthenticated deletion: {response.status_code}",
+                        {"status_code": response.status_code, "forum_id": test_forum_id}
+                    )
+            except Exception as e:
+                self.log_result(
+                    "Forum Flow - Deletion Without Auth",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test 4: Test deletion with invalid forum ID
+        invalid_forum_id = "invalid_forum_id_123"
+        try:
+            response = self.session.delete(f"{BACKEND_URL}/forums/{invalid_forum_id}")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Flow - Invalid ID Deletion",
+                    True,
+                    "Authentication check happens before ID validation (expected)",
+                    {"status_code": response.status_code, "forum_id": invalid_forum_id}
+                )
+            elif response.status_code == 404:
+                self.log_result(
+                    "Forum Flow - Invalid ID Deletion",
+                    False,
+                    "ID validation happens before auth check (security issue)",
+                    {"status_code": response.status_code, "forum_id": invalid_forum_id}
+                )
+            else:
+                self.log_result(
+                    "Forum Flow - Invalid ID Deletion",
+                    False,
+                    f"Unexpected response: {response.status_code}",
+                    {"status_code": response.status_code, "forum_id": invalid_forum_id}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Flow - Invalid ID Deletion",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_forum_api_structure(self):
+        """Test forum API response structure and data integrity"""
+        print("\n=== Forum API Structure Tests ===")
+        
+        try:
+            response = self.session.get(f"{BACKEND_URL}/forums")
+            if response.status_code != 200:
+                self.log_result(
+                    "Forum API Structure - Access",
+                    False,
+                    f"Cannot access forums endpoint: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+                return
+            
+            forums = response.json()
+            
+            # Test forum structure
+            required_fields = ["id", "name", "description", "category", "created_by", "post_count", "created_at"]
+            optional_fields = ["created_by_name", "is_creator"]
+            
+            for i, forum in enumerate(forums):
+                missing_required = [field for field in required_fields if field not in forum]
+                
+                if missing_required:
+                    self.log_result(
+                        f"Forum Structure - Forum {i+1}",
+                        False,
+                        f"Missing required fields: {missing_required}",
+                        {"forum_id": forum.get("id"), "missing_fields": missing_required}
+                    )
+                else:
+                    self.log_result(
+                        f"Forum Structure - Forum {i+1}",
+                        True,
+                        "All required fields present",
+                        {"forum_id": forum.get("id"), "name": forum.get("name")}
+                    )
+                
+                # Validate data types
+                type_checks = [
+                    ("id", str),
+                    ("name", str),
+                    ("description", str),
+                    ("category", str),
+                    ("post_count", int),
+                    ("created_at", str)
+                ]
+                
+                type_errors = []
+                for field, expected_type in type_checks:
+                    if field in forum and not isinstance(forum[field], expected_type):
+                        type_errors.append(f"{field}: expected {expected_type.__name__}, got {type(forum[field]).__name__}")
+                
+                if type_errors:
+                    self.log_result(
+                        f"Forum Data Types - Forum {i+1}",
+                        False,
+                        f"Type validation errors: {type_errors}",
+                        {"forum_id": forum.get("id"), "type_errors": type_errors}
+                    )
+                else:
+                    self.log_result(
+                        f"Forum Data Types - Forum {i+1}",
+                        True,
+                        "All field types correct",
+                        {"forum_id": forum.get("id")}
+                    )
+        
+        except json.JSONDecodeError:
+            self.log_result(
+                "Forum API Structure - JSON",
+                False,
+                "Response is not valid JSON",
+                {"response": response.text[:200]}
+            )
+        except Exception as e:
+            self.log_result(
+                "Forum API Structure - Access",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_forum_role_based_access_simulation(self):
+        """Test role-based access patterns by examining endpoint behavior"""
+        print("\n=== Forum Role-Based Access Simulation ===")
+        
+        # Test different request patterns that would be used by different roles
+        
+        # Test 1: Patient-like request (should be blocked from creation)
+        patient_headers = {
+            "User-Agent": "CuraLink-Patient/1.0",
+            "X-Role-Hint": "patient"  # This is just for testing, not actual auth
+        }
+        
+        try:
+            response = self.session.post(
+                f"{BACKEND_URL}/forums/create",
+                json={"name": "Patient Forum", "description": "Test", "category": "General"},
+                headers=patient_headers
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Role Access - Patient Creation Attempt",
+                    True,
+                    "Patient-like request correctly blocked (auth required)",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Role Access - Patient Creation Attempt",
+                    False,
+                    f"Unexpected response: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+        except Exception as e:
+            self.log_result(
+                "Role Access - Patient Creation Attempt",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 2: Researcher-like request (should also be blocked without proper auth)
+        researcher_headers = {
+            "User-Agent": "CuraLink-Researcher/1.0",
+            "X-Role-Hint": "researcher"  # This is just for testing, not actual auth
+        }
+        
+        try:
+            response = self.session.post(
+                f"{BACKEND_URL}/forums/create",
+                json={"name": "Researcher Forum", "description": "Test", "category": "Research"},
+                headers=researcher_headers
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Role Access - Researcher Creation Attempt",
+                    True,
+                    "Researcher-like request correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Role Access - Researcher Creation Attempt",
+                    False,
+                    f"Unexpected response: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+        except Exception as e:
+            self.log_result(
+                "Role Access - Researcher Creation Attempt",
+                False,
+                f"Request failed: {str(e)}"
+            )
     
     def test_forum_creation_without_auth(self):
         """Test forum creation without authentication"""
