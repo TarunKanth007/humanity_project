@@ -1726,6 +1726,91 @@ async def reject_appointment(
     
     return {"status": "success"}
 
+@api_router.get("/profile/activity")
+async def get_user_activity(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get user activity history"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    activity = {
+        "appointments": [],
+        "forums_joined": [],
+        "forums_created": [],
+        "trials_created": [],
+        "reviews_given": [],
+        "favorites_count": 0
+    }
+    
+    # Get appointments
+    appointments = await db.appointments.find(
+        {"$or": [{"patient_id": user.id}, {"researcher_id": user.id}]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Enrich appointments with user details
+    for appt in appointments:
+        if appt.get("researcher_id"):
+            researcher = await db.researcher_profiles.find_one({"user_id": appt["researcher_id"]}, {"_id": 0})
+            if researcher:
+                appt["researcher_name"] = researcher.get("name", "Unknown")
+                appt["researcher_specialty"] = researcher.get("sector", "N/A")
+        appt["created_at"] = appt["created_at"].isoformat() if isinstance(appt.get("created_at"), datetime) else appt.get("created_at")
+    
+    activity["appointments"] = appointments
+    
+    # Get forums joined (memberships)
+    memberships = await db.forum_memberships.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Enrich with forum details
+    for membership in memberships:
+        forum = await db.forums.find_one({"id": membership["forum_id"]}, {"_id": 0})
+        if forum:
+            membership["forum_details"] = forum
+            membership["joined_at"] = membership["joined_at"].isoformat() if isinstance(membership.get("joined_at"), datetime) else membership.get("joined_at")
+    
+    activity["forums_joined"] = memberships
+    
+    # Get forums created (if researcher)
+    if "researcher" in user.roles:
+        forums_created = await db.forums.find(
+            {"created_by": user.id},
+            {"_id": 0}
+        ).to_list(100)
+        for forum in forums_created:
+            forum["created_at"] = forum["created_at"].isoformat() if isinstance(forum.get("created_at"), datetime) else forum.get("created_at")
+        activity["forums_created"] = forums_created
+        
+        # Get trials created
+        trials_created = await db.clinical_trials.find(
+            {"created_by": user.id},
+            {"_id": 0}
+        ).to_list(100)
+        for trial in trials_created:
+            trial["created_at"] = trial["created_at"].isoformat() if isinstance(trial.get("created_at"), datetime) else trial.get("created_at")
+        activity["trials_created"] = trials_created
+    
+    # Get reviews given
+    reviews = await db.reviews.find(
+        {"reviewer_id": user.id},
+        {"_id": 0}
+    ).to_list(100)
+    for review in reviews:
+        review["created_at"] = review["created_at"].isoformat() if isinstance(review.get("created_at"), datetime) else review.get("created_at")
+    activity["reviews_given"] = reviews
+    
+    # Get favorites count
+    favorites_count = await db.favorites.count_documents({"user_id": user.id})
+    activity["favorites_count"] = favorites_count
+    
+    return activity
+
 # ============ Notification Endpoints ============
 
 @api_router.get("/notifications")
