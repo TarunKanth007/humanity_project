@@ -798,6 +798,9 @@ class BackendTester:
         self.test_forum_creation_without_auth()
         self.test_forum_creation_validation()
         self.test_forum_deletion_without_auth()
+        self.test_forum_creation_and_deletion_flow()
+        self.test_forum_api_structure()
+        self.test_forum_role_based_access_simulation()
         
         # Summary
         print("\n" + "="*50)
