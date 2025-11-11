@@ -207,7 +207,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Forum Favorites Feature"
+    - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
   stuck_tasks: 
     - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
   test_all: false
