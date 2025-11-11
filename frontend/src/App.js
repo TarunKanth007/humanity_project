@@ -993,17 +993,6 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
-  const handleSaveProfile = async () => {
-    try {
-      await api.put('/researcher/profile', editedProfile);
-      toast.success('Profile updated successfully!');
-      setIsEditingProfile(false);
-      setProfileData(editedProfile);
-    } catch (error) {
-      toast.error('Failed to update profile');
-    }
-  };
-
   const handleAddSpecialty = () => {
     if (specialtyInput.trim()) {
       setEditedProfile({
