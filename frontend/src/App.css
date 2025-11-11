@@ -1290,6 +1290,170 @@ strong {
   font-size: 13px;
 }
 
+/* Forum Discussion Styles */
+.forum-discussion {
+  padding: 24px;
+}
+
+.forum-header {
+  margin-bottom: 32px;
+}
+
+.forum-title-section {
+  margin-top: 16px;
+}
+
+.forum-discussion-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--taupe);
+  margin-bottom: 8px;
+}
+
+.forum-discussion-description {
+  color: var(--taupe);
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.ask-question-card {
+  margin-bottom: 32px;
+  box-shadow: var(--card-shadow);
+}
+
+.image-input-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.image-url-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid rgba(91, 70, 54, 0.15);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.image-url-input:focus {
+  outline: none;
+  border-color: var(--olive);
+}
+
+.post-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.join-prompt-card {
+  margin-bottom: 32px;
+  background: rgba(85, 107, 47, 0.05);
+  border: 2px solid var(--olive);
+}
+
+.discussion-threads {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.discussion-thread {
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+}
+
+.discussion-thread:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.post-author strong {
+  color: var(--taupe);
+  font-weight: 600;
+}
+
+.post-time {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--taupe);
+  opacity: 0.6;
+}
+
+.post-content {
+  color: var(--taupe);
+  line-height: 1.7;
+  font-size: 15px;
+  margin-top: 16px;
+  white-space: pre-wrap;
+}
+
+.post-image {
+  margin-top: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 500px;
+}
+
+.post-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.replies-section {
+  margin-top: 24px;
+  padding-left: 24px;
+  border-left: 3px solid var(--olive);
+}
+
+.reply-item {
+  padding: 16px;
+  background: rgba(85, 107, 47, 0.03);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.reply-header strong {
+  color: var(--taupe);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.reply-time {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--taupe);
+  opacity: 0.6;
+}
+
+.reply-content {
+  color: var(--taupe);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-left: 28px;
+  white-space: pre-wrap;
+}
+
+.reply-form {
+  margin-top: 16px;
+}
+
 /* Tabs with Magnetic & Parallax Effects */
 .dashboard-tabs {
   margin-top: 32px;
