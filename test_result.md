@@ -204,11 +204,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
+    - "Forum Favorites Feature"
   stuck_tasks: 
     - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
