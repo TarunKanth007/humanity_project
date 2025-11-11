@@ -290,6 +290,7 @@ class ForumPostCreateRequest(BaseModel):
     forum_id: str
     content: str
     parent_id: Optional[str] = None
+    image_url: Optional[str] = None
 
 class FavoriteCreateRequest(BaseModel):
     item_type: str
