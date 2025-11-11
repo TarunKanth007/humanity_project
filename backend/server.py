@@ -992,39 +992,15 @@ async def join_forum_group(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Join a forum group (researchers only, must match specialty)"""
+    """Join a forum group - Patients can join any forum, researchers need matching specialty"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    if "researcher" not in user.roles:
-        raise HTTPException(status_code=403, detail="Only researchers can join forum groups")
     
     # Get forum details
     forum = await db.forums.find_one({"id": forum_id}, {"_id": 0})
     if not forum:
         raise HTTPException(status_code=404, detail="Forum not found")
-    
-    # Get researcher profile
-    researcher = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
-    if not researcher:
-        raise HTTPException(status_code=404, detail="Researcher profile not found")
-    
-    # Check if researcher's specialty matches forum category
-    forum_category = forum.get("category", "").lower()
-    researcher_specialties = [s.lower() for s in researcher.get("specialties", [])]
-    
-    # Simple matching logic - can be made more sophisticated
-    has_matching_specialty = any(
-        specialty in forum_category or forum_category in specialty
-        for specialty in researcher_specialties
-    )
-    
-    if not has_matching_specialty:
-        raise HTTPException(
-            status_code=403, 
-            detail=f"Your specialties do not match this forum's category ({forum['category']})"
-        )
     
     # Check if already a member
     existing = await db.forum_memberships.find_one({
@@ -1035,20 +1011,60 @@ async def join_forum_group(
     if existing:
         return {"status": "already_member", "message": "Already a member of this group"}
     
-    # Create membership
-    membership = ForumMembership(
-        forum_id=forum_id,
-        forum_name=forum["name"],
-        user_id=user.id,
-        user_name=user.name,
-        specialty=", ".join(researcher["specialties"][:2])  # First 2 specialties
-    )
+    # For patients - allow joining any forum
+    if "patient" in user.roles:
+        membership = ForumMembership(
+            forum_id=forum_id,
+            forum_name=forum["name"],
+            user_id=user.id,
+            user_name=user.name,
+            specialty="Patient"  # Patients don't have specialties
+        )
+        
+        membership_dict = membership.model_dump()
+        membership_dict['joined_at'] = membership_dict['joined_at'].isoformat()
+        await db.forum_memberships.insert_one(membership_dict)
+        
+        return {"status": "success", "message": "Successfully joined the group"}
     
-    membership_dict = membership.model_dump()
-    membership_dict['joined_at'] = membership_dict['joined_at'].isoformat()
-    await db.forum_memberships.insert_one(membership_dict)
+    # For researchers - check specialty matching
+    if "researcher" in user.roles:
+        researcher = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+        if not researcher:
+            raise HTTPException(status_code=404, detail="Researcher profile not found")
+        
+        # Check if researcher's specialty matches forum category
+        forum_category = forum.get("category", "").lower()
+        researcher_specialties = [s.lower() for s in researcher.get("specialties", [])]
+        
+        # Simple matching logic - can be made more sophisticated
+        has_matching_specialty = any(
+            specialty in forum_category or forum_category in specialty
+            for specialty in researcher_specialties
+        )
+        
+        if not has_matching_specialty:
+            raise HTTPException(
+                status_code=403, 
+                detail=f"Your specialties do not match this forum's category ({forum['category']}). You can view but not post in this group."
+            )
+        
+        # Create membership
+        membership = ForumMembership(
+            forum_id=forum_id,
+            forum_name=forum["name"],
+            user_id=user.id,
+            user_name=user.name,
+            specialty=", ".join(researcher["specialties"][:2])  # First 2 specialties
+        )
+        
+        membership_dict = membership.model_dump()
+        membership_dict['joined_at'] = membership_dict['joined_at'].isoformat()
+        await db.forum_memberships.insert_one(membership_dict)
+        
+        return {"status": "success", "message": "Successfully joined the group"}
     
-    return {"status": "success", "message": "Successfully joined the group"}
+    raise HTTPException(status_code=403, detail="Invalid user role")
 
 @api_router.delete("/forums/{forum_id}/leave")
 async def leave_forum_group(
