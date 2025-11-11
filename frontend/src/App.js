@@ -1211,20 +1211,70 @@ const PatientDashboard = ({ user, logout }) => {
                 <div className="loading-state">Loading forums...</div>
               ) : (
                 <div className="items-grid">
-                  {forums.map((forum) => (
-                    <Card key={forum.id} className="item-card clickable">
-                      <CardHeader>
-                        <CardTitle className="item-title">{forum.name}</CardTitle>
-                        <CardDescription>{forum.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="item-meta">
-                          <Badge>{forum.category}</Badge>
-                          <span>{forum.post_count} posts</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {forums.map((forum) => {
+                    const membership = forumMemberships[forum.id];
+                    const isMember = membership?.is_member;
+                    
+                    return (
+                      <Card key={forum.id} className="item-card">
+                        <CardHeader>
+                          <CardTitle className="item-title">{forum.name}</CardTitle>
+                          <CardDescription>{forum.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="item-meta">
+                            <Badge variant={isMember ? "default" : "outline"}>{forum.category}</Badge>
+                            <span>{forum.post_count} posts</span>
+                          </div>
+                          
+                          {isMember && (
+                            <div className="forum-member-badge">
+                              <Users className="icon-sm" style={{color: 'var(--olive)'}} />
+                              <span style={{color: 'var(--olive)', fontWeight: 600}}>Group Member</span>
+                            </div>
+                          )}
+                          
+                          <div style={{marginTop: '16px', display: 'flex', gap: '8px'}}>
+                            {isMember ? (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleLeaveGroup(forum.id)}
+                                style={{width: '100%'}}
+                              >
+                                Leave Group
+                              </Button>
+                            ) : (
+                              <Button 
+                                size="sm"
+                                onClick={() => handleJoinGroup(forum.id)}
+                                style={{
+                                  width: '100%',
+                                  background: 'var(--accent-gradient)',
+                                  color: 'var(--cream)'
+                                }}
+                              >
+                                <Users className="icon-sm" />
+                                Join Group
+                              </Button>
+                            )}
+                          </div>
+                          
+                          {!isMember && (
+                            <p style={{
+                              fontSize: '12px', 
+                              color: 'var(--taupe)', 
+                              opacity: 0.7,
+                              marginTop: '8px',
+                              fontStyle: 'italic'
+                            }}>
+                              Only researchers with matching specialties can join and post
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>
@@ -1803,20 +1853,70 @@ const ResearcherDashboard = ({ user, logout }) => {
                 <div className="loading-state">Loading forums...</div>
               ) : (
                 <div className="items-grid">
-                  {forums.map((forum) => (
-                    <Card key={forum.id} className="item-card clickable">
-                      <CardHeader>
-                        <CardTitle className="item-title">{forum.name}</CardTitle>
-                        <CardDescription>{forum.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="item-meta">
-                          <Badge>{forum.category}</Badge>
-                          <span>{forum.post_count} posts</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {forums.map((forum) => {
+                    const membership = forumMemberships[forum.id];
+                    const isMember = membership?.is_member;
+                    
+                    return (
+                      <Card key={forum.id} className="item-card">
+                        <CardHeader>
+                          <CardTitle className="item-title">{forum.name}</CardTitle>
+                          <CardDescription>{forum.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="item-meta">
+                            <Badge variant={isMember ? "default" : "outline"}>{forum.category}</Badge>
+                            <span>{forum.post_count} posts</span>
+                          </div>
+                          
+                          {isMember && (
+                            <div className="forum-member-badge">
+                              <Users className="icon-sm" style={{color: 'var(--olive)'}} />
+                              <span style={{color: 'var(--olive)', fontWeight: 600}}>Group Member</span>
+                            </div>
+                          )}
+                          
+                          <div style={{marginTop: '16px', display: 'flex', gap: '8px'}}>
+                            {isMember ? (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleLeaveGroup(forum.id)}
+                                style={{width: '100%'}}
+                              >
+                                Leave Group
+                              </Button>
+                            ) : (
+                              <Button 
+                                size="sm"
+                                onClick={() => handleJoinGroup(forum.id)}
+                                style={{
+                                  width: '100%',
+                                  background: 'var(--accent-gradient)',
+                                  color: 'var(--cream)'
+                                }}
+                              >
+                                <Users className="icon-sm" />
+                                Join Group
+                              </Button>
+                            )}
+                          </div>
+                          
+                          {!isMember && (
+                            <p style={{
+                              fontSize: '12px', 
+                              color: 'var(--taupe)', 
+                              opacity: 0.7,
+                              marginTop: '8px',
+                              fontStyle: 'italic'
+                            }}>
+                              Only researchers with matching specialties can join and post
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>
