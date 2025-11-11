@@ -118,7 +118,7 @@ backend:
         comment: "Updated backend/.env to include explicit CORS origins: localhost:3000, medmatch-7.preview.emergentagent.com, safecure.preview.emergentagent.com. CORS middleware in server.py already configured to read from CORS_ORIGINS env variable and split by comma."
       - working: true
         agent: "testing"
-        comment: "✅ CORS CONFIGURATION VERIFIED: All tests passed (13/13). CORS correctly returns specific origins (not wildcard '*') for all allowed origins: http://localhost:3000, https://medmatch-7.preview.emergentagent.com, https://safecure.preview.emergentagent.com. Properly rejects disallowed origins. Preflight requests work correctly with credentials support. Authentication endpoints respond appropriately. Backend is deployment-ready with secure CORS configuration."
+        comment: "✅ CORS CONFIGURATION VERIFIED: All tests passed (13/13). CORS correctly returns specific origins (not wildcard '*') for all allowed origins: http://localhost:3000, https://curalink-connect.preview.emergentagent.com, https://curalink-connect.preview.emergentagent.com. Properly rejects disallowed origins. Preflight requests work correctly with credentials support. Authentication endpoints respond appropriately. Backend is deployment-ready with secure CORS configuration."
 
 frontend:
   - task: "Jitsi Meet URL - Environment Variable"
