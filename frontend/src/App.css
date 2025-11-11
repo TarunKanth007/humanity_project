@@ -557,9 +557,6 @@ h1, h2, h3, h4, h5, h6 {
 .trusted-content {
   flex: 1;
   text-align: left;
-  animation: slideInLeft 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  animation-delay: 1.7s;
-  opacity: 0;
 }
 
 .trusted-title {
