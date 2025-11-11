@@ -948,33 +948,7 @@ async def delete_forum(
     
     return {"status": "success", "message": "Forum deleted successfully"}
 
-@api_router.post("/forums")
-async def create_forum(
-    forum_data: ForumCreateRequest,
-    session_token: Optional[str] = Cookie(None),
-    authorization: Optional[str] = Header(None)
-):
-    """Create forum (researchers only)"""
-    user = await get_current_user(session_token, authorization)
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    if "researcher" not in user.roles:
-        raise HTTPException(status_code=403, detail="Only researchers can create forums")
-    
-    forum = Forum(
-        name=forum_data.name,
-        description=forum_data.description,
-        category=forum_data.category,
-        created_by=user.id,
-        created_by_name=user.name
-    )
-    
-    forum_dict = forum.model_dump()
-    forum_dict['created_at'] = forum_dict['created_at'].isoformat()
-    await db.forums.insert_one(forum_dict)
-    
-    return {"status": "success", "forum": forum.model_dump()}
+# Old forum creation endpoint removed - replaced with /forums/create
 
 @api_router.get("/forums/{forum_id}/posts")
 async def get_forum_posts(
