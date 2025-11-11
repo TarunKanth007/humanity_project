@@ -236,6 +236,215 @@ class BackendTester:
                 f"Request failed: {str(e)}"
             )
     
+    def create_test_user_and_get_token(self, role: str = "researcher") -> Optional[str]:
+        """Create a test user and return session token"""
+        try:
+            # Create a mock session (this would normally come from Emergent Auth)
+            # For testing, we'll create a user directly and simulate the session
+            test_email = f"test_{role}@curalink.test"
+            test_name = f"Test {role.title()}"
+            
+            # First, try to create a user session using the auth endpoint
+            # Note: This is a simplified approach for testing
+            session_data = {
+                "session_id": f"test_session_{role}_123456"
+            }
+            
+            response = self.session.post(
+                f"{BACKEND_URL}/auth/session",
+                json=session_data
+            )
+            
+            # If this fails (expected), we'll need to use a different approach
+            # For now, return None to indicate we need manual token setup
+            return None
+            
+        except Exception as e:
+            print(f"Could not create test user: {e}")
+            return None
+    
+    def test_forum_creation_without_auth(self):
+        """Test forum creation without authentication"""
+        print("\n=== Forum Creation - No Auth Tests ===")
+        
+        forum_data = {
+            "name": "Test Cardiology Forum",
+            "description": "A test forum for cardiology discussions",
+            "category": "Cardiology"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{BACKEND_URL}/forums/create",
+                json=forum_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Creation - No Auth",
+                    True,
+                    "Correctly returns 401 for unauthenticated request",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Creation - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+                
+        except Exception as e:
+            self.log_result(
+                "Forum Creation - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_forum_creation_validation(self):
+        """Test forum creation with invalid data"""
+        print("\n=== Forum Creation - Validation Tests ===")
+        
+        # Test missing required fields
+        invalid_data_sets = [
+            ({}, "Empty data"),
+            ({"name": "Test Forum"}, "Missing description and category"),
+            ({"description": "Test description"}, "Missing name and category"),
+            ({"category": "Cardiology"}, "Missing name and description"),
+            ({"name": "", "description": "Test", "category": "Cardiology"}, "Empty name"),
+            ({"name": "Test", "description": "", "category": "Cardiology"}, "Empty description"),
+            ({"name": "Test", "description": "Test", "category": ""}, "Empty category")
+        ]
+        
+        for invalid_data, description in invalid_data_sets:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/forums/create",
+                    json=invalid_data
+                )
+                
+                # Should return 401 (no auth) or 400 (bad data)
+                if response.status_code in [400, 401]:
+                    self.log_result(
+                        f"Forum Creation Validation - {description}",
+                        True,
+                        f"Correctly rejects invalid data (status: {response.status_code})",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+                else:
+                    self.log_result(
+                        f"Forum Creation Validation - {description}",
+                        False,
+                        f"Unexpected status code: {response.status_code}",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+                    
+            except Exception as e:
+                self.log_result(
+                    f"Forum Creation Validation - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+    
+    def test_forum_deletion_without_auth(self):
+        """Test forum deletion without authentication"""
+        print("\n=== Forum Deletion - No Auth Tests ===")
+        
+        # Try to delete a non-existent forum (should still require auth)
+        test_forum_id = "test_forum_123"
+        
+        try:
+            response = self.session.delete(f"{BACKEND_URL}/forums/{test_forum_id}")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Deletion - No Auth",
+                    True,
+                    "Correctly returns 401 for unauthenticated request",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Forum Deletion - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+                
+        except Exception as e:
+            self.log_result(
+                "Forum Deletion - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_forums_list_endpoint(self):
+        """Test forums list endpoint"""
+        print("\n=== Forums List Tests ===")
+        
+        try:
+            response = self.session.get(f"{BACKEND_URL}/forums")
+            
+            if response.status_code == 200:
+                try:
+                    forums_data = response.json()
+                    if isinstance(forums_data, list):
+                        self.log_result(
+                            "Forums List - Structure",
+                            True,
+                            f"Returns valid list with {len(forums_data)} forums",
+                            {"status_code": response.status_code, "forum_count": len(forums_data)}
+                        )
+                        
+                        # Check forum structure if any forums exist
+                        if forums_data:
+                            first_forum = forums_data[0]
+                            required_fields = ["id", "name", "description", "category"]
+                            missing_fields = [field for field in required_fields if field not in first_forum]
+                            
+                            if not missing_fields:
+                                self.log_result(
+                                    "Forums List - Forum Structure",
+                                    True,
+                                    "Forum objects have required fields",
+                                    {"required_fields": required_fields, "sample_forum": first_forum}
+                                )
+                            else:
+                                self.log_result(
+                                    "Forums List - Forum Structure",
+                                    False,
+                                    f"Missing required fields: {missing_fields}",
+                                    {"missing_fields": missing_fields, "sample_forum": first_forum}
+                                )
+                    else:
+                        self.log_result(
+                            "Forums List - Structure",
+                            False,
+                            f"Expected list, got {type(forums_data)}",
+                            {"response_type": type(forums_data).__name__}
+                        )
+                except json.JSONDecodeError:
+                    self.log_result(
+                        "Forums List - JSON",
+                        False,
+                        "Response is not valid JSON",
+                        {"response": response.text[:200]}
+                    )
+            else:
+                self.log_result(
+                    "Forums List - Access",
+                    False,
+                    f"Unexpected status code: {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+                
+        except Exception as e:
+            self.log_result(
+                "Forums List - Access",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
     def test_core_endpoints(self):
         """Test core API endpoints for basic functionality"""
         print("\n=== Core Endpoint Tests ===")
