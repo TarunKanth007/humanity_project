@@ -211,6 +211,25 @@ const LandingPage = () => {
               I'm a Researcher
             </Button>
           </div>
+
+          <div className="signin-section">
+            <div className="signin-divider">
+              <span>or</span>
+            </div>
+            <p className="signin-quote">
+              "Continue your journey to better health outcomes"
+            </p>
+            <button 
+              className="signin-button"
+              onClick={() => window.location.href = AUTH_URL}
+            >
+              <User className="icon-sm" />
+              Already have an account? <strong>Sign In</strong>
+            </button>
+            <p className="signin-subtext">
+              Access your saved trials, appointments, and consultations
+            </p>
+          </div>
         </div>
 
         {/* What We Do Section */}
