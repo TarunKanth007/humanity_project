@@ -434,14 +434,14 @@ const Onboarding = ({ user, setUser }) => {
 
   return (
     <div className="onboarding-page">
-      <div className="onboarding-container scroll-animate scroll-fade-up">
+      <div className="onboarding-container">
         <h1>Welcome to CuraLink!</h1>
         <p className="onboarding-subtitle">Choose your role - this cannot be changed later</p>
 
         <div className="role-cards">
           <div 
             data-testid="patient-role-card"
-            className="role-card scroll-animate scroll-scale"
+            className="role-card"
             onClick={() => handleRoleSelect('patient')}
           >
             <Stethoscope className="role-icon" />
@@ -451,7 +451,7 @@ const Onboarding = ({ user, setUser }) => {
 
           <div 
             data-testid="researcher-role-card"
-            className="role-card scroll-animate scroll-scale"
+            className="role-card"
             onClick={() => handleRoleSelect('researcher')}
           >
             <Microscope className="role-icon" />
