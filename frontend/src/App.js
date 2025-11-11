@@ -1429,6 +1429,7 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [collaborators, setCollaborators] = useState([]);
   const [myTrials, setMyTrials] = useState([]);
   const [forums, setForums] = useState([]);
+  const [forumMemberships, setForumMemberships] = useState({});
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
