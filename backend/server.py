@@ -823,6 +823,57 @@ async def get_researcher_profile(
     
     return profile
 
+@api_router.put("/researcher/profile")
+async def update_researcher_profile(
+    profile_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Update researcher profile"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get existing profile
+    existing_profile = await db.researcher_profiles.find_one({"user_id": user.id})
+    if not existing_profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Update allowed fields
+    update_fields = {}
+    if "name" in profile_data:
+        update_fields["name"] = profile_data["name"]
+    if "age" in profile_data:
+        update_fields["age"] = profile_data["age"]
+    if "years_experience" in profile_data:
+        update_fields["years_experience"] = profile_data["years_experience"]
+    if "sector" in profile_data:
+        update_fields["sector"] = profile_data["sector"]
+    if "available_hours" in profile_data:
+        update_fields["available_hours"] = profile_data["available_hours"]
+    if "phone_number" in profile_data:
+        update_fields["phone_number"] = profile_data["phone_number"]
+    if "specialties" in profile_data:
+        update_fields["specialties"] = profile_data["specialties"]
+    if "research_interests" in profile_data:
+        update_fields["research_interests"] = profile_data["research_interests"]
+    if "bio" in profile_data:
+        update_fields["bio"] = profile_data["bio"]
+    if "orcid" in profile_data:
+        update_fields["orcid"] = profile_data["orcid"]
+    if "researchgate" in profile_data:
+        update_fields["researchgate"] = profile_data["researchgate"]
+    
+    # Update profile
+    await db.researcher_profiles.update_one(
+        {"user_id": user.id},
+        {"$set": update_fields}
+    )
+    
+    # Return updated profile
+    updated_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    return updated_profile
+
 @api_router.get("/researcher/collaborators")
 async def get_collaborators(
     specialty: Optional[str] = None,
