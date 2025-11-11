@@ -17,6 +17,7 @@ import { Heart, Search, Users, FileText, MessageSquare, Star, Plus, Send, LogOut
 import { QACommunity } from "@/components/QACommunity";
 import { Notifications } from "@/components/Notifications";
 import { ChatRoom } from "@/components/ChatRoom";
+import { ForumDiscussion } from "@/components/ForumDiscussion";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
