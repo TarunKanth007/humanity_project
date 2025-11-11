@@ -1408,16 +1408,138 @@ const PatientDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {favorites.map((fav) => (
-                    <Card key={fav.favorite_id} className="item-card">
-                      <CardHeader>
-                        <CardTitle className="item-title">
-                          {fav.item.title || fav.item.name}
-                        </CardTitle>
-                        <CardDescription>
-                          <Badge>{fav.item_type}</Badge>
-                        </CardDescription>
-                      </CardHeader>
-                    </Card>
+                    <Popover key={fav.favorite_id}>
+                      <PopoverTrigger asChild>
+                        <Card className="item-card" style={{ cursor: 'pointer' }}>
+                          <CardHeader>
+                            <CardTitle className="item-title">
+                              {fav.item.title || fav.item.name}
+                            </CardTitle>
+                            <CardDescription>
+                              <Badge>{fav.item_type}</Badge>
+                            </CardDescription>
+                          </CardHeader>
+                        </Card>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-96" align="start">
+                        <div className="space-y-3">
+                          <div>
+                            <h4 className="font-semibold text-lg mb-2">
+                              {fav.item.title || fav.item.name}
+                            </h4>
+                            <Badge variant="secondary">{fav.item_type}</Badge>
+                          </div>
+                          
+                          {fav.item_type === 'trial' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Phase:</strong> {fav.item.phase}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Status:</strong> {fav.item.status}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Location:</strong> {fav.item.location}
+                                </p>
+                              </div>
+                              <p className="text-sm">{fav.item.description || fav.item.summary}</p>
+                              {fav.item.disease_areas && fav.item.disease_areas.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {fav.item.disease_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
+                          
+                          {fav.item_type === 'expert' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Specialty:</strong> {fav.item.specialty}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Location:</strong> {fav.item.location}
+                                </p>
+                                {fav.item.available_hours && (
+                                  <p className="text-sm text-muted-foreground mb-1">
+                                    <strong>Available:</strong> {fav.item.available_hours}
+                                  </p>
+                                )}
+                                {fav.item.average_rating > 0 && (
+                                  <p className="text-sm text-muted-foreground mb-1">
+                                    <strong>Rating:</strong> ⭐ {fav.item.average_rating} ({fav.item.total_reviews} reviews)
+                                  </p>
+                                )}
+                              </div>
+                              {fav.item.bio && <p className="text-sm">{fav.item.bio}</p>}
+                              {fav.item.research_areas && fav.item.research_areas.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {fav.item.research_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
+                          
+                          {fav.item_type === 'publication' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Journal:</strong> {fav.item.journal}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Year:</strong> {fav.item.year}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Authors:</strong> {fav.item.authors?.join(', ')}
+                                </p>
+                              </div>
+                              <p className="text-sm">{fav.item.summary || fav.item.abstract?.slice(0, 300) + '...'}</p>
+                              {fav.item.disease_areas && fav.item.disease_areas.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {fav.item.disease_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                              {fav.item.url && (
+                                <a 
+                                  href={fav.item.url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline"
+                                >
+                                  View Publication →
+                                </a>
+                              )}
+                            </>
+                          )}
+                          
+                          {fav.item_type === 'forum' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Category:</strong> {fav.item.category}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Posts:</strong> {fav.item.post_count || 0}
+                                </p>
+                                {fav.item.created_by_name && (
+                                  <p className="text-sm text-muted-foreground mb-1">
+                                    <strong>Created by:</strong> {fav.item.created_by_name}
+                                  </p>
+                                )}
+                              </div>
+                              <p className="text-sm">{fav.item.description}</p>
+                            </>
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   ))}
                 </div>
               )}
@@ -2248,16 +2370,138 @@ const ResearcherDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {favorites.map((fav) => (
-                    <Card key={fav.favorite_id} className="item-card">
-                      <CardHeader>
-                        <CardTitle className="item-title">
-                          {fav.item.title || fav.item.name}
-                        </CardTitle>
-                        <CardDescription>
-                          <Badge>{fav.item_type}</Badge>
-                        </CardDescription>
-                      </CardHeader>
-                    </Card>
+                    <Popover key={fav.favorite_id}>
+                      <PopoverTrigger asChild>
+                        <Card className="item-card" style={{ cursor: 'pointer' }}>
+                          <CardHeader>
+                            <CardTitle className="item-title">
+                              {fav.item.title || fav.item.name}
+                            </CardTitle>
+                            <CardDescription>
+                              <Badge>{fav.item_type}</Badge>
+                            </CardDescription>
+                          </CardHeader>
+                        </Card>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-96" align="start">
+                        <div className="space-y-3">
+                          <div>
+                            <h4 className="font-semibold text-lg mb-2">
+                              {fav.item.title || fav.item.name}
+                            </h4>
+                            <Badge variant="secondary">{fav.item_type}</Badge>
+                          </div>
+                          
+                          {fav.item_type === 'trial' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Phase:</strong> {fav.item.phase}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Status:</strong> {fav.item.status}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Location:</strong> {fav.item.location}
+                                </p>
+                              </div>
+                              <p className="text-sm">{fav.item.description || fav.item.summary}</p>
+                              {fav.item.disease_areas && fav.item.disease_areas.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {fav.item.disease_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
+                          
+                          {fav.item_type === 'expert' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Specialty:</strong> {fav.item.specialty}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Location:</strong> {fav.item.location}
+                                </p>
+                                {fav.item.available_hours && (
+                                  <p className="text-sm text-muted-foreground mb-1">
+                                    <strong>Available:</strong> {fav.item.available_hours}
+                                  </p>
+                                )}
+                                {fav.item.average_rating > 0 && (
+                                  <p className="text-sm text-muted-foreground mb-1">
+                                    <strong>Rating:</strong> ⭐ {fav.item.average_rating} ({fav.item.total_reviews} reviews)
+                                  </p>
+                                )}
+                              </div>
+                              {fav.item.bio && <p className="text-sm">{fav.item.bio}</p>}
+                              {fav.item.research_areas && fav.item.research_areas.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {fav.item.research_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
+                          
+                          {fav.item_type === 'publication' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Journal:</strong> {fav.item.journal}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Year:</strong> {fav.item.year}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Authors:</strong> {fav.item.authors?.join(', ')}
+                                </p>
+                              </div>
+                              <p className="text-sm">{fav.item.summary || fav.item.abstract?.slice(0, 300) + '...'}</p>
+                              {fav.item.disease_areas && fav.item.disease_areas.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {fav.item.disease_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                              {fav.item.url && (
+                                <a 
+                                  href={fav.item.url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline"
+                                >
+                                  View Publication →
+                                </a>
+                              )}
+                            </>
+                          )}
+                          
+                          {fav.item_type === 'forum' && (
+                            <>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Category:</strong> {fav.item.category}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  <strong>Posts:</strong> {fav.item.post_count || 0}
+                                </p>
+                                {fav.item.created_by_name && (
+                                  <p className="text-sm text-muted-foreground mb-1">
+                                    <strong>Created by:</strong> {fav.item.created_by_name}
+                                  </p>
+                                )}
+                              </div>
+                              <p className="text-sm">{fav.item.description}</p>
+                            </>
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   ))}
                 </div>
               )}
