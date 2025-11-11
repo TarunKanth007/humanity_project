@@ -864,21 +864,89 @@ async def get_my_trials(
 
 @api_router.get("/forums")
 async def get_forums(
-    category: Optional[str] = None,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get forums"""
+    """Get all forums with creator info"""
+    # Optional auth - returns more info if authenticated
+    user = None
+    try:
+        user = await get_current_user(session_token, authorization)
+    except:
+        pass
+    
+    forums = await db.forums.find({}, {"_id": 0}).to_list(100)
+    
+    # Add is_creator flag if user is authenticated
+    if user:
+        for forum in forums:
+            forum['is_creator'] = forum.get('created_by') == user.id
+    
+    return forums
+
+@api_router.post("/forums/create")
+async def create_forum(
+    forum_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Create a new forum (researchers only)"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    query = {}
-    if category:
-        query["category"] = category
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can create forums")
     
-    forums = await db.forums.find(query, {"_id": 0}).to_list(100)
-    return forums
+    # Validate required fields
+    if not all(k in forum_data for k in ['name', 'description', 'category']):
+        raise HTTPException(status_code=400, detail="Missing required fields")
+    
+    # Create forum
+    forum = Forum(
+        name=forum_data['name'],
+        description=forum_data['description'],
+        category=forum_data['category'],
+        created_by=user.id,
+        created_by_name=user.name
+    )
+    
+    forum_dict = forum.model_dump()
+    forum_dict['created_at'] = forum_dict['created_at'].isoformat()
+    await db.forums.insert_one(forum_dict)
+    
+    return {"status": "success", "forum": forum.model_dump()}
+
+@api_router.delete("/forums/{forum_id}")
+async def delete_forum(
+    forum_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Delete a forum (only creator can delete)"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get forum
+    forum = await db.forums.find_one({"id": forum_id}, {"_id": 0})
+    if not forum:
+        raise HTTPException(status_code=404, detail="Forum not found")
+    
+    # Check if user is the creator
+    if forum.get('created_by') != user.id:
+        raise HTTPException(status_code=403, detail="Only the forum creator can delete this forum")
+    
+    # Delete forum
+    await db.forums.delete_one({"id": forum_id})
+    
+    # Delete all posts in this forum
+    await db.forum_posts.delete_many({"forum_id": forum_id})
+    
+    # Delete all memberships
+    await db.forum_memberships.delete_many({"forum_id": forum_id})
+    
+    return {"status": "success", "message": "Forum deleted successfully"}
 
 @api_router.post("/forums")
 async def create_forum(
