@@ -898,7 +898,8 @@ async def create_forum(
         name=forum_data.name,
         description=forum_data.description,
         category=forum_data.category,
-        created_by=user.id
+        created_by=user.id,
+        created_by_name=user.name
     )
     
     forum_dict = forum.model_dump()
