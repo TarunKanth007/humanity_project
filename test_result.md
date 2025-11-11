@@ -183,6 +183,18 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ PARTIAL FIX ONLY: Main agent correctly removed scroll-animate classes from Onboarding and ProfileSetup components (✅ verified), but the root CSS issue remains. Landing page still has 12 elements with scroll-animate class that have opacity:0 on load. IntersectionObserver works (adds visible class after scroll) but elements are invisible on initial load. The CSS rule '.scroll-animate { opacity: 0; }' in App.css is still causing visibility issues. Onboarding/Profile pages are protected by authentication so cannot verify the actual fix without login credentials."
+  
+  - task: "Forum Favorites Feature"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented forum favorites feature. Backend: Added 'forum' to Favorite model item_types, added forum enrichment in GET /favorites endpoint, added GET /favorites/check/{item_type}/{item_id} endpoint. Frontend: Added forumFavorites state in both Patient and Researcher dashboards, loadForumFavorites() function, handleToggleFavorite() function. Added heart icon buttons on forum cards that fill with color when favorited. Forums now load favorites status on tab view."
 
 metadata:
   created_by: "main_agent"
