@@ -572,6 +572,43 @@ async def get_patient_profile(
     
     return profile
 
+@api_router.put("/patient/profile")
+async def update_patient_profile(
+    profile_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Update patient profile"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get existing profile
+    existing_profile = await db.patient_profiles.find_one({"user_id": user.id})
+    if not existing_profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Update allowed fields
+    update_fields = {}
+    if "conditions" in profile_data:
+        update_fields["conditions"] = profile_data["conditions"]
+    if "location" in profile_data:
+        update_fields["location"] = profile_data["location"]
+    if "phone_number" in profile_data:
+        update_fields["phone_number"] = profile_data["phone_number"]
+    if "interests" in profile_data:
+        update_fields["interests"] = profile_data["interests"]
+    
+    # Update profile
+    await db.patient_profiles.update_one(
+        {"user_id": user.id},
+        {"$set": update_fields}
+    )
+    
+    # Return updated profile
+    updated_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    return updated_profile
+
 @api_router.get("/patient/clinical-trials")
 async def get_clinical_trials(
     condition: Optional[str] = None,
