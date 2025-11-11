@@ -1416,6 +1416,8 @@ async def get_favorites(
             item = await db.health_experts.find_one({"id": fav["item_id"]}, {"_id": 0})
         elif fav["item_type"] == "collaborator":
             item = await db.researcher_profiles.find_one({"user_id": fav["item_id"]}, {"_id": 0})
+        elif fav["item_type"] == "forum":
+            item = await db.forums.find_one({"id": fav["item_id"]}, {"_id": 0})
         
         if item:
             enriched.append({
