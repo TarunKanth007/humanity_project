@@ -1244,7 +1244,13 @@ const PatientDashboard = ({ user, logout }) => {
             </TabsContent>
 
             <TabsContent value="forums">
-              {loading ? (
+              {selectedForum ? (
+                <ForumDiscussion 
+                  forum={selectedForum} 
+                  user={user}
+                  onBack={() => setSelectedForum(null)}
+                />
+              ) : loading ? (
                 <div className="loading-state">Loading forums...</div>
               ) : (
                 <div className="items-grid">
@@ -1253,8 +1259,8 @@ const PatientDashboard = ({ user, logout }) => {
                     const isMember = membership?.is_member;
                     
                     return (
-                      <Card key={forum.id} className="item-card">
-                        <CardHeader>
+                      <Card key={forum.id} className="item-card" style={{ cursor: 'pointer' }}>
+                        <CardHeader onClick={() => setSelectedForum(forum)}>
                           <CardTitle className="item-title">{forum.name}</CardTitle>
                           <CardDescription>{forum.description}</CardDescription>
                         </CardHeader>
@@ -1272,27 +1278,44 @@ const PatientDashboard = ({ user, logout }) => {
                           )}
                           
                           <div style={{marginTop: '16px', display: 'flex', gap: '8px'}}>
+                            <Button 
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedForum(forum);
+                              }}
+                              style={{
+                                flex: 1,
+                                background: 'var(--accent-gradient)',
+                                color: 'var(--cream)'
+                              }}
+                            >
+                              <MessageSquare className="icon-sm" />
+                              View Discussions
+                            </Button>
+                            
                             {isMember ? (
                               <Button 
                                 variant="outline" 
                                 size="sm"
-                                onClick={() => handleLeaveGroup(forum.id)}
-                                style={{width: '100%'}}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleLeaveGroup(forum.id);
+                                }}
                               >
-                                Leave Group
+                                Leave
                               </Button>
                             ) : (
                               <Button 
                                 size="sm"
-                                onClick={() => handleJoinGroup(forum.id)}
-                                style={{
-                                  width: '100%',
-                                  background: 'var(--accent-gradient)',
-                                  color: 'var(--cream)'
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleJoinGroup(forum.id);
                                 }}
                               >
                                 <Users className="icon-sm" />
-                                Join Group
+                                Join
                               </Button>
                             )}
                           </div>
