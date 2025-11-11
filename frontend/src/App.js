@@ -290,14 +290,14 @@ const LandingPage = () => {
         </div>
 
         {/* Trusted By Section */}
-        <div className="trusted-by-section">
-          <div className="trusted-content">
+        <div className="trusted-by-section scroll-animate scroll-scale">
+          <div className="trusted-content scroll-animate scroll-slide-left">
             <h2 className="trusted-title">Trusted by clinicians & patients</h2>
             <p className="trusted-description">
               Evidence-driven matches and clear summaries to support informed decisions.
             </p>
           </div>
-          <div className="stats-grid">
+          <div className="stats-grid scroll-animate scroll-slide-right">
             <div className="stat-card">
               <div className="stat-number">1.2k+</div>
               <div className="stat-label">Trials surfaced</div>
