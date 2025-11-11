@@ -1171,9 +1171,10 @@ h1, h2, h3, h4, h5, h6 {
   animation: flowUnderline 3s ease infinite;
 }
 
-/* Tab text color on hover */
+/* Tab text glow on hover */
 .dashboard-tabs [role="tab"]:hover {
   color: var(--olive);
+  text-shadow: 0 0 20px rgba(85, 107, 47, 0.3);
 }
 
 /* Magnetic cursor trail effect */
