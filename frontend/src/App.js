@@ -1691,6 +1691,16 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleDeleteForum = async (forumId) => {
+    try {
+      await api.delete(`/forums/${forumId}`);
+      toast.success('Forum deleted successfully');
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete forum');
+    }
+  };
+
   const createTrial = async (e) => {
     e.preventDefault();
     try {
