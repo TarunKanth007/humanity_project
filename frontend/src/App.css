@@ -696,13 +696,37 @@ strong {
 .what-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, var(--olive) 0%, #6B8E3D 100%);
+  background: var(--accent-gradient);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 24px;
   color: var(--cream);
+  box-shadow: var(--glow-olive);
+  position: relative;
+  overflow: hidden;
+}
+
+.what-icon::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  transform: scale(0);
+  transition: transform 0.5s ease;
+}
+
+.what-we-do-card:hover .what-icon::before {
+  transform: scale(1);
+}
+
+.what-we-do-card:hover .what-icon {
+  transform: rotate(5deg) scale(1.1);
+  box-shadow: var(--glow-olive-strong);
 }
 
 .what-we-do-card h3 {
