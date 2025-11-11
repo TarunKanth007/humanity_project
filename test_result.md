@@ -102,36 +102,57 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Address deployment warnings for CuraLink application: 1) Fix hardcoded Jitsi Meet URL in ChatRoom component by moving to environment variables, 2) Fix CORS configuration to use explicit allowed origins instead of wildcard '*', 3) Prepare for Emergent deployment with 'safecure' as the production URL name."
+user_problem_statement: "Implement Create and Delete Forum feature for researchers in CuraLink. Researchers should be able to create new forum groups for specific health issues with name, specialty/category, and description. They should also be able to delete forums they created."
 
 backend:
-  - task: "CORS Configuration - Explicit Origins"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py, /app/backend/.env"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Updated backend/.env to include explicit CORS origins: localhost:3000, medmatch-7.preview.emergentagent.com, safecure.preview.emergentagent.com. CORS middleware in server.py already configured to read from CORS_ORIGINS env variable and split by comma."
-      - working: true
-        agent: "testing"
-        comment: "✅ CORS CONFIGURATION VERIFIED: All tests passed (13/13). CORS correctly returns specific origins (not wildcard '*') for all allowed origins: http://localhost:3000, https://curalink-connect.preview.emergentagent.com, https://curalink-connect.preview.emergentagent.com. Properly rejects disallowed origins. Preflight requests work correctly with credentials support. Authentication endpoints respond appropriately. Backend is deployment-ready with secure CORS configuration."
-
-frontend:
-  - task: "Jitsi Meet URL - Environment Variable"
+  - task: "Create Forum Endpoint"
     implemented: true
     working: "NA"
-    file: "/app/frontend/src/components/ChatRoom.js, /app/frontend/.env"
+    file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Added REACT_APP_JITSI_DOMAIN=meet.jit.si to frontend/.env. Updated ChatRoom.js handleCall() function to read from environment variable instead of hardcoded URL. Room name prefix changed to 'safecure' for production branding."
+        comment: "Backend endpoint POST /api/forums/create already exists. Accepts name, description, category. Validates researcher role. Creates forum with owner_id tracking."
+  
+  - task: "Delete Forum Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Backend endpoint DELETE /api/forums/{forum_id} already exists. Validates ownership before deletion. Cascades deletion to all posts and memberships."
+
+frontend:
+  - task: "Create Forum UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 'Create Forum' button above forums grid in ResearcherDashboard. Implemented modal dialog with form fields for name, category/specialty, and description. Connected to POST /api/forums/create endpoint. Shows success/error toasts."
+  
+  - task: "Delete Forum UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added delete button (trash icon) on forum cards for forums owned by logged-in researcher. Shows 'Owner' badge on owned forums. Includes confirmation dialog before deletion. Connected to DELETE /api/forums/{forum_id} endpoint."
 
 metadata:
   created_by: "main_agent"
