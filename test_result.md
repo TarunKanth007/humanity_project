@@ -210,6 +210,18 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Implemented hover popups for favorites page. When hovering over any favorited item (trial, expert, publication, forum), a detailed popover appears showing full information. Added Popover component from shadcn UI. Each item type shows relevant details: Trials show phase, status, location, description, disease areas. Experts show specialty, location, availability, rating, bio, research areas. Publications show journal, year, authors, abstract, disease areas, URL link. Forums show category, post count, creator, description. Applied to both Patient and Researcher dashboard favorites tabs."
+  
+  - task: "Profile Pages - Patient & Researcher"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comprehensive profile pages for both patients and researchers. Backend: Added phone_number fields to both profile models, PUT endpoints for updating profiles, GET /profile/activity endpoint for complete history. Frontend - Patient: Profile tab with view/edit mode for phone, location, conditions. Progress tracker showing 5 journey milestones (signup, profile, forums, favorites, appointments). Activity history with 3 tabs (appointments, forums joined, reviews given). Frontend - Researcher: Profile tab with edit for phone, name, age, experience, sector, hours, specialties, research interests, bio. Activity history with 3 tabs (appointments as provider, forums created, trials created). Impact stats card showing contribution summary. All profile data loads automatically when switching to profile tab."
 
 metadata:
   created_by: "main_agent"
