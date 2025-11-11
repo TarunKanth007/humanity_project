@@ -134,6 +134,7 @@ class ForumPost(BaseModel):
     user_role: str
     content: str
     parent_id: Optional[str] = None
+    image_url: Optional[str] = None  # For patient image uploads
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ForumMembership(BaseModel):
