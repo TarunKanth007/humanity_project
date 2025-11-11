@@ -819,6 +819,11 @@ const PatientDashboard = ({ user, logout }) => {
     location: '',
     duration_suffering: ''
   });
+  const [profileData, setProfileData] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editedProfile, setEditedProfile] = useState({});
+  const [userActivity, setUserActivity] = useState(null);
+  const [conditionInput, setConditionInput] = useState('');
 
   useEffect(() => {
     loadData();
