@@ -421,6 +421,9 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 60px;
   box-shadow: 0 20px 60px rgba(85, 107, 47, 0.2);
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.9s;
+  opacity: 0;
 }
 
 .trusted-content {
