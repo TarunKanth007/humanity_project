@@ -825,10 +825,12 @@ const PatientDashboard = ({ user, logout }) => {
     return () => clearInterval(interval);
   }, [activeTab]);
 
-  // Magnetic cursor effect for tabs
+  // Magnetic cursor effect and parallax scroll for tabs
   useEffect(() => {
     const tabs = document.querySelectorAll('.dashboard-tabs [role="tab"]');
+    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
     
+    // Magnetic cursor effect
     const handleMouseMove = (e) => {
       tabs.forEach(tab => {
         const rect = tab.getBoundingClientRect();
@@ -858,14 +860,25 @@ const PatientDashboard = ({ user, logout }) => {
       });
     };
     
-    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
+    // Parallax scroll effect
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (tabList) {
+        // Subtle parallax movement based on scroll
+        const parallaxOffset = scrollY * 0.05;
+        tabList.style.transform = `translateY(${parallaxOffset}px)`;
+      }
+    };
+    
     if (tabList) {
       tabList.addEventListener('mousemove', handleMouseMove);
       tabList.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('scroll', handleScroll);
       
       return () => {
         tabList.removeEventListener('mousemove', handleMouseMove);
         tabList.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('scroll', handleScroll);
       };
     }
   }, []);
@@ -1434,10 +1447,12 @@ const ResearcherDashboard = ({ user, logout }) => {
     return () => clearInterval(interval);
   }, [activeTab]);
 
-  // Magnetic cursor effect for tabs
+  // Magnetic cursor effect and parallax scroll for tabs
   useEffect(() => {
     const tabs = document.querySelectorAll('.dashboard-tabs [role="tab"]');
+    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
     
+    // Magnetic cursor effect
     const handleMouseMove = (e) => {
       tabs.forEach(tab => {
         const rect = tab.getBoundingClientRect();
@@ -1467,14 +1482,25 @@ const ResearcherDashboard = ({ user, logout }) => {
       });
     };
     
-    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
+    // Parallax scroll effect
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (tabList) {
+        // Subtle parallax movement based on scroll
+        const parallaxOffset = scrollY * 0.05;
+        tabList.style.transform = `translateY(${parallaxOffset}px)`;
+      }
+    };
+    
     if (tabList) {
       tabList.addEventListener('mousemove', handleMouseMove);
       tabList.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('scroll', handleScroll);
       
       return () => {
         tabList.removeEventListener('mousemove', handleMouseMove);
         tabList.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('scroll', handleScroll);
       };
     }
   }, []);
