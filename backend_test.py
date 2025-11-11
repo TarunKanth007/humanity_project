@@ -525,7 +525,7 @@ class BackendTester:
     
     def run_all_tests(self):
         """Run all backend tests"""
-        print("🚀 Starting CuraLink Backend Tests")
+        print("🚀 Starting CuraLink Backend Tests - Forum Create/Delete Focus")
         print(f"Testing backend at: {BACKEND_URL}")
         print(f"Expected CORS origins: {EXPECTED_CORS_ORIGINS}")
         
@@ -534,6 +534,12 @@ class BackendTester:
         self.test_cors_preflight()
         self.test_auth_endpoints()
         self.test_core_endpoints()
+        
+        # Forum-specific tests
+        self.test_forums_list_endpoint()
+        self.test_forum_creation_without_auth()
+        self.test_forum_creation_validation()
+        self.test_forum_deletion_without_auth()
         
         # Summary
         print("\n" + "="*50)
