@@ -68,6 +68,7 @@ class ResearcherProfile(BaseModel):
     years_experience: int
     sector: str
     available_hours: str  # e.g., "9 AM - 5 PM" or "Flexible"
+    phone_number: Optional[str] = None
     orcid: Optional[str] = None
     researchgate: Optional[str] = None
     available_for_meetings: bool = True
