@@ -995,11 +995,7 @@ const PatientDashboard = ({ user, logout }) => {
 
   // handleAddSpecialty removed from PatientDashboard
 
-  const handleRemoveSpecialty = (index) => {
-    const updated = [...(editedProfile.specialties || [])];
-    updated.splice(index, 1);
-    setEditedProfile({ ...editedProfile, specialties: updated });
-  };
+  // handleRemoveSpecialty removed from PatientDashboard
 
   const handleAddInterest = () => {
     if (interestInput.trim()) {
@@ -2278,11 +2274,7 @@ const ResearcherDashboard = ({ user, logout }) => {
 
   // handleAddSpecialty removed from PatientDashboard
 
-  const handleRemoveSpecialty = (index) => {
-    const updated = [...(editedProfile.specialties || [])];
-    updated.splice(index, 1);
-    setEditedProfile({ ...editedProfile, specialties: updated });
-  };
+  // handleRemoveSpecialty removed from PatientDashboard
 
   const handleAddInterest = () => {
     if (interestInput.trim()) {
