@@ -997,15 +997,7 @@ const PatientDashboard = ({ user, logout }) => {
 
   // handleRemoveSpecialty removed from PatientDashboard
 
-  const handleAddInterest = () => {
-    if (interestInput.trim()) {
-      setEditedProfile({
-        ...editedProfile,
-        research_interests: [...(editedProfile.research_interests || []), interestInput.trim()]
-      });
-      setInterestInput('');
-    }
-  };
+  // handleAddInterest removed from PatientDashboard
 
   const handleRemoveInterest = (index) => {
     const updated = [...(editedProfile.research_interests || [])];
@@ -2276,15 +2268,7 @@ const ResearcherDashboard = ({ user, logout }) => {
 
   // handleRemoveSpecialty removed from PatientDashboard
 
-  const handleAddInterest = () => {
-    if (interestInput.trim()) {
-      setEditedProfile({
-        ...editedProfile,
-        research_interests: [...(editedProfile.research_interests || []), interestInput.trim()]
-      });
-      setInterestInput('');
-    }
-  };
+  // handleAddInterest removed from PatientDashboard
 
   const handleRemoveInterest = (index) => {
     const updated = [...(editedProfile.research_interests || [])];
