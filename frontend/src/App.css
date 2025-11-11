@@ -1345,4 +1345,36 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 80px;
     padding: 40px 0;
   }
+
+  /* What We Do responsive */
+  .what-we-do-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .what-we-do-section {
+    margin-top: 60px;
+    padding: 40px 0;
+  }
+
+  /* Trusted By responsive */
+  .trusted-by-section {
+    flex-direction: column;
+    padding: 40px 24px;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .trusted-content {
+    text-align: center;
+  }
+
+  .stats-grid {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .stat-card {
+    min-width: auto;
+  }
 }
