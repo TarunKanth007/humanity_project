@@ -1227,10 +1227,12 @@ h1, h2, h3, h4, h5, h6 {
   border: 2px solid rgba(91, 70, 54, 0.15);
   transition: all 0.2s ease;
   background: white;
+  box-shadow: none !important;
 }
 
 .item-card:hover {
   border-color: var(--olive);
+  box-shadow: none !important;
 }
 
 .item-card.clickable {
