@@ -71,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .landing-hero {
   text-align: center;
-  padding: 80px 0 60px;
+  padding: 40px 0 30px;
 }
 
 .hero-badge {
@@ -80,18 +80,18 @@ h1, h2, h3, h4, h5, h6 {
   gap: 10px;
   background: var(--olive);
   color: var(--cream);
-  padding: 10px 24px;
+  padding: 8px 20px;
   border-radius: 50px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .hero-title {
-  font-size: clamp(40px, 5vw, 64px);
+  font-size: clamp(36px, 4.5vw, 52px);
   font-weight: 800;
   line-height: 1.2;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   color: var(--taupe);
 }
 
