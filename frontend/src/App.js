@@ -200,6 +200,8 @@ const LandingPage = () => {
     <div className="landing-page">
       <div className="landing-container">
         <div className="landing-hero">
+          <img src="/logo.svg" alt="CuraLink Logo" className="hero-logo" />
+          
           <div className="hero-badge">
             <Microscope className="icon-sm" />
             Connecting Healthcare Research
