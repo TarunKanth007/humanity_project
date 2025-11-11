@@ -481,6 +481,9 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 32px;
   margin-top: 80px;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 1.3s;
+  opacity: 0;
 }
 
 .feature-card {
