@@ -1709,6 +1709,37 @@ const ProtectedRoute = ({ children, user }) => {
 // Global Animation Wrapper Component
 const AnimatedRouteWrapper = ({ children }) => {
   useScrollAnimation();
+  
+  // Auto-add scroll-animate classes to common elements
+  useEffect(() => {
+    const autoAnimateSelectors = [
+      '.item-card',
+      '.role-card',
+      '.profile-form',
+      '.dashboard-header',
+      '.tab-content'
+    ];
+    
+    const addAnimationClasses = () => {
+      autoAnimateSelectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach((el, index) => {
+          if (!el.classList.contains('scroll-animate')) {
+            el.classList.add('scroll-animate', 'scroll-scale');
+            el.style.transitionDelay = `${index * 0.05}s`;
+          }
+        });
+      });
+    };
+    
+    // Run on mount and after route changes
+    addAnimationClasses();
+    const observer = new MutationObserver(addAnimationClasses);
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    return () => observer.disconnect();
+  }, []);
+  
   return <>{children}</>;
 };
 
