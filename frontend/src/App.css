@@ -1103,8 +1103,100 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.8;
 }
 
+/* Tabs with Interactive Animations */
 .dashboard-tabs {
   margin-top: 32px;
+  position: relative;
+}
+
+/* Magnetic & Parallax Tab Effects */
+.dashboard-tabs [role="tablist"] {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-tabs [role="tab"] {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  overflow: visible;
+}
+
+/* Magnetic effect - will be enhanced with JS */
+.dashboard-tabs [role="tab"]:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+/* Animated Underline Effect */
+.dashboard-tabs [role="tab"]::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--olive) 0%, #6B8E3D 100%);
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px rgba(85, 107, 47, 0.3);
+}
+
+.dashboard-tabs [role="tab"]:hover::after {
+  width: 80%;
+}
+
+.dashboard-tabs [role="tab"][data-state="active"]::after {
+  width: 100%;
+  background: linear-gradient(90deg, var(--olive) 0%, #6B8E3D 50%, var(--olive) 100%);
+  box-shadow: 0 3px 12px rgba(85, 107, 47, 0.5);
+}
+
+/* Flowing underline animation */
+@keyframes flowUnderline {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.dashboard-tabs [role="tab"][data-state="active"]::after {
+  background: linear-gradient(90deg, var(--olive), #6B8E3D, var(--olive), #6B8E3D);
+  background-size: 200% 100%;
+  animation: flowUnderline 3s ease infinite;
+}
+
+/* Tab text glow on hover */
+.dashboard-tabs [role="tab"]:hover {
+  color: var(--olive);
+  text-shadow: 0 0 20px rgba(85, 107, 47, 0.3);
+}
+
+/* Magnetic cursor trail effect */
+.dashboard-tabs [role="tab"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(85, 107, 47, 0.15) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.dashboard-tabs [role="tab"]:hover::before {
+  width: 120%;
+  height: 200%;
+  opacity: 1;
 }
 
 .tab-header {
