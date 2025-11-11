@@ -646,8 +646,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .feature-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 45px rgba(91, 70, 54, 0.2);
   border-color: var(--olive);
-  transform: translateY(-4px);
 }
 
 .feature-icon {
