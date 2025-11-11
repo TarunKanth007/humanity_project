@@ -940,6 +940,26 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleJoinGroup = async (forumId) => {
+    try {
+      await api.post(`/forums/${forumId}/join`);
+      toast.success('Successfully joined the group!');
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to join group');
+    }
+  };
+
+  const handleLeaveGroup = async (forumId) => {
+    try {
+      await api.delete(`/forums/${forumId}/leave`);
+      toast.success('Left the group');
+      loadData();
+    } catch (error) {
+      toast.error('Failed to leave group');
+    }
+  };
+
   const requestAppointment = async (e) => {
     e.preventDefault();
     try {
