@@ -1918,92 +1918,197 @@ const ResearcherDashboard = ({ user, logout }) => {
                   user={user}
                   onBack={() => setSelectedForum(null)}
                 />
-              ) : loading ? (
-                <div className="loading-state">Loading forums...</div>
               ) : (
-                <div className="items-grid">
-                  {forums.map((forum) => {
-                    const membership = forumMemberships[forum.id];
-                    const isMember = membership?.is_member;
-                    
-                    return (
-                      <Card key={forum.id} className="item-card" style={{ cursor: 'pointer' }}>
-                        <CardHeader onClick={() => setSelectedForum(forum)}>
-                          <CardTitle className="item-title">{forum.name}</CardTitle>
-                          <CardDescription>{forum.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="item-meta">
-                            <Badge variant={isMember ? "default" : "outline"}>{forum.category}</Badge>
-                            <span>{forum.post_count} posts</span>
-                          </div>
-                          
-                          {isMember && (
-                            <div className="forum-member-badge">
-                              <Users className="icon-sm" style={{color: 'var(--olive)'}} />
-                              <span style={{color: 'var(--olive)', fontWeight: 600}}>Group Member</span>
-                            </div>
-                          )}
-                          
-                          <div style={{marginTop: '16px', display: 'flex', gap: '8px'}}>
-                            <Button 
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedForum(forum);
-                              }}
-                              style={{
-                                flex: 1,
-                                background: 'var(--accent-gradient)',
-                                color: 'var(--cream)'
-                              }}
-                            >
-                              <MessageSquare className="icon-sm" />
-                              View Discussions
-                            </Button>
-                            
-                            {isMember ? (
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleLeaveGroup(forum.id);
-                                }}
-                              >
-                                Leave
-                              </Button>
-                            ) : (
-                              <Button 
-                                size="sm"
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleJoinGroup(forum.id);
-                                }}
-                              >
-                                <Users className="icon-sm" />
-                                Join
-                              </Button>
-                            )}
-                          </div>
-                          
-                          {!isMember && (
-                            <p style={{
-                              fontSize: '12px', 
-                              color: 'var(--taupe)', 
-                              opacity: 0.7,
-                              marginTop: '8px',
-                              fontStyle: 'italic'
-                            }}>
-                              Only researchers with matching specialties can join and post
-                            </p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
+                <>
+                  <div style={{marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <h2 style={{fontSize: '20px', fontWeight: 600, color: 'var(--olive)'}}>Forum Groups</h2>
+                    <Dialog open={showCreateForum} onOpenChange={setShowCreateForum}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          data-testid="create-forum-btn"
+                          style={{
+                            background: 'var(--accent-gradient)',
+                            color: 'var(--cream)'
+                          }}
+                        >
+                          <Plus className="icon-sm" />
+                          Create Forum
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Create New Forum Group</DialogTitle>
+                          <DialogDescription>
+                            Create a forum group for a specific health issue or specialty
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={async (e) => {
+                          e.preventDefault();
+                          try {
+                            await api.post('/forums/create', {
+                              name: newForum.name,
+                              description: newForum.description,
+                              category: newForum.category
+                            });
+                            toast.success('Forum created successfully!');
+                            setShowCreateForum(false);
+                            setNewForum({ name: '', description: '', category: '' });
+                            loadData();
+                          } catch (error) {
+                            toast.error(error.response?.data?.detail || 'Failed to create forum');
+                          }
+                        }}>
+                          <Input
+                            data-testid="forum-name-input"
+                            placeholder="Forum Name (e.g., Diabetes Type 2 Support)"
+                            value={newForum.name}
+                            onChange={(e) => setNewForum({ ...newForum, name: e.target.value })}
+                            required
+                            style={{marginBottom: '12px'}}
+                          />
+                          <Input
+                            data-testid="forum-category-input"
+                            placeholder="Specialty/Category (e.g., Endocrinology)"
+                            value={newForum.category}
+                            onChange={(e) => setNewForum({ ...newForum, category: e.target.value })}
+                            required
+                            style={{marginBottom: '12px'}}
+                          />
+                          <textarea
+                            data-testid="forum-description-input"
+                            placeholder="Description of the forum group"
+                            value={newForum.description}
+                            onChange={(e) => setNewForum({ ...newForum, description: e.target.value })}
+                            required
+                            style={{
+                              width: '100%',
+                              minHeight: '100px',
+                              padding: '8px',
+                              borderRadius: '6px',
+                              border: '1px solid var(--border)',
+                              fontFamily: 'inherit',
+                              fontSize: '14px',
+                              marginBottom: '12px'
+                            }}
+                          />
+                          <Button data-testid="submit-forum-btn" type="submit">Create Forum</Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                  
+                  {loading ? (
+                    <div className="loading-state">Loading forums...</div>
+                  ) : (
+                    <div className="items-grid">
+                      {forums.map((forum) => {
+                        const membership = forumMemberships[forum.id];
+                        const isMember = membership?.is_member;
+                        const isOwner = forum.created_by === user.id;
+                        
+                        return (
+                          <Card key={forum.id} className="item-card" style={{ cursor: 'pointer' }}>
+                            <CardHeader onClick={() => setSelectedForum(forum)}>
+                              <CardTitle className="item-title">
+                                {forum.name}
+                                {isOwner && (
+                                  <Badge variant="secondary" style={{marginLeft: '8px', fontSize: '10px'}}>
+                                    Owner
+                                  </Badge>
+                                )}
+                              </CardTitle>
+                              <CardDescription>{forum.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="item-meta">
+                                <Badge variant={isMember ? "default" : "outline"}>{forum.category}</Badge>
+                                <span>{forum.post_count} posts</span>
+                              </div>
+                              
+                              {isMember && (
+                                <div className="forum-member-badge">
+                                  <Users className="icon-sm" style={{color: 'var(--olive)'}} />
+                                  <span style={{color: 'var(--olive)', fontWeight: 600}}>Group Member</span>
+                                </div>
+                              )}
+                              
+                              <div style={{marginTop: '16px', display: 'flex', gap: '8px'}}>
+                                <Button 
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedForum(forum);
+                                  }}
+                                  style={{
+                                    flex: 1,
+                                    background: 'var(--accent-gradient)',
+                                    color: 'var(--cream)'
+                                  }}
+                                >
+                                  <MessageSquare className="icon-sm" />
+                                  View Discussions
+                                </Button>
+                                
+                                {isMember ? (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleLeaveGroup(forum.id);
+                                    }}
+                                  >
+                                    Leave
+                                  </Button>
+                                ) : (
+                                  <Button 
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleJoinGroup(forum.id);
+                                    }}
+                                  >
+                                    <Users className="icon-sm" />
+                                    Join
+                                  </Button>
+                                )}
+                                
+                                {isOwner && (
+                                  <Button 
+                                    variant="destructive" 
+                                    size="sm"
+                                    data-testid={`delete-forum-btn-${forum.id}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (window.confirm(`Are you sure you want to delete "${forum.name}"? This will remove all posts and memberships.`)) {
+                                        handleDeleteForum(forum.id);
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 className="icon-sm" />
+                                  </Button>
+                                )}
+                              </div>
+                              
+                              {!isMember && (
+                                <p style={{
+                                  fontSize: '12px', 
+                                  color: 'var(--taupe)', 
+                                  opacity: 0.7,
+                                  marginTop: '8px',
+                                  fontStyle: 'italic'
+                                }}>
+                                  Only researchers with matching specialties can join and post
+                                </p>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
               )}
             </TabsContent>
 
