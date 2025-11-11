@@ -999,11 +999,7 @@ const PatientDashboard = ({ user, logout }) => {
 
   // handleAddInterest removed from PatientDashboard
 
-  const handleRemoveInterest = (index) => {
-    const updated = [...(editedProfile.research_interests || [])];
-    updated.splice(index, 1);
-    setEditedProfile({ ...editedProfile, research_interests: updated });
-  };
+  // handleRemoveInterest removed from PatientDashboard
 
   const handleToggleFavorite = async (forumId) => {
     try {
@@ -2270,11 +2266,7 @@ const ResearcherDashboard = ({ user, logout }) => {
 
   // handleAddInterest removed from PatientDashboard
 
-  const handleRemoveInterest = (index) => {
-    const updated = [...(editedProfile.research_interests || [])];
-    updated.splice(index, 1);
-    setEditedProfile({ ...editedProfile, research_interests: updated });
-  };
+  // handleRemoveInterest removed from PatientDashboard
 
   const handleToggleFavorite = async (forumId) => {
     try {
