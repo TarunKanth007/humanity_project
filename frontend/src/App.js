@@ -1434,6 +1434,51 @@ const ResearcherDashboard = ({ user, logout }) => {
     return () => clearInterval(interval);
   }, [activeTab]);
 
+  // Magnetic cursor effect for tabs
+  useEffect(() => {
+    const tabs = document.querySelectorAll('.dashboard-tabs [role="tab"]');
+    
+    const handleMouseMove = (e) => {
+      tabs.forEach(tab => {
+        const rect = tab.getBoundingClientRect();
+        const tabCenterX = rect.left + rect.width / 2;
+        const tabCenterY = rect.top + rect.height / 2;
+        
+        const deltaX = (e.clientX - tabCenterX) / 20;
+        const deltaY = (e.clientY - tabCenterY) / 20;
+        
+        const distance = Math.sqrt(
+          Math.pow(e.clientX - tabCenterX, 2) + 
+          Math.pow(e.clientY - tabCenterY, 2)
+        );
+        
+        // Apply magnetic effect within 150px radius
+        if (distance < 150) {
+          tab.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.05)`;
+        } else {
+          tab.style.transform = '';
+        }
+      });
+    };
+    
+    const handleMouseLeave = () => {
+      tabs.forEach(tab => {
+        tab.style.transform = '';
+      });
+    };
+    
+    const tabList = document.querySelector('.dashboard-tabs [role="tablist"]');
+    if (tabList) {
+      tabList.addEventListener('mousemove', handleMouseMove);
+      tabList.addEventListener('mouseleave', handleMouseLeave);
+      
+      return () => {
+        tabList.removeEventListener('mousemove', handleMouseMove);
+        tabList.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, []);
+
   const loadUnreadCount = async () => {
     try {
       const res = await api.get('/notifications/unread-count');
