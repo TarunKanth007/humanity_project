@@ -1548,6 +1548,32 @@ const PatientDashboard = ({ user, logout }) => {
                 </div>
               )}
             </TabsContent>
+            <TabsContent value="profile">
+              <div className="profile-content">
+                <Card className="profile-card">
+                  <CardHeader>
+                    <CardTitle>My Profile</CardTitle>
+                    <CardDescription>Manage your account information and preferences</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="profile-info">
+                      <div className="profile-avatar">
+                        <img src={user.picture} alt={user.name} className="user-avatar-large" />
+                      </div>
+                      <div className="profile-details">
+                        <h3>{user.name}</h3>
+                        <p>{user.email}</p>
+                        <Badge variant="secondary">Patient</Badge>
+                      </div>
+                    </div>
+                    <div className="profile-actions">
+                      <Button variant="outline">Edit Profile</Button>
+                      <Button variant="outline">Account Settings</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
       </div>
