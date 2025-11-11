@@ -760,7 +760,7 @@ async def create_researcher_profile(
     if verify:
         logging.info(f"✅ VERIFIED: Expert exists in database with id: {verify.get('id')}")
     else:
-        logging.error(f"❌ ERROR: Expert NOT found in database after creation!")
+        logging.error("❌ ERROR: Expert NOT found in database after creation!")
     
     return {
         "status": "success", 
@@ -1468,7 +1468,7 @@ async def create_appointment_request(
             type="appointment_request",
             title="New Appointment Request",
             content=f"{request_data.patient_name} has requested an appointment for {request_data.condition}",
-            link=f"/notifications"
+            link="/notifications"
         )
         notif_dict = notification.model_dump()
         notif_dict['created_at'] = notif_dict['created_at'].isoformat()
@@ -1535,7 +1535,7 @@ async def accept_appointment(
         user_id=appointment["patient_id"],
         type="appointment_accepted",
         title="Appointment Accepted!",
-        content=f"Your appointment request has been accepted. You can now join the consultation.",
+        content="Your appointment request has been accepted. You can now join the consultation.",
         link=f"/chat/{chat_room.id}"
     )
     notif_dict = notification.model_dump()
