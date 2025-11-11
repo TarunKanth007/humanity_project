@@ -1773,6 +1773,7 @@ function App() {
             </Routes>
           )}
         </AuthContext>
+        </AnimatedRouteWrapper>
       </BrowserRouter>
     </div>
   );
