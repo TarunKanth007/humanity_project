@@ -12,6 +12,21 @@
   --olive: #556B2F;
 }
 
+.App {
+  min-height: 100vh;
+}
+
+/* Page Transition */
+.page-transition {
+  animation: pageEnter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.dashboard-content,
+.onboarding-container,
+.profile-container {
+  animation: pageEnter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
 /* Scroll Animations - More Visible & Soothing */
 @keyframes fadeInUp {
   from {
