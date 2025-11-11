@@ -1532,6 +1532,8 @@ const ResearcherDashboard = ({ user, logout }) => {
       } else if (activeTab === 'forums') {
         const res = await api.get('/forums');
         setForums(res.data);
+        // Load membership status for each forum
+        await loadForumMemberships(res.data);
       } else if (activeTab === 'favorites') {
         const res = await api.get('/favorites');
         setFavorites(res.data);
@@ -1540,6 +1542,39 @@ const ResearcherDashboard = ({ user, logout }) => {
       console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadForumMemberships = async (forumsList) => {
+    try {
+      const memberships = {};
+      for (const forum of forumsList) {
+        const res = await api.get(`/forums/${forum.id}/membership`);
+        memberships[forum.id] = res.data;
+      }
+      setForumMemberships(memberships);
+    } catch (error) {
+      console.error('Failed to load memberships:', error);
+    }
+  };
+
+  const handleJoinGroup = async (forumId) => {
+    try {
+      await api.post(`/forums/${forumId}/join`);
+      toast.success('Successfully joined the group!');
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to join group');
+    }
+  };
+
+  const handleLeaveGroup = async (forumId) => {
+    try {
+      await api.delete(`/forums/${forumId}/leave`);
+      toast.success('Left the group');
+      loadData();
+    } catch (error) {
+      toast.error('Failed to leave group');
     }
   };
 
