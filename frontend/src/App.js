@@ -1511,13 +1511,9 @@ const PatientDashboard = ({ user, logout }) => {
                               </div>
                             </CardHeader>
                             <CardContent>
-                              {trial.ai_summary && (
-                                <div className="ai-summary-badge">
-                                  <Sparkles className="icon-xs" />
-                                  <span>AI Summarized</span>
-                                </div>
-                              )}
-                              <p className="item-description">{trial.ai_summary || trial.summary || trial.description}</p>
+                              <p className="item-description">
+                                {truncateToWords(trial.summary || trial.description, 35)}
+                              </p>
                               {trial.match_reasons && trial.match_reasons.length > 0 && (
                                 <div style={{ 
                                   marginTop: '8px', 
