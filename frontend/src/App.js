@@ -1184,6 +1184,28 @@ const PatientDashboard = ({ user, logout }) => {
             </div>
           </div>
 
+          {/* Search Bar */}
+          <div style={{ marginBottom: '24px' }}>
+            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px', maxWidth: '800px', margin: '0 auto' }}>
+              <Input
+                data-testid="search-input"
+                type="text"
+                placeholder="Search for researchers, trials, or publications..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <Button 
+                type="submit" 
+                disabled={isSearching || !searchQuery.trim()}
+                data-testid="search-button"
+              >
+                <Search className="icon-sm" />
+                {isSearching ? 'Searching...' : 'Search'}
+              </Button>
+            </form>
+          </div>
+
           {/* Active Consultations Section */}
           {activeChatRooms.length > 0 && (
             <div className="active-consultations mb-6">
