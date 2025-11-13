@@ -973,8 +973,19 @@ async def get_publications(
         # Sort by relevance score
         scored_pubs.sort(key=lambda x: x["relevance_score"], reverse=True)
         
-        # Return top 10 most relevant
-        return scored_pubs[:10]
+        # Get top 10 most relevant
+        top_pubs = scored_pubs[:10]
+        
+        # Generate AI summaries for top publications
+        for pub in top_pubs:
+            ai_summary = await summarize_publication(
+                title=pub.get("title", ""),
+                abstract=pub.get("abstract", "")
+            )
+            pub["ai_summary"] = ai_summary
+            pub["ai_summarized"] = True
+        
+        return top_pubs
         
     except Exception as e:
         logger.error(f"Error fetching publications from API: {e}")
