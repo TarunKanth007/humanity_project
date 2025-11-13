@@ -668,21 +668,95 @@ async def get_clinical_trials(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get clinical trials for patient"""
+    """
+    Get clinical trials for patient
+    Fetches real-time data from ClinicalTrials.gov API matched to patient conditions
+    """
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    query = {}
-    if condition:
-        query["disease_areas"] = {"$regex": condition, "$options": "i"}
-    if location:
-        query["location"] = {"$regex": location, "$options": "i"}
-    if status:
-        query["status"] = status
+    from clinical_trials_api import ClinicalTrialsAPI
     
-    trials = await db.clinical_trials.find(query, {"_id": 0}).limit(50).to_list(50)
-    return trials
+    # Get patient profile for personalized results
+    patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    patient_conditions = patient_profile.get("conditions", []) if patient_profile else []
+    
+    # Determine search condition: use filter > patient condition > generic
+    search_condition = condition
+    if not search_condition and patient_conditions:
+        search_condition = patient_conditions[0]  # Use primary condition
+    if not search_condition:
+        search_condition = "cancer"  # Default fallback
+    
+    try:
+        ct_api = ClinicalTrialsAPI()
+        
+        # Fetch trials from API
+        api_trials = ct_api.search_and_normalize(
+            condition=search_condition,
+            location=location,
+            status=status or "RECRUITING",
+            limit=20  # Fetch more to score and filter
+        )
+        
+        # Calculate relevance scores for each trial
+        scored_trials = []
+        for trial in api_trials:
+            score = 0
+            match_reasons = ["Live data from ClinicalTrials.gov"]
+            
+            # Match against patient conditions
+            disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
+            for patient_condition in patient_conditions:
+                condition_lower = patient_condition.lower()
+                if any(condition_lower in area for area in disease_areas):
+                    score += 30
+                    match_reasons.append(f"Matches your condition: {patient_condition}")
+                if condition_lower in trial.get("title", "").lower():
+                    score += 20
+                    match_reasons.append(f"Title mentions: {patient_condition}")
+            
+            # Boost for recruiting status
+            if trial.get("status", "").upper() == "RECRUITING":
+                score += 15
+                match_reasons.append("Currently recruiting")
+            
+            # Boost for recent updates
+            if trial.get("last_update"):
+                score += 10
+                match_reasons.append("Recently updated")
+            
+            # Add trial with score (minimum 50 for API results)
+            scored_trials.append({
+                **trial,
+                "relevance_score": max(score, 50),
+                "match_reasons": match_reasons
+            })
+        
+        # Sort by relevance score
+        scored_trials.sort(key=lambda x: x["relevance_score"], reverse=True)
+        
+        # Return top 10 most relevant
+        return scored_trials[:10]
+        
+    except Exception as e:
+        logger.error(f"Error fetching trials from API: {e}")
+        # Fallback to database
+        query = {}
+        if condition:
+            query["disease_areas"] = {"$regex": condition, "$options": "i"}
+        if location:
+            query["location"] = {"$regex": location, "$options": "i"}
+        if status:
+            query["status"] = status
+        
+        trials = await db.clinical_trials.find(query, {"_id": 0}).limit(10).to_list(10)
+        # Add default scores to database results
+        for trial in trials:
+            trial["relevance_score"] = 50
+            trial["match_reasons"] = ["Database result"]
+        return trials
 
 @api_router.get("/patient/experts")
 async def get_health_experts(
