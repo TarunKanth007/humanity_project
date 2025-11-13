@@ -4524,19 +4524,13 @@ const ResearcherDashboard = ({ user, logout }) => {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          {pub.ai_summary && (
-                            <div className="ai-summary-badge">
-                              <Sparkles className="icon-xs" />
-                              <span>AI Summarized</span>
-                            </div>
-                          )}
                           {pub.authors && pub.authors.length > 0 && (
                             <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                               <strong>Authors:</strong> {pub.authors.slice(0, 3).join(', ')}{pub.authors.length > 3 ? ' et al.' : ''}
                             </p>
                           )}
                           <p className="item-description">
-                            {pub.ai_summary || pub.summary || pub.abstract?.slice(0, 250) + '...'}
+                            {truncateToWords(pub.summary || pub.abstract, 35)}
                           </p>
                           {pub.url && (
                             <a 
