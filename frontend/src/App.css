@@ -459,7 +459,7 @@ strong {
 }
 
 .gradient-text {
-  background: var(--accent-gradient);
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -474,7 +474,7 @@ strong {
   left: 0;
   top: 0;
   z-index: -1;
-  background: var(--accent-gradient);
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: blur(10px);
