@@ -418,7 +418,7 @@ strong {
   width: 120px;
   height: 120px;
   margin: 0 auto 24px;
-  filter: drop-shadow(0 4px 12px rgba(85, 107, 47, 0.2));
+  filter: drop-shadow(0 4px 12px rgba(63, 81, 181, 0.2));
   animation: float 3s ease-in-out infinite;
 }
 
