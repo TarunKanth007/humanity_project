@@ -1303,9 +1303,9 @@ strong {
 }
 
 .dashboard-subtitle {
-  color: var(--taupe);
+  color: #000000;
   margin-top: 8px;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 /* Forum Member Badge */
