@@ -386,8 +386,8 @@ strong {
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(91, 70, 54, 0.15);
-  border-top-color: var(--olive);
+  border: 4px solid rgba(63, 81, 181, 0.15);
+  border-top-color: var(--primary-blue);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
