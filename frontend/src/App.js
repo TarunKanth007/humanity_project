@@ -2518,6 +2518,59 @@ const ResearcherDashboard = ({ user, logout }) => {
           </DialogContent>
         </Dialog>
 
+        {/* Review Dialog */}
+        <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Leave a Review</DialogTitle>
+              <DialogDescription>
+                Share your experience collaborating with {selectedCollab?.partner?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmitReview}>
+              <div style={{display: 'grid', gap: '16px'}}>
+                <div>
+                  <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>
+                    Rating
+                  </label>
+                  <div style={{display: 'flex', gap: '8px'}}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          cursor: 'pointer',
+                          fill: star <= reviewForm.rating ? 'var(--olive)' : 'none',
+                          color: star <= reviewForm.rating ? 'var(--olive)' : 'var(--taupe)'
+                        }}
+                        onClick={() => setReviewForm({...reviewForm, rating: star})}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>
+                    Your Review
+                  </label>
+                  <Textarea
+                    placeholder="Share your collaboration experience..."
+                    value={reviewForm.text}
+                    onChange={(e) => setReviewForm({...reviewForm, text: e.target.value})}
+                    rows={4}
+                    required
+                  />
+                </div>
+                
+                <Button type="submit" style={{marginTop: '8px'}}>
+                  Submit Review
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
         <div data-testid="researcher-dashboard" className="dashboard-content">
           <div className="dashboard-header">
             <div>
