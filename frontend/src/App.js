@@ -836,6 +836,9 @@ const PatientDashboard = ({ user, logout }) => {
   // Enhanced researcher profile states
   const [researcherDetails, setResearcherDetails] = useState(null);
   const [showResearcherDetails, setShowResearcherDetails] = useState(false);
+  
+  // Favorite status tracking
+  const [favoritedItems, setFavoritedItems] = useState({});
 
   useEffect(() => {
     loadData();
