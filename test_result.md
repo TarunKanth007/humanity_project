@@ -180,15 +180,19 @@ frontend:
 
 metadata:
   created_by: "main_agent"
-  version: "1.0"
-  test_sequence: 4
+  version: "2.0"
+  test_sequence: 5
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
-  stuck_tasks: 
-    - "Onboarding & Profile Setup Forms Not Visible Bug Fix"
+    - "Search Endpoint with Matching Scores"
+    - "Patient Overview Endpoint"
+    - "Enhanced Researcher Details Endpoint"
+    - "Search Functionality UI"
+    - "Overview/For You Tab"
+    - "Enhanced Researcher Profile Details"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
