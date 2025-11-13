@@ -11,13 +11,13 @@ import uuid
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://curalink-connect.preview.emergentagent.com/api"
+BACKEND_URL = "https://medbridge-21.preview.emergentagent.com/api"
 
 # Expected CORS origins
 EXPECTED_CORS_ORIGINS = [
     "http://localhost:3000",
-    "https://curalink-connect.preview.emergentagent.com", 
-    "https://curalink-connect.preview.emergentagent.com"
+    "https://medbridge-21.preview.emergentagent.com", 
+    "https://medbridge-21.preview.emergentagent.com"
 ]
 
 class BackendTester:
