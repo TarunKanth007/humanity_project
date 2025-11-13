@@ -1849,7 +1849,8 @@ async def add_favorite(
     })
     
     if existing:
-        return {"status": "already_favorited"}
+        # Return the existing favorite ID for toggle functionality
+        return {"status": "already_favorited", "favorite_id": existing.get("id"), "action": "exists"}
     
     favorite = Favorite(
         user_id=user.id,
@@ -1861,7 +1862,7 @@ async def add_favorite(
     favorite_dict['created_at'] = favorite_dict['created_at'].isoformat()
     await db.favorites.insert_one(favorite_dict)
     
-    return {"status": "success"}
+    return {"status": "success", "favorite_id": favorite.id, "action": "added"}
 
 @api_router.delete("/favorites/{favorite_id}")
 async def remove_favorite(
