@@ -901,7 +901,7 @@ strong {
 
 .section-subtitle {
   font-size: 18px;
-  color: var(--taupe);
+  color: #000000;
   opacity: 0.7;
   margin-bottom: 60px;
 }
