@@ -802,17 +802,104 @@ async def get_publications(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get publications"""
+    """
+    Get publications for patient
+    Fetches real-time data from PubMed API matched to patient conditions
+    """
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    query = {}
-    if disease_area:
-        query["disease_areas"] = {"$regex": disease_area, "$options": "i"}
+    from pubmed_api import PubMedAPI
     
-    publications = await db.publications.find(query, {"_id": 0}).limit(50).to_list(50)
-    return publications
+    # Get patient profile for personalized results
+    patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    patient_conditions = patient_profile.get("conditions", []) if patient_profile else []
+    
+    # Determine search query: use filter > patient condition > generic
+    search_query = disease_area
+    if not search_query and patient_conditions:
+        search_query = patient_conditions[0]  # Use primary condition
+    if not search_query:
+        search_query = "medicine"  # Default fallback
+    
+    try:
+        pubmed_api = PubMedAPI()
+        
+        # Fetch publications from API
+        api_publications = pubmed_api.search_and_fetch(
+            query=search_query,
+            max_results=20  # Fetch more to score and filter
+        )
+        
+        # Calculate relevance scores for each publication
+        scored_pubs = []
+        for pub in api_publications:
+            score = 0
+            match_reasons = ["Live data from PubMed"]
+            
+            # Match against patient conditions
+            disease_areas = [area.lower() for area in pub.get("disease_areas", [])]
+            title_lower = pub.get("title", "").lower()
+            abstract_lower = pub.get("abstract", "").lower()
+            
+            for patient_condition in patient_conditions:
+                condition_lower = patient_condition.lower()
+                
+                # Check MeSH terms (disease areas)
+                if any(condition_lower in area for area in disease_areas):
+                    score += 30
+                    match_reasons.append(f"Relevant to: {patient_condition}")
+                
+                # Check title
+                if condition_lower in title_lower:
+                    score += 25
+                    match_reasons.append(f"Title mentions: {patient_condition}")
+                
+                # Check abstract
+                if condition_lower in abstract_lower:
+                    score += 15
+                    match_reasons.append(f"Abstract discusses: {patient_condition}")
+            
+            # Boost for recent publications (last 3 years)
+            current_year = datetime.now(timezone.utc).year
+            pub_year = pub.get("year") or 2000
+            if current_year - pub_year <= 3:
+                score += 15
+                age = current_year - pub_year
+                match_reasons.append(f"Recent ({age} year{'s' if age != 1 else ''} old)")
+            
+            # Boost if has DOI (indicates quality journal)
+            if pub.get("doi"):
+                score += 5
+                match_reasons.append("Peer-reviewed")
+            
+            # Add publication with score (minimum 50 for API results)
+            scored_pubs.append({
+                **pub,
+                "relevance_score": max(score, 50),
+                "match_reasons": match_reasons
+            })
+        
+        # Sort by relevance score
+        scored_pubs.sort(key=lambda x: x["relevance_score"], reverse=True)
+        
+        # Return top 10 most relevant
+        return scored_pubs[:10]
+        
+    except Exception as e:
+        logger.error(f"Error fetching publications from API: {e}")
+        # Fallback to database
+        query = {}
+        if disease_area:
+            query["disease_areas"] = {"$regex": disease_area, "$options": "i"}
+        
+        publications = await db.publications.find(query, {"_id": 0}).limit(10).to_list(10)
+        # Add default scores to database results
+        for pub in publications:
+            pub["relevance_score"] = 50
+            pub["match_reasons"] = ["Database result"]
+        return publications
 
 @api_router.post("/patient/meeting-request")
 async def create_meeting_request(
