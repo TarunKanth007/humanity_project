@@ -1887,8 +1887,9 @@ async def send_collaboration_request(
     notification = Notification(
         user_id=request_data["receiver_id"],
         type="collaboration_request",
-        message=f"{collab_request.sender_name} wants to collaborate with you",
-        data={"request_id": collab_request.id}
+        title="New Collaboration Request",
+        content=f"{collab_request.sender_name} wants to collaborate with you on {request_data['purpose']}",
+        link="/notifications"
     )
     notif_dict = notification.dict()
     notif_dict["created_at"] = notif_dict["created_at"].isoformat()
