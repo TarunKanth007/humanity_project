@@ -89,6 +89,24 @@ code {
     }
 }
 
+@layer components {
+    .bg-primary {
+        background: linear-gradient(135deg, #3F51B5, #536DFE) !important;
+    }
+    
+    .hover\:bg-primary\/90:hover {
+        background: linear-gradient(135deg, #303F9F, #3F51B5) !important;
+    }
+    
+    .text-primary {
+        color: #3F51B5 !important;
+    }
+    
+    .border-primary {
+        border-color: #3F51B5 !important;
+    }
+}
+
 @layer base {
     [data-debug-wrapper="true"] {
         display: contents !important;
