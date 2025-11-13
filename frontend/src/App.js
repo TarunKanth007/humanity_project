@@ -2101,6 +2101,7 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [collabMessageInput, setCollabMessageInput] = useState('');
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: 5, text: '' });
+  const collabMessagesEndRef = React.useRef(null);
 
   useEffect(() => {
     loadData();
