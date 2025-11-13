@@ -2991,6 +2991,16 @@ const ResearcherDashboard = ({ user, logout }) => {
   
   // Publications state
   const [publications, setPublications] = useState([]);
+  const [showCreatePublication, setShowCreatePublication] = useState(false);
+  const [newPublication, setNewPublication] = useState({
+    title: '',
+    journal: '',
+    year: new Date().getFullYear(),
+    authors: '',
+    abstract: '',
+    doi: '',
+    url: ''
+  });
   
   // Browse trials and publications (from APIs)
   const [browseClinicalTrials, setBrowseClinicalTrials] = useState([]);
