@@ -210,7 +210,7 @@ const LandingPage = () => {
           </div>
           
           <h1 className="hero-title">
-            Discover Clinical Trials,<br />
+            <span className="gradient-text">Discover Clinical Trials,</span><br />
             <span className="gradient-text">Connect with Experts</span>
           </h1>
           
