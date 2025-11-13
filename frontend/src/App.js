@@ -987,11 +987,20 @@ const PatientDashboard = ({ user, logout }) => {
   };
 
   const loadFavoriteStatuses = async (items, itemType) => {
+    // Load favorite statuses in parallel for speed
+    const statusPromises = items.map(item => 
+      checkFavoriteStatus(itemType, item.id)
+        .then(isFavorited => ({ id: item.id, isFavorited }))
+        .catch(() => ({ id: item.id, isFavorited: false }))
+    );
+    
+    const statusResults = await Promise.all(statusPromises);
+    
     const statuses = {};
-    for (const item of items) {
-      const isFavorited = await checkFavoriteStatus(itemType, item.id);
-      statuses[item.id] = isFavorited;
-    }
+    statusResults.forEach(({ id, isFavorited }) => {
+      statuses[id] = isFavorited;
+    });
+    
     setFavoritedItems(prev => ({ ...prev, ...statuses }));
   };
 
