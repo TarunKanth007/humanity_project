@@ -3238,6 +3238,50 @@ const ResearcherDashboard = ({ user, logout }) => {
   };
 
   const loadForumMemberships = async (forumsList) => {
+
+
+  const handleCreatePublication = async () => {
+    try {
+      // Validate required fields
+      if (!newPublication.title || !newPublication.journal || !newPublication.year) {
+        toast.error('Please fill in title, journal, and year');
+        return;
+      }
+
+      // Parse authors (comma-separated)
+      const authorsArray = newPublication.authors.split(',').map(a => a.trim()).filter(a => a);
+
+      await api.post('/researcher/publications/create', {
+        title: newPublication.title,
+        journal: newPublication.journal,
+        year: parseInt(newPublication.year),
+        authors: authorsArray,
+        abstract: newPublication.abstract,
+        doi: newPublication.doi,
+        url: newPublication.url
+      });
+
+      toast.success('Publication added successfully!');
+      setShowCreatePublication(false);
+      setNewPublication({
+        title: '',
+        journal: '',
+        year: new Date().getFullYear(),
+        authors: '',
+        abstract: '',
+        doi: '',
+        url: ''
+      });
+      
+      // Reload publications
+      setActiveTab('publications');
+      loadData();
+    } catch (error) {
+      console.error('Failed to create publication:', error);
+      toast.error(error.response?.data?.detail || 'Failed to add publication');
+    }
+  };
+
     try {
       const memberships = {};
       for (const forum of forumsList) {
