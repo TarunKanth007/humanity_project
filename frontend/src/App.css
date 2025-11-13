@@ -2510,37 +2510,44 @@ strong {
     font-size: 12px;
   }
 
-  /* Override inline styles for profile grids */
-  [style*="gridTemplateColumns"][style*="repeat(2, 1fr)"],
-  [style*="grid-template-columns"][style*="repeat(2, 1fr)"] {
+  /* Override inline styles for profile grids - more specific */
+  [data-testid="profile-tab"] [style*="display: grid"][style*="gap"] {
     grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  [style*="gridTemplateColumns"][style*="repeat(5, 1fr)"],
-  [style*="grid-template-columns"][style*="repeat(5, 1fr)"] {
+  /* Profile stats grid */
+  [data-testid="profile-tab"] [style*="gridTemplateColumns: 'repeat(5"],
+  [data-testid="profile-tab"] [style*="grid-template-columns: 'repeat(5"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Profile content width fix */
-  .profile-content {
+  /* All cards in profile */
+  [data-testid="profile-tab"] > div > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Card headers and content */
+  [data-testid="profile-tab"] .CardHeader,
+  [data-testid="profile-tab"] .CardContent {
     overflow-x: hidden;
     max-width: 100%;
   }
 
-  /* Card content responsive */
-  [class*="CardContent"] > div[style*="display: grid"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Textarea full width on mobile */
-  textarea {
+  /* Form inputs in profile */
+  [data-testid="profile-tab"] input,
+  [data-testid="profile-tab"] textarea {
     width: 100% !important;
-    box-sizing: border-box;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  /* Input full width */
-  input {
-    max-width: 100%;
-    box-sizing: border-box;
+  /* Badges container */
+  [data-testid="profile-tab"] [style*="display: flex"][style*="flexWrap: 'wrap'"] {
+    max-width: 100% !important;
   }
 }
