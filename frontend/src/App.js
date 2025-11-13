@@ -2082,6 +2082,19 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [userActivity, setUserActivity] = useState(null);
   const [specialtyInput, setSpecialtyInput] = useState('');
   const [interestInput, setInterestInput] = useState('');
+  
+  // Collaboration states
+  const [showCollabRequest, setShowCollabRequest] = useState(false);
+  const [selectedCollaborator, setSelectedCollaborator] = useState(null);
+  const [collabRequestForm, setCollabRequestForm] = useState({
+    purpose: '',
+    sector: '',
+    message: ''
+  });
+  const [collaborations, setCollaborations] = useState([]);
+  const [selectedCollab, setSelectedCollab] = useState(null);
+  const [collabMessages, setCollabMessages] = useState([]);
+  const [collabMessageInput, setCollabMessageInput] = useState('');
 
   useEffect(() => {
     loadData();
