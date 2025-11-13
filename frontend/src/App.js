@@ -2099,6 +2099,8 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [selectedCollab, setSelectedCollab] = useState(null);
   const [collabMessages, setCollabMessages] = useState([]);
   const [collabMessageInput, setCollabMessageInput] = useState('');
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, text: '' });
 
   useEffect(() => {
     loadData();
