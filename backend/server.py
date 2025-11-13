@@ -3277,61 +3277,18 @@ async def search(
     results["trials"] = results["trials"][:10]
     results["publications"] = results["publications"][:10]
     
-    # Generate AI summaries in parallel for speed
-    import asyncio
-    
-    # Prepare trial summary tasks
-    trial_tasks = []
-    trial_indices = []
-    for i, trial in enumerate(results["trials"]):
+    # Skip AI summarization for speed - use truncated descriptions instead
+    for trial in results["trials"]:
         if trial.get("source") == "ClinicalTrials.gov API":
-            trial_tasks.append(
-                summarize_clinical_trial(
-                    title=trial.get("title", ""),
-                    description=trial.get("description", ""),
-                    disease_areas=trial.get("disease_areas", [])
-                )
-            )
-            trial_indices.append(i)
+            desc = trial.get("description", "")
+            trial["ai_summary"] = desc[:150] + "..." if len(desc) > 150 else desc
+            trial["ai_summarized"] = False
     
-    # Prepare publication summary tasks
-    pub_tasks = []
-    pub_indices = []
-    for i, pub in enumerate(results["publications"]):
+    for pub in results["publications"]:
         if pub.get("source") == "PubMed API":
-            pub_tasks.append(
-                summarize_publication(
-                    title=pub.get("title", ""),
-                    abstract=pub.get("abstract", "")
-                )
-            )
-            pub_indices.append(i)
-    
-    # Run all summaries in parallel
-    all_summaries = await asyncio.gather(
-        *trial_tasks, *pub_tasks, 
-        return_exceptions=True
-    )
-    
-    # Split results back
-    trial_summaries = all_summaries[:len(trial_tasks)]
-    pub_summaries = all_summaries[len(trial_tasks):]
-    
-    # Add trial summaries
-    for idx, summary in zip(trial_indices, trial_summaries):
-        if isinstance(summary, Exception):
-            logger.error(f"Error summarizing trial: {summary}")
-        else:
-            results["trials"][idx]["ai_summary"] = summary
-            results["trials"][idx]["ai_summarized"] = True
-    
-    # Add publication summaries
-    for idx, summary in zip(pub_indices, pub_summaries):
-        if isinstance(summary, Exception):
-            logger.error(f"Error summarizing publication: {summary}")
-        else:
-            results["publications"][idx]["ai_summary"] = summary
-            results["publications"][idx]["ai_summarized"] = True
+            abstract = pub.get("abstract", "")
+            pub["ai_summary"] = abstract[:150] + "..." if len(abstract) > 150 else abstract
+            pub["ai_summarized"] = False
     
     return results
 
