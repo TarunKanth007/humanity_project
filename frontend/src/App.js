@@ -839,6 +839,12 @@ const PatientDashboard = ({ user, logout }) => {
   
   // Favorite status tracking
   const [favoritedItems, setFavoritedItems] = useState({});
+  
+  // Pagination states
+  const [trialsPage, setTrialsPage] = useState(1);
+  const [pubsPage, setPubsPage] = useState(1);
+  const [loadingMoreTrials, setLoadingMoreTrials] = useState(false);
+  const [loadingMorePubs, setLoadingMorePubs] = useState(false);
 
   useEffect(() => {
     loadData();
