@@ -3925,18 +3925,33 @@ const ResearcherDashboard = ({ user, logout }) => {
                         {overviewData.latest_publications.map((pub, idx) => (
                           <Card key={idx} className="item-card">
                             <CardHeader>
-                              <CardTitle className="item-title">{pub.title}</CardTitle>
-                              <CardDescription>
-                                {pub.journal} • {pub.year}
-                              </CardDescription>
+                              <div className="card-header-row">
+                                <div style={{ flex: 1 }}>
+                                  <CardTitle className="item-title">{pub.title}</CardTitle>
+                                  <CardDescription>
+                                    {pub.journal} • {pub.year}
+                                  </CardDescription>
+                                </div>
+                                {pub.relevance_score && (
+                                  <Badge style={{
+                                    background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    padding: '4px 10px'
+                                  }}>
+                                    {pub.relevance_score}% Match
+                                  </Badge>
+                                )}
+                              </div>
                             </CardHeader>
                             <CardContent>
                               {pub.authors && <p className="item-meta">Authors: {pub.authors.join(', ')}</p>}
                               <p className="item-description">{pub.summary || pub.abstract?.slice(0, 200) + '...'}</p>
-                              {pub.reasons && pub.reasons.length > 0 && (
-                                <div className="match-reasons">
+                              {pub.match_reasons && pub.match_reasons.length > 0 && (
+                                <div className="match-reasons" style={{ marginTop: '12px' }}>
                                   <p className="match-reasons-title">Relevant to:</p>
-                                  {pub.reasons.map((reason, idx) => (
+                                  {pub.match_reasons.map((reason, idx) => (
                                     <span key={idx} className="match-reason-badge">{reason}</span>
                                   ))}
                                 </div>
