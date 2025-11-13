@@ -2389,6 +2389,169 @@ const PatientDashboard = ({ user, logout }) => {
         </DialogContent>
       </Dialog>
 
+      {/* Enhanced Researcher Details Dialog */}
+      <Dialog open={showResearcherDetails} onOpenChange={setShowResearcherDetails}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">
+              {researcherDetails?.user?.name || researcherDetails?.profile?.name}
+            </DialogTitle>
+            <CardDescription>{researcherDetails?.profile?.specialties?.join(', ')}</CardDescription>
+          </DialogHeader>
+          
+          {researcherDetails && (
+            <div className="space-y-6">
+              {/* Basic Info */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Professional Information</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Experience</p>
+                    <p className="font-medium">{researcherDetails.profile.years_experience} years</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Sector</p>
+                    <p className="font-medium">{researcherDetails.profile.sector}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Available Hours</p>
+                    <p className="font-medium">{researcherDetails.profile.available_hours}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Rating</p>
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                      <span className="font-medium">
+                        {researcherDetails.average_rating} / 5.0 ({researcherDetails.total_reviews} reviews)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bio */}
+              {researcherDetails.profile.bio && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">About</h3>
+                  <p className="text-sm">{researcherDetails.profile.bio}</p>
+                </div>
+              )}
+
+              {/* Research Interests */}
+              {researcherDetails.profile.research_interests?.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Research Interests</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {researcherDetails.profile.research_interests.map((interest, idx) => (
+                      <Badge key={idx} variant="secondary">{interest}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Clinical Trials */}
+              {researcherDetails.trials?.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Clinical Trials ({researcherDetails.trials.length})</h3>
+                  <div className="space-y-3">
+                    {researcherDetails.trials.slice(0, 5).map((trial) => (
+                      <Card key={trial.id}>
+                        <CardContent className="pt-4">
+                          <h4 className="font-semibold mb-2">{trial.title}</h4>
+                          <div className="flex gap-2 mb-2">
+                            <Badge variant="outline">{trial.phase}</Badge>
+                            <Badge>{trial.status}</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{trial.description.slice(0, 150)}...</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Publications */}
+              {researcherDetails.publications?.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Publications ({researcherDetails.publications.length})</h3>
+                  <div className="space-y-3">
+                    {researcherDetails.publications.slice(0, 5).map((pub) => (
+                      <Card key={pub.id}>
+                        <CardContent className="pt-4">
+                          <h4 className="font-semibold mb-2">{pub.title}</h4>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            {pub.journal} • {pub.year} • {pub.authors.slice(0, 3).join(', ')}
+                          </p>
+                          <p className="text-sm">{pub.abstract.slice(0, 150)}...</p>
+                          {pub.url && (
+                            <a 
+                              href={pub.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:underline mt-2 inline-block"
+                            >
+                              View Publication →
+                            </a>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Reviews */}
+              {researcherDetails.reviews?.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Patient Reviews</h3>
+                  <div className="space-y-3">
+                    {researcherDetails.reviews.slice(0, 3).map((review) => (
+                      <Card key={review.id}>
+                        <CardContent className="pt-4">
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <Star 
+                                key={i} 
+                                className="w-4 h-4"
+                                fill={i < review.rating ? 'var(--olive)' : 'none'}
+                                color={i < review.rating ? 'var(--olive)' : 'var(--taupe)'}
+                              />
+                            ))}
+                            <span className="text-sm text-muted-foreground ml-2">
+                              {new Date(review.created_at).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <p className="text-sm">{review.comment}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Button */}
+              <Button 
+                className="w-full" 
+                size="lg"
+                onClick={() => {
+                  setShowResearcherDetails(false);
+                  setSelectedExpert({
+                    ...researcherDetails.profile,
+                    user_id: researcherDetails.user.id,
+                    name: researcherDetails.user.name,
+                    email: researcherDetails.user.email
+                  });
+                  setShowAppointmentDialog(true);
+                }}
+              >
+                <Calendar className="icon-sm mr-2" />
+                Request Appointment
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Appointment Request Dialog */}
       <Dialog open={showAppointmentDialog} onOpenChange={setShowAppointmentDialog}>
         <DialogContent className="dialog-content">
