@@ -819,12 +819,13 @@ async def get_clinical_trials(
     try:
         ct_api = ClinicalTrialsAPI()
         
-        # Fetch trials from API
+        # Fetch trials from API (fetch more based on page)
+        fetch_limit = 20 + (page - 1) * 10  # Fetch enough for all pages
         api_trials = ct_api.search_and_normalize(
             condition=search_condition,
             location=location,
             status=status or "RECRUITING",
-            limit=20  # Fetch more to score and filter
+            limit=min(fetch_limit, 100)  # Max 100 total
         )
         
         # Calculate relevance scores for each trial
