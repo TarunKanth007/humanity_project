@@ -1711,6 +1711,37 @@ async def get_researcher_overview(
 
 
 @api_router.get("/researcher/publications")
+
+
+@api_router.post("/researcher/publications/create")
+async def create_researcher_publication(
+    publication_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Create a new publication entry for researcher"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Create publication document
+    publication = {
+        "id": str(uuid.uuid4()),
+        "researcher_id": user.id,
+        "title": publication_data.get("title"),
+        "journal": publication_data.get("journal"),
+        "year": publication_data.get("year"),
+        "authors": publication_data.get("authors", []),
+        "abstract": publication_data.get("abstract", ""),
+        "doi": publication_data.get("doi", ""),
+        "url": publication_data.get("url", ""),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.researcher_publications.insert_one(publication)
+    
+    return {"message": "Publication created successfully", "id": publication["id"]}
+
 async def get_researcher_publications(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
