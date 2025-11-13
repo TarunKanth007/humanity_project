@@ -2946,7 +2946,7 @@ const PatientDashboard = ({ user, logout }) => {
 // Researcher Dashboard
 const ResearcherDashboard = ({ user, logout }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('collaborators');
+  const [activeTab, setActiveTab] = useState('overview');
   const [collaborators, setCollaborators] = useState([]);
   const [myTrials, setMyTrials] = useState([]);
   const [forums, setForums] = useState([]);
