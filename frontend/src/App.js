@@ -4427,7 +4427,17 @@ const ResearcherDashboard = ({ user, logout }) => {
                     ))}
                   </div>
                   <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                    <Button onClick={loadMorePublications} variant="outline">
+                    <Button 
+                      onClick={loadMorePublications}
+                      size="lg"
+                      style={{
+                        background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                        color: 'white',
+                        padding: '12px 32px',
+                        fontSize: '16px',
+                        fontWeight: '600'
+                      }}
+                    >
                       Get 10 More
                     </Button>
                   </div>
