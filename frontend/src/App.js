@@ -3521,6 +3521,9 @@ const ResearcherDashboard = ({ user, logout }) => {
                           <TabsTrigger value="trials">
                             <Activity className="icon-sm" /> Trials ({userActivity?.trials_created?.length || 0})
                           </TabsTrigger>
+                          <TabsTrigger value="collabs">
+                            <Users className="icon-sm" /> Collaborations ({userActivity?.collaborations_history?.length || 0})
+                          </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="appointments">
