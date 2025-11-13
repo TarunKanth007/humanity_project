@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
 CuraLink Backend Testing Suite
-Focus: Forum Create/Delete Feature Testing
+Focus: Patient Dashboard Features Testing
+- Search functionality with matching scores
+- Patient overview endpoint
+- Enhanced researcher details endpoint
 """
 
 import requests
