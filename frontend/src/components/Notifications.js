@@ -203,6 +203,58 @@ export const Notifications = ({ user, logout }) => {
             </div>
           )}
 
+          {isResearcher && collabRequests.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Collaboration Requests</h2>
+              <div className="space-y-4">
+                {collabRequests.map((request) => (
+                  <Card key={request.id} className="appointment-card">
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle>{request.sender_name}</CardTitle>
+                          <CardDescription>
+                            <Calendar className="icon-xs inline mr-1" />
+                            {new Date(request.created_at).toLocaleDateString()}
+                          </CardDescription>
+                        </div>
+                        <Badge>Pending</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <p><strong>Purpose:</strong> {request.purpose}</p>
+                        <p><strong>Their Sector:</strong> {request.sector}</p>
+                        <p><strong>Message:</strong></p>
+                        <p className="text-sm bg-gray-50 p-3 rounded">{request.message}</p>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <Button 
+                          onClick={() => handleAcceptCollab(request.id)}
+                          className="flex-1"
+                        >
+                          <Check className="icon-sm mr-1" />
+                          Accept & Start Collaboration
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setShowRejectDialog(true);
+                          }}
+                          className="flex-1"
+                        >
+                          <X className="icon-sm mr-1" />
+                          Reject
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           <h2 className="text-xl font-semibold mb-4">All Notifications</h2>
           {notifications.length === 0 ? (
             <div className="empty-state">
