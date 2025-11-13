@@ -4379,7 +4379,22 @@ const ResearcherDashboard = ({ user, logout }) => {
                     <div className="loading-state">Loading forums...</div>
                   ) : (
                     <div className="items-grid">
-                      {forums.map((forum) => {
+                      {forums.filter((forum) => {
+                        if (forumFilter === 'all') return true;
+                        // Filter by researcher's specialties and interests
+                        if (!profileData) return true;
+                        const specialties = profileData.specialties || [];
+                        const interests = profileData.research_interests || [];
+                        const category = forum.category?.toLowerCase() || '';
+                        const description = forum.description?.toLowerCase() || '';
+                        
+                        // Check if forum matches researcher's field
+                        return specialties.some(s => 
+                          category.includes(s.toLowerCase()) || description.includes(s.toLowerCase())
+                        ) || interests.some(i => 
+                          category.includes(i.toLowerCase()) || description.includes(i.toLowerCase())
+                        );
+                      }).map((forum) => {
                         const membership = forumMemberships[forum.id];
                         const isMember = membership?.is_member;
                         const isOwner = forum.created_by === user.id;
