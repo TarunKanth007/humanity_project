@@ -142,92 +142,41 @@ backend:
         comment: "Implemented GET /api/researcher/{researcher_user_id}/details endpoint. Returns comprehensive researcher information including: profile data, user info, clinical trials created by researcher, publications authored by researcher (searched by name), reviews/ratings with average. Allows patients to see complete researcher portfolio before booking."
 
 frontend:
-  - task: "Create Forum UI"
+  - task: "Search Functionality UI"
     implemented: true
-    working: false
+    working: "NA"
     file: "/app/frontend/src/App.js"
     stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Added 'Create Forum' button above forums grid in ResearcherDashboard. Implemented modal dialog with form fields for name, category/specialty, and description. Connected to POST /api/forums/create endpoint. Shows success/error toasts."
-      - working: false
-        agent: "testing"
-        comment: "❌ CANNOT TEST: Authentication required to access researcher dashboard and forum features. Application properly redirects unauthenticated users to landing page. UI components are implemented in code (create-forum-btn, forum-name-input, forum-category-input, forum-description-input, submit-forum-btn) but cannot be tested without valid authentication session. Backend endpoints are confirmed working from previous tests."
-  
-  - task: "Delete Forum UI"
-    implemented: true
-    working: false
-    file: "/app/frontend/src/App.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Added delete button (trash icon) on forum cards for forums owned by logged-in researcher. Shows 'Owner' badge on owned forums. Includes confirmation dialog before deletion. Connected to DELETE /api/forums/{forum_id} endpoint."
-      - working: false
-        agent: "testing"
-        comment: "❌ CANNOT TEST: Authentication required to access researcher dashboard and forum features. Application properly redirects unauthenticated users to landing page. UI components are implemented in code (delete-forum-btn-{id}, handleDeleteForum function, confirmation dialog) but cannot be tested without valid authentication session. Backend endpoints are confirmed working from previous tests."
-  
-  - task: "Onboarding & Profile Setup Forms Not Visible Bug Fix"
-    implemented: true
-    working: false
-    file: "/app/frontend/src/App.js"
-    stuck_count: 1
     priority: "critical"
-    needs_retesting: false
-    status_history:
-      - working: false
-        agent: "user"
-        comment: "User reported that during new login with email, the role selection and profile setup forms are not visible. Only titles are showing."
-      - working: true
-        agent: "main"
-        comment: "FIXED: The issue was caused by scroll-animate CSS classes that set opacity:0 by default and wait for IntersectionObserver to add .visible class. On onboarding/profile pages, elements were in viewport on load but observer wasn't triggering properly. Removed scroll-animate classes from Onboarding and ProfileSetup components. Role selection cards and profile forms now immediately visible."
-      - working: false
-        agent: "testing"
-        comment: "❌ PARTIAL FIX ONLY: Main agent correctly removed scroll-animate classes from Onboarding and ProfileSetup components (✅ verified), but the root CSS issue remains. Landing page still has 12 elements with scroll-animate class that have opacity:0 on load. IntersectionObserver works (adds visible class after scroll) but elements are invisible on initial load. The CSS rule '.scroll-animate { opacity: 0; }' in App.css is still causing visibility issues. Onboarding/Profile pages are protected by authentication so cannot verify the actual fix without login credentials."
-  
-  - task: "Forum Favorites Feature"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py, /app/frontend/src/App.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Implemented forum favorites feature. Backend: Added 'forum' to Favorite model item_types, added forum enrichment in GET /favorites endpoint, added GET /favorites/check/{item_type}/{item_id} endpoint. Frontend: Added forumFavorites state in both Patient and Researcher dashboards, loadForumFavorites() function, handleToggleFavorite() function. Added heart icon buttons on forum cards that fill with color when favorited. Forums now load favorites status on tab view."
-      - working: true
-        agent: "testing"
-        comment: "✅ BACKEND TESTING COMPLETE: Forum Favorites feature working correctly. All 52 comprehensive tests passed including authentication, API structure, data validation, and endpoint integration tests. Key findings: 1) All favorites endpoints (POST /api/favorites, GET /api/favorites, DELETE /api/favorites/{id}, GET /api/favorites/check/{type}/{id}) properly require authentication (401 for unauthenticated requests), 2) Forum enrichment correctly implemented in GET /api/favorites endpoint to fetch forum data from forums collection, 3) Data validation working properly - rejects invalid/missing fields with appropriate status codes (422 for schema validation, 401 for auth), 4) API routing correctly configured - all endpoints accessible and return expected responses, 5) Security properly implemented - authentication check happens before data validation preventing information leakage, 6) Forum favorites integration verified with existing forum data (2 forums available for testing). Backend implementation is production-ready and fully functional."
+        comment: "Added search bar to Patient Dashboard (below header, above tabs). Search input with Search button. On submit, calls POST /api/search with query. Search results displayed in dedicated 'Search Results' tab (dynamically shown when results exist). Results grouped by category (Researchers, Trials, Publications) with match_score displayed as percentage badge. Each result shows 'Why this matches' box with top 3 match_reasons. Clicking researcher opens enhanced details. Search state managed with searchQuery, searchResults, isSearching."
   
-  - task: "Favorites Hover Popups"
+  - task: "Overview/For You Tab"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/App.js"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Implemented hover popups for favorites page. When hovering over any favorited item (trial, expert, publication, forum), a detailed popover appears showing full information. Added Popover component from shadcn UI. Each item type shows relevant details: Trials show phase, status, location, description, disease areas. Experts show specialty, location, availability, rating, bio, research areas. Publications show journal, year, authors, abstract, disease areas, URL link. Forums show category, post count, creator, description. Applied to both Patient and Researcher dashboard favorites tabs."
+        comment: "Added 'For You' tab as first tab in Patient Dashboard (changed default activeTab from 'trials' to 'overview'). Loads data from GET /api/patient/overview on tab switch. Displays three sections: 1) Top Rated Researchers (top 3, shows rating badge, specialty, bio, research areas, View Profile button), 2) Featured Clinical Trials (top 3, shows phase/status badges, location, disease areas), 3) Latest Research Publications (top 3, shows journal/year, authors, abstract, disease areas, links). All sections styled consistently with existing item cards."
   
-  - task: "Profile Pages - Patient & Researcher"
+  - task: "Enhanced Researcher Profile Details"
     implemented: true
     working: "NA"
-    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Implemented comprehensive profile pages for both patients and researchers. Backend: Added phone_number fields to both profile models, PUT endpoints for updating profiles, GET /profile/activity endpoint for complete history. Frontend - Patient: Profile tab with view/edit mode for phone, location, conditions. Progress tracker showing 5 journey milestones (signup, profile, forums, favorites, appointments). Activity history with 3 tabs (appointments, forums joined, reviews given). Frontend - Researcher: Profile tab with edit for phone, name, age, experience, sector, hours, specialties, research interests, bio. Activity history with 3 tabs (appointments as provider, forums created, trials created). Impact stats card showing contribution summary. All profile data loads automatically when switching to profile tab."
+        comment: "Created new viewResearcherDetails() function and enhanced researcher details dialog. Replaces viewExpertDetails for platform members. Calls GET /api/researcher/{user_id}/details. Dialog shows: professional info (experience, sector, hours, rating), bio, research interests, Clinical Trials section (shows researcher's trials with phase/status), Publications section (shows authored publications with journal/year/authors), Patient Reviews section (shows top 3 reviews with star ratings). Request Appointment button at bottom. Applied to experts tab and search results. Large dialog (max-w-4xl) with scrolling for long content."
 
 metadata:
   created_by: "main_agent"
