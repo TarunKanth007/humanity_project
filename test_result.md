@@ -105,35 +105,41 @@
 user_problem_statement: "Verify and implement Patient Dashboard features according to checklist: 1) Search functionality with matching scores for researchers/trials/publications, 2) Top/Featured section showing top researchers, trials, and publications, 3) Enhanced researcher profiles showing their publications and clinical trials. All features should be fully functional with proper data from API."
 
 backend:
-  - task: "Create Forum Endpoint"
+  - task: "Search Endpoint with Matching Scores"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
-    needs_retesting: false
+    priority: "critical"
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Backend endpoint POST /api/forums/create already exists. Accepts name, description, category. Validates researcher role. Creates forum with owner_id tracking."
-      - working: true
-        agent: "testing"
-        comment: "✅ BACKEND TESTING COMPLETE: Forum creation endpoint working correctly. Authentication properly enforced (401 for unauthenticated requests). Endpoint accepts required fields (name, description, category). Validation working - rejects requests without authentication. API structure verified. Role-based access control functioning (requires researcher role). All 34 comprehensive tests passed including CORS, authentication, validation, and API structure tests."
+        comment: "Implemented POST /api/search endpoint. Searches across researchers, trials, and publications. Calculates match scores based on: query matching in names/titles/descriptions, patient conditions vs researcher specialties/trial disease areas, ratings/activity. Returns results with match_score (0-100%) and match_reasons array. Supports personalized matching using patient profile conditions."
   
-  - task: "Delete Forum Endpoint"
+  - task: "Patient Overview Endpoint"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Backend endpoint DELETE /api/forums/{forum_id} already exists. Validates ownership before deletion. Cascades deletion to all posts and memberships."
-      - working: true
-        agent: "testing"
-        comment: "✅ BACKEND TESTING COMPLETE: Forum deletion endpoint working correctly. Authentication properly enforced (401 for unauthenticated requests). Security properly implemented - authentication check happens before ID validation (prevents information leakage). Endpoint structure verified. Ownership validation will be enforced when authenticated. All deletion flow tests passed."
+        comment: "Implemented GET /api/patient/overview endpoint. Returns personalized overview with: top_researchers (top 3 by rating), featured_trials (relevant/recruiting trials scored by patient conditions), latest_publications (recent publications scored by relevance to patient). All sections personalized based on patient profile conditions."
+  
+  - task: "Enhanced Researcher Details Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented GET /api/researcher/{researcher_user_id}/details endpoint. Returns comprehensive researcher information including: profile data, user info, clinical trials created by researcher, publications authored by researcher (searched by name), reviews/ratings with average. Allows patients to see complete researcher portfolio before booking."
 
 frontend:
   - task: "Create Forum UI"
