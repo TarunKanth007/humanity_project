@@ -1244,8 +1244,18 @@ const PatientDashboard = ({ user, logout }) => {
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="dashboard-tabs">
             <TabsList>
+              <TabsTrigger data-testid="overview-tab" value="overview">
+                <Stethoscope className="icon-sm" />
+                For You
+              </TabsTrigger>
+              {searchResults && (
+                <TabsTrigger data-testid="search-tab" value="search">
+                  <Search className="icon-sm" />
+                  Search Results
+                </TabsTrigger>
+              )}
               <TabsTrigger data-testid="trials-tab" value="trials">
-                <Search className="icon-sm" />
+                <FileText className="icon-sm" />
                 Clinical Trials
               </TabsTrigger>
               <TabsTrigger data-testid="experts-tab" value="experts">
@@ -1253,7 +1263,7 @@ const PatientDashboard = ({ user, logout }) => {
                 Health Experts
               </TabsTrigger>
               <TabsTrigger data-testid="publications-tab" value="publications">
-                <FileText className="icon-sm" />
+                <BookOpen className="icon-sm" />
                 Publications
               </TabsTrigger>
               <TabsTrigger data-testid="forums-tab" value="forums">
