@@ -797,7 +797,7 @@ const ProfileSetup = ({ user }) => {
 // Patient Dashboard
 const PatientDashboard = ({ user, logout }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('trials');
+  const [activeTab, setActiveTab] = useState('overview');
   const [clinicalTrials, setClinicalTrials] = useState([]);
   const [experts, setExperts] = useState([]);
   const [publications, setPublications] = useState([]);
@@ -824,6 +824,18 @@ const PatientDashboard = ({ user, logout }) => {
   const [editedProfile, setEditedProfile] = useState({});
   const [userActivity, setUserActivity] = useState(null);
   const [conditionInput, setConditionInput] = useState('');
+  
+  // Search functionality states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // Overview/Featured section states
+  const [overviewData, setOverviewData] = useState(null);
+  
+  // Enhanced researcher profile states
+  const [researcherDetails, setResearcherDetails] = useState(null);
+  const [showResearcherDetails, setShowResearcherDetails] = useState(false);
 
   useEffect(() => {
     loadData();
