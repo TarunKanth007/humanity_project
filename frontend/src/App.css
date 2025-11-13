@@ -2319,6 +2319,34 @@ strong {
 
 /* Extra small mobile */
 @media (max-width: 480px) {
+  .dashboard-nav {
+    padding: 10px 12px;
+  }
+
+  .nav-brand {
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  .brand-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+
+  .nav-actions button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+  }
+
   .dashboard-header h1 {
     font-size: 20px;
   }
