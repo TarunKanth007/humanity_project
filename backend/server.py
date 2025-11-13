@@ -530,6 +530,7 @@ async def get_current_user(session_token: Optional[str] = None, authorization: O
     
     session = await db.user_sessions.find_one({"session_token": token})
     if not session:
+        logging.warning(f"AUTH: No session found for token: {token[:20]}...")
         return None
     
     # Check expiry
@@ -538,15 +539,18 @@ async def get_current_user(session_token: Optional[str] = None, authorization: O
         expires_at = datetime.fromisoformat(expires_at)
     if expires_at < datetime.now(timezone.utc):
         await db.user_sessions.delete_one({"session_token": token})
+        logging.warning(f"AUTH: Session expired for user_id: {session['user_id']}")
         return None
     
     user_doc = await db.users.find_one({"id": session["user_id"]}, {"_id": 0})
     if not user_doc:
+        logging.error(f"AUTH: User not found for user_id: {session['user_id']}")
         return None
     
     if isinstance(user_doc.get('created_at'), str):
         user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
     
+    logging.info(f"AUTH: Retrieved user from session - Email: {user_doc['email']}, ID: {user_doc['id']}")
     return User(**user_doc)
 
 async def generate_ai_summary(text: str, context: str = "medical") -> str:
