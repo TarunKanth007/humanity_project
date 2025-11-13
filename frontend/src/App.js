@@ -1388,7 +1388,15 @@ const PatientDashboard = ({ user, logout }) => {
               </TabsTrigger>
               <TabsTrigger data-testid="publications-tab" value="publications">
                 <BookOpen className="icon-sm" />
-                Publications
+                My Publications
+              </TabsTrigger>
+              <TabsTrigger data-testid="browse-trials-tab" value="browse-trials">
+                <FileText className="icon-sm" />
+                Browse Trials
+              </TabsTrigger>
+              <TabsTrigger data-testid="browse-publications-tab" value="browse-publications">
+                <BookOpen className="icon-sm" />
+                Browse Publications
               </TabsTrigger>
               <TabsTrigger data-testid="forums-tab" value="forums">
                 <MessageSquare className="icon-sm" />
@@ -3631,7 +3639,15 @@ const ResearcherDashboard = ({ user, logout }) => {
               </TabsTrigger>
               <TabsTrigger data-testid="publications-tab" value="publications">
                 <BookOpen className="icon-sm" />
-                Publications
+                My Publications
+              </TabsTrigger>
+              <TabsTrigger data-testid="browse-trials-tab" value="browse-trials">
+                <FileText className="icon-sm" />
+                Browse Trials
+              </TabsTrigger>
+              <TabsTrigger data-testid="browse-publications-tab" value="browse-publications">
+                <BookOpen className="icon-sm" />
+                Browse Publications
               </TabsTrigger>
               <TabsTrigger data-testid="forums-tab" value="forums">
                 <MessageSquare className="icon-sm" />
