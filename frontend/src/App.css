@@ -1663,10 +1663,10 @@ strong {
 
 /* Active Consultations */
 .active-consultations {
-  background: rgba(85, 107, 47, 0.08);
+  background: var(--teal-gradient);
   padding: 20px;
   border-radius: 12px;
-  border: 2px solid var(--olive);
+  border: 2px solid var(--teal);
 }
 
 .consultations-grid {
@@ -1677,7 +1677,7 @@ strong {
 
 .consultation-card {
   background: white;
-  border: 2px solid rgba(91, 70, 54, 0.15);
+  border: 2px solid rgba(63, 81, 181, 0.15);
 }
 
 .consultation-avatar {
@@ -1685,7 +1685,7 @@ strong {
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--olive);
+  border: 2px solid var(--teal);
 }
 
 /* Notifications */
@@ -1698,7 +1698,7 @@ strong {
   padding: 0 4px;
   font-size: 11px;
   font-weight: 600;
-  background: var(--olive);
+  background: var(--teal-gradient);
   color: var(--cream);
   border-radius: 10px;
   display: flex;
