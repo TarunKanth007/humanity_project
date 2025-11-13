@@ -2990,6 +2990,9 @@ const ResearcherDashboard = ({ user, logout }) => {
   // Forum filter state
   const [forumFilter, setForumFilter] = useState('all'); // 'all' or 'myfield'
   
+  // Favorite status tracking
+  const [favoritedItems, setFavoritedItems] = useState({});
+  
   // Collaboration states
   const [showCollabRequest, setShowCollabRequest] = useState(false);
   const [selectedCollaborator, setSelectedCollaborator] = useState(null);
