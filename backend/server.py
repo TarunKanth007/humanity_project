@@ -268,10 +268,12 @@ class CollaborationRequest(BaseModel):
     sender_id: str
     sender_name: str
     receiver_id: str
+    receiver_name: Optional[str] = None
     purpose: str
     sector: str
     message: str
     status: str = "pending"  # pending, accepted, rejected
+    rejection_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Collaboration(BaseModel):
