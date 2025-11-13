@@ -1545,12 +1545,41 @@ const PatientDashboard = ({ user, logout }) => {
                         {overviewData.latest_publications.map((pub) => (
                           <Card key={pub.id} className="item-card">
                             <CardHeader>
-                              <CardTitle className="item-title">{pub.title}</CardTitle>
-                              <CardDescription>
-                                {pub.journal} • {pub.year}
-                              </CardDescription>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ flex: 1 }}>
+                                  <CardTitle className="item-title">{pub.title}</CardTitle>
+                                  <CardDescription>
+                                    {pub.journal} • {pub.year}
+                                  </CardDescription>
+                                </div>
+                                {pub.relevance_score && (
+                                  <Badge style={{
+                                    background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    padding: '4px 10px',
+                                    whiteSpace: 'nowrap'
+                                  }}>
+                                    {pub.relevance_score}% Match
+                                  </Badge>
+                                )}
+                              </div>
                             </CardHeader>
                             <CardContent>
+                              {pub.match_reasons && pub.match_reasons.length > 0 && (
+                                <div style={{ 
+                                  marginTop: '0',
+                                  marginBottom: '12px',
+                                  padding: '8px 12px', 
+                                  background: '#E8EAF6', 
+                                  borderRadius: '6px',
+                                  fontSize: '13px',
+                                  color: '#3F51B5'
+                                }}>
+                                  <strong>Relevant:</strong> {pub.match_reasons.join(', ')}
+                                </div>
+                              )}
                               <p className="item-authors">{pub.authors.join(', ')}</p>
                               {pub.ai_summarized ? (
                                 <div>
