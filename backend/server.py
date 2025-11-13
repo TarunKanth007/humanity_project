@@ -1767,14 +1767,6 @@ async def get_researcher_overview(
             })
         
         latest_publications = sorted(latest_publications, key=lambda x: x["relevance_score"], reverse=True)[:3]
-        
-        # Add AI summaries to top publications
-        for pub in latest_publications:
-            if not pub.get("ai_summary"):
-                abstract = pub.get("abstract", "")
-                if abstract:
-                    ai_summary = await generate_ai_summary(abstract, "medical research")
-                    pub["ai_summary"] = ai_summary
     except Exception as e:
         logging.error(f"Failed to fetch publications: {e}")
     
