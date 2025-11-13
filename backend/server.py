@@ -2147,7 +2147,14 @@ async def send_collaboration_message(
     msg_dict["created_at"] = msg_dict["created_at"].isoformat()
     await db.collaboration_messages.insert_one(msg_dict)
     
-    return msg_dict
+    # Return without MongoDB's _id field
+    return {
+        "id": msg_dict["id"],
+        "collaboration_id": msg_dict["collaboration_id"],
+        "sender_id": msg_dict["sender_id"],
+        "message": msg_dict["message"],
+        "created_at": msg_dict["created_at"]
+    }
 
 @api_router.post("/collaborations/{collaboration_id}/review")
 async def submit_collaboration_review(
