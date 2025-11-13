@@ -918,11 +918,15 @@ async def get_publications(
     try:
         pubmed_api = PubMedAPI()
         
-        # Fetch publications from API
+        logger.info(f"Fetching publications from PubMed for query: {search_query}")
+        
+        # Fetch publications from API (synchronous call)
         api_publications = pubmed_api.search_and_fetch(
             query=search_query,
             max_results=20  # Fetch more to score and filter
         )
+        
+        logger.info(f"Received {len(api_publications)} publications from PubMed")
         
         # Calculate relevance scores for each publication
         scored_pubs = []
