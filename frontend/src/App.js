@@ -1774,7 +1774,7 @@ const PatientDashboard = ({ user, logout }) => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => addToFavorites('expert', expert.id)}
+                            onClick={() => addToFavorites('expert', expert.id, expert)}
                           >
                             <Heart className="icon-sm" />
                           </Button>
