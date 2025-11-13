@@ -938,12 +938,18 @@ const PatientDashboard = ({ user, logout }) => {
       } else if (activeTab === 'trials') {
         const res = await api.get('/patient/clinical-trials');
         setClinicalTrials(res.data);
+        // Load favorite statuses for trials
+        await loadFavoriteStatuses(res.data, 'trial');
       } else if (activeTab === 'experts') {
         const res = await api.get('/patient/experts');
         setExperts(res.data);
+        // Load favorite statuses for experts
+        await loadFavoriteStatuses(res.data, 'expert');
       } else if (activeTab === 'publications') {
         const res = await api.get('/patient/publications');
         setPublications(res.data);
+        // Load favorite statuses for publications
+        await loadFavoriteStatuses(res.data, 'publication');
       } else if (activeTab === 'forums') {
         const res = await api.get('/forums');
         setForums(res.data);
