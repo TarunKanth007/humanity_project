@@ -876,11 +876,11 @@ strong {
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 12px;
-  color: var(--taupe);
+  color: var(--primary-blue);
 }
 
 .feature-card p {
-  color: var(--taupe);
+  color: #000000;
   line-height: 1.6;
   opacity: 0.8;
 }
