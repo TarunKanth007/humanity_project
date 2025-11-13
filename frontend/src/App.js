@@ -1592,19 +1592,34 @@ const PatientDashboard = ({ user, logout }) => {
                             </CardHeader>
                             <CardContent>
                               {pub.ai_summarized ? (
-                                <p 
-                                  className="item-description"
-                                  style={{ 
-                                    background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                    backgroundClip: 'text',
-                                    fontWeight: '500',
-                                    fontSize: '15px'
-                                  }}
-                                >
-                                  {pub.ai_summary}
-                                </p>
+                                <div>
+                                  <div style={{ marginBottom: '8px' }}>
+                                    <span 
+                                      style={{ 
+                                        fontSize: '11px',
+                                        fontWeight: '600',
+                                        color: '#3F51B5',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                      }}
+                                    >
+                                      ✨ AI Summarized
+                                    </span>
+                                  </div>
+                                  <p 
+                                    className="item-description"
+                                    style={{ 
+                                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                                      WebkitBackgroundClip: 'text',
+                                      WebkitTextFillColor: 'transparent',
+                                      backgroundClip: 'text',
+                                      fontWeight: '500',
+                                      fontSize: '15px'
+                                    }}
+                                  >
+                                    {pub.ai_summary}
+                                  </p>
+                                </div>
                               ) : (
                                 <p className="item-description">{pub.abstract.slice(0, 150)}...</p>
                               )}
