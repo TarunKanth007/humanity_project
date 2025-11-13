@@ -455,7 +455,7 @@ strong {
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 16px;
-  color: var(--taupe);
+  color: #000000;
 }
 
 .gradient-text {
