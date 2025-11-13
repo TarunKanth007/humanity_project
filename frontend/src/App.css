@@ -2250,20 +2250,40 @@ strong {
 
   /* Navigation responsive */
   .dashboard-nav {
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
+    padding: 12px 16px;
+  }
+
+  .nav-brand {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 24px;
+    height: 24px;
   }
 
   .nav-actions {
-    flex-direction: column;
-    width: 100%;
     gap: 8px;
   }
 
   .nav-actions button {
-    width: 100%;
-    justify-content: center;
+    font-size: 13px;
+    padding: 8px 12px;
+    min-width: auto;
+  }
+
+  .nav-user {
+    gap: 8px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-user span {
+    display: none;
   }
 }
 
