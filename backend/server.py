@@ -1634,11 +1634,12 @@ async def get_researcher_overview(
     # If database is empty, fetch from ClinicalTrials.gov API
     if len(all_trials) == 0:
         try:
-            from clinical_trials_api import search_clinical_trials
+            from clinical_trials_api import ClinicalTrialsAPI
+            api_client = ClinicalTrialsAPI()
             # Search with first specialty or interest
             search_term = specialties[0] if specialties else (interests[0] if interests else "cancer")
-            api_trials = await search_clinical_trials(search_term, max_results=20)
-            all_trials = api_trials
+            all_trials = api_client.search_and_normalize(condition=search_term, status="RECRUITING", limit=20)
+            logging.info(f"Fetched {len(all_trials)} trials from ClinicalTrials.gov API for researcher")
         except Exception as e:
             logging.error(f"Failed to fetch trials from API: {e}")
     
