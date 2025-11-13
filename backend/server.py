@@ -575,13 +575,17 @@ async def process_session(data: SessionDataRequest, response: Response):
         auth_response.raise_for_status()
         session_data = auth_response.json()
         
-        # Check if user exists
+        logging.info(f"AUTH: Processing login for email: {session_data['email']}, name: {session_data['name']}")
+        
+        # Check if user exists BY EMAIL
         user_doc = await db.users.find_one({"email": session_data["email"]}, {"_id": 0})
         
         if user_doc:
+            logging.info(f"AUTH: Found existing user - ID: {user_doc['id']}, Email: {user_doc['email']}")
             user = User(**user_doc)
         else:
             # Create new user
+            logging.info(f"AUTH: Creating new user for email: {session_data['email']}")
             user = User(
                 email=session_data["email"],
                 name=session_data["name"],
@@ -590,9 +594,11 @@ async def process_session(data: SessionDataRequest, response: Response):
             user_dict = user.model_dump()
             user_dict['created_at'] = user_dict['created_at'].isoformat()
             await db.users.insert_one(user_dict)
+            logging.info(f"AUTH: New user created - ID: {user.id}, Email: {user.email}")
         
         # Delete any existing sessions for this user to prevent duplicates
-        await db.user_sessions.delete_many({"user_id": user.id})
+        deleted = await db.user_sessions.delete_many({"user_id": user.id})
+        logging.info(f"AUTH: Deleted {deleted.deleted_count} old sessions for user {user.id}")
         
         # Create session
         session_token = session_data["session_token"]
@@ -609,6 +615,7 @@ async def process_session(data: SessionDataRequest, response: Response):
         session_dict['created_at'] = session_dict['created_at'].isoformat()
         
         await db.user_sessions.insert_one(session_dict)
+        logging.info(f"AUTH: Created new session for user {user.id}, email: {user.email}")
         
         # Set httpOnly cookie
         response.set_cookie(
@@ -621,6 +628,7 @@ async def process_session(data: SessionDataRequest, response: Response):
             path="/"
         )
         
+        logging.info(f"AUTH: Login complete - Returning user: {user.email}, ID: {user.id}, Roles: {user.roles}")
         return {"status": "success", "user": user.model_dump()}
     
     except Exception as e:
