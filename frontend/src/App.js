@@ -1480,19 +1480,47 @@ const PatientDashboard = ({ user, logout }) => {
                         {overviewData.featured_trials.map((trial) => (
                           <Card key={trial.id} className="item-card">
                             <CardHeader>
-                              <CardTitle className="item-title">{trial.title}</CardTitle>
-                              <CardDescription>
-                                <Badge variant="outline">{trial.phase}</Badge>
-                                <Badge className="ml-2">{trial.status}</Badge>
-                              </CardDescription>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ flex: 1 }}>
+                                  <CardTitle className="item-title">{trial.title}</CardTitle>
+                                  <CardDescription>
+                                    <Badge variant="outline">{trial.phase}</Badge>
+                                    <Badge className="ml-2">{trial.status}</Badge>
+                                  </CardDescription>
+                                </div>
+                                {trial.relevance_score && (
+                                  <Badge style={{
+                                    background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    padding: '4px 10px',
+                                    whiteSpace: 'nowrap'
+                                  }}>
+                                    {trial.relevance_score}% Match
+                                  </Badge>
+                                )}
+                              </div>
                             </CardHeader>
                             <CardContent>
                               <p className="item-description">{trial.summary || trial.description}</p>
+                              {trial.match_reasons && trial.match_reasons.length > 0 && (
+                                <div style={{ 
+                                  marginTop: '8px', 
+                                  padding: '8px 12px', 
+                                  background: '#E8EAF6', 
+                                  borderRadius: '6px',
+                                  fontSize: '13px',
+                                  color: '#3F51B5'
+                                }}>
+                                  <strong>Why this matches:</strong> {trial.match_reasons.join(', ')}
+                                </div>
+                              )}
                               <div className="item-meta">
                                 <span><MapPin className="icon-xs" /> {trial.location}</span>
                               </div>
                               <div className="tags">
-                                {trial.disease_areas.map((area, idx) => (
+                                {trial.disease_areas && trial.disease_areas.map((area, idx) => (
                                   <Badge key={idx} variant="secondary">{area}</Badge>
                                 ))}
                               </div>
