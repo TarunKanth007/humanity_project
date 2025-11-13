@@ -1481,7 +1481,7 @@ async def researcher_search(
     
     # Search publications via PubMed API
     try:
-        from backend.pubmed_api import search_pubmed
+        from pubmed_api import search_pubmed
         pubmed_results = await search_pubmed(query, max_results=20)
         
         for pub in pubmed_results:
@@ -1658,7 +1658,7 @@ async def get_researcher_overview(
     # Get latest publications in researcher's areas
     latest_publications = []
     try:
-        from backend.pubmed_api import search_pubmed
+        from pubmed_api import search_pubmed
         
         # Search for publications matching specialties and interests
         search_terms = specialties + interests
@@ -1736,7 +1736,7 @@ async def get_researcher_publications(
     
     # Get publications from PubMed
     try:
-        from backend.pubmed_api import search_pubmed_by_author
+        from pubmed_api import search_pubmed_by_author
         pubmed_publications = await search_pubmed_by_author(user.name, max_results=50)
         
         for pub in pubmed_publications:
@@ -1791,7 +1791,7 @@ async def get_researcher_publications(
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
-        from backend.pubmed_api import search_pubmed_by_author
+        from pubmed_api import search_pubmed_by_author
         
         # Search by researcher name
         publications = await search_pubmed_by_author(user.name, max_results=50)
