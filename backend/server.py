@@ -1763,7 +1763,7 @@ async def get_researcher_overview(
                 latest_publications.append({
                     **pub,
                     "relevance_score": min(score, 100),  # Cap at 100%
-                    "reasons": reasons[:2]
+                    "match_reasons": reasons[:2]
                 })
             
             latest_publications = sorted(latest_publications, key=lambda x: x["relevance_score"], reverse=True)[:3]
