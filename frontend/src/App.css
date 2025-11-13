@@ -1644,7 +1644,7 @@ strong {
 .empty-icon {
   width: 64px;
   height: 64px;
-  color: var(--olive);
+  color: var(--primary-blue);
   opacity: 0.5;
   margin: 0 auto 24px;
 }
