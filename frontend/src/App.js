@@ -3162,6 +3162,14 @@ const ResearcherDashboard = ({ user, logout }) => {
         // Load personalized overview
         const res = await api.get('/researcher/overview');
         setOverviewData(res.data);
+      } else if (activeTab === 'browse-trials') {
+        // Load clinical trials from API (similar to patient)
+        const res = await api.get(`/patient/clinical-trials?page=${trialsPage}`);
+        setBrowseClinicalTrials(res.data);
+      } else if (activeTab === 'browse-publications') {
+        // Load publications from API (similar to patient)
+        const res = await api.get(`/patient/publications?page=${pubsPage}`);
+        setBrowsePublications(res.data);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
