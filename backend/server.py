@@ -865,8 +865,10 @@ async def get_clinical_trials(
         # Sort by relevance score
         scored_trials.sort(key=lambda x: x["relevance_score"], reverse=True)
         
-        # Get top 10 most relevant
-        top_trials = scored_trials[:10]
+        # Paginate results - get 10 items for current page
+        start_idx = (page - 1) * 10
+        end_idx = start_idx + 10
+        top_trials = scored_trials[start_idx:end_idx]
         
         # Generate AI summaries in parallel for speed
         import asyncio
