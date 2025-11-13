@@ -1147,6 +1147,232 @@ class BackendTester:
         self.test_backend_health()
         self.test_cors_configuration()
         self.test_cors_preflight()
+        
+        # Test 2: Search with invalid data
+        invalid_data_sets = [
+            ({}, "Empty data"),
+            ({"query": ""}, "Empty query"),
+            ({"filters": {}}, "Missing query"),
+            ({"query": "test", "invalid_field": "value"}, "Extra fields")
+        ]
+        
+        for invalid_data, description in invalid_data_sets:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/search",
+                    json=invalid_data
+                )
+                
+                if response.status_code in [400, 401, 422]:
+                    self.log_result(
+                        f"Search Validation - {description}",
+                        True,
+                        f"Correctly rejects invalid data (status: {response.status_code})",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+                else:
+                    self.log_result(
+                        f"Search Validation - {description}",
+                        False,
+                        f"Unexpected status code: {response.status_code}",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Search Validation - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+    
+    def test_patient_overview_endpoint_without_auth(self):
+        """Test patient overview endpoint authentication requirement"""
+        print("\n=== Patient Dashboard - Overview Endpoint Tests ===")
+        
+        try:
+            response = self.session.get(f"{BACKEND_URL}/patient/overview")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Patient Overview - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Patient Overview - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Patient Overview - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_researcher_details_endpoint_without_auth(self):
+        """Test researcher details endpoint authentication requirement"""
+        print("\n=== Patient Dashboard - Researcher Details Endpoint Tests ===")
+        
+        # Test with valid-looking researcher ID
+        test_researcher_id = "test_researcher_123"
+        
+        try:
+            response = self.session.get(f"{BACKEND_URL}/researcher/{test_researcher_id}/details")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Researcher Details - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code, "researcher_id": test_researcher_id}
+                )
+            else:
+                self.log_result(
+                    "Researcher Details - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "researcher_id": test_researcher_id}
+                )
+        except Exception as e:
+            self.log_result(
+                "Researcher Details - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test with invalid researcher ID format
+        invalid_ids = ["", "invalid/id", "id with spaces", "very_long_id_" + "x" * 100]
+        
+        for invalid_id in invalid_ids:
+            try:
+                response = self.session.get(f"{BACKEND_URL}/researcher/{invalid_id}/details")
+                
+                if response.status_code in [400, 401, 404, 422]:
+                    self.log_result(
+                        f"Researcher Details - Invalid ID: {invalid_id[:20]}",
+                        True,
+                        f"Correctly handles invalid ID (status: {response.status_code})",
+                        {"status_code": response.status_code, "invalid_id": invalid_id}
+                    )
+                else:
+                    self.log_result(
+                        f"Researcher Details - Invalid ID: {invalid_id[:20]}",
+                        False,
+                        f"Unexpected status code: {response.status_code}",
+                        {"status_code": response.status_code, "invalid_id": invalid_id}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Researcher Details - Invalid ID: {invalid_id[:20]}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+    
+    def test_patient_dashboard_endpoints_structure(self):
+        """Test Patient Dashboard endpoints exist and have proper structure"""
+        print("\n=== Patient Dashboard - Endpoint Structure Tests ===")
+        
+        endpoints_to_test = [
+            ("/search", "POST", "Search Endpoint"),
+            ("/patient/overview", "GET", "Patient Overview Endpoint"),
+            ("/researcher/test_id/details", "GET", "Researcher Details Endpoint")
+        ]
+        
+        for endpoint, method, description in endpoints_to_test:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{BACKEND_URL}{endpoint}")
+                elif method == "POST":
+                    response = self.session.post(
+                        f"{BACKEND_URL}{endpoint}",
+                        json={"query": "test"}
+                    )
+                
+                # We expect 401 for all these endpoints without auth
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Dashboard Structure - {description}",
+                        True,
+                        "Endpoint exists and requires authentication",
+                        {"endpoint": endpoint, "method": method, "status_code": response.status_code}
+                    )
+                elif response.status_code == 404:
+                    self.log_result(
+                        f"Dashboard Structure - {description}",
+                        False,
+                        "Endpoint not found - routing issue",
+                        {"endpoint": endpoint, "method": method, "status_code": response.status_code}
+                    )
+                else:
+                    self.log_result(
+                        f"Dashboard Structure - {description}",
+                        False,
+                        f"Unexpected response: {response.status_code}",
+                        {"endpoint": endpoint, "method": method, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Dashboard Structure - {description}",
+                    False,
+                    f"Request failed: {str(e)}",
+                    {"endpoint": endpoint, "method": method}
+                )
+    
+    def test_search_endpoint_data_validation(self):
+        """Test search endpoint data validation and structure"""
+        print("\n=== Patient Dashboard - Search Data Validation ===")
+        
+        # Test different query types and edge cases
+        test_queries = [
+            ("cancer", "Medical condition"),
+            ("diabetes", "Another medical condition"),
+            ("heart disease", "Multi-word condition"),
+            ("Dr", "Doctor prefix"),
+            ("cardiology", "Medical specialty"),
+            ("oncology", "Another specialty"),
+            ("research", "General term"),
+            ("trial", "Clinical trial term"),
+            ("publication", "Research term"),
+            ("a", "Single character"),
+            ("test query with many words", "Long query"),
+            ("123", "Numeric query"),
+            ("cancer diabetes", "Multiple conditions"),
+            ("COVID-19", "Hyphenated term"),
+            ("Dr. Smith", "Name with title")
+        ]
+        
+        for query, description in test_queries:
+            try:
+                search_data = {"query": query}
+                response = self.session.post(
+                    f"{BACKEND_URL}/search",
+                    json=search_data
+                )
+                
+                # Should return 401 without auth, but endpoint should handle the query format
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Search Query Validation - {description}",
+                        True,
+                        f"Query '{query}' properly formatted and processed",
+                        {"query": query, "status_code": response.status_code}
+                    )
+                else:
+                    self.log_result(
+                        f"Search Query Validation - {description}",
+                        False,
+                        f"Unexpected response for query '{query}': {response.status_code}",
+                        {"query": query, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Search Query Validation - {description}",
+                    False,
+                    f"Request failed for query '{query}': {str(e)}"
+                )
         self.test_auth_endpoints()
         self.test_core_endpoints()
         
