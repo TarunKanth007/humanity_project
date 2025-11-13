@@ -4202,8 +4202,10 @@ const ResearcherDashboard = ({ user, logout }) => {
               )}
             </TabsContent>
 
-            <TabsContent value="trials">
-              <div className="tab-header">
+            {/* My Work Tab - Combined Trials and Publications */}
+            <TabsContent value="my-work">
+              <div style={{ marginBottom: '32px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>My Clinical Trials</h3>
                 <Dialog open={showTrialDialog} onOpenChange={setShowTrialDialog}>
                   <DialogTrigger asChild>
                     <Button data-testid="create-trial-btn">
