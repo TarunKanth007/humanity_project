@@ -1517,6 +1517,181 @@ async def researcher_search(
 # ============ Common Endpoints ============
 
 @api_router.get("/forums")
+
+@api_router.get("/researcher/overview")
+async def get_researcher_overview(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Get personalized overview for researcher:
+    - Top researchers in their field (by collaboration potential)
+    - Featured trials relevant to their expertise
+    - Latest publications in their research areas
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get researcher profile
+    researcher_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    if not researcher_profile:
+        return {
+            "top_researchers": [],
+            "featured_trials": [],
+            "latest_publications": []
+        }
+    
+    specialties = researcher_profile.get("specialties", [])
+    interests = researcher_profile.get("research_interests", [])
+    
+    # Get top researchers in the same field
+    all_researchers = await db.researcher_profiles.find({}, {"_id": 0}).to_list(1000)
+    scored_researchers = []
+    
+    for researcher in all_researchers:
+        # Skip self
+        if researcher.get("user_id") == user.id:
+            continue
+        
+        score = 0
+        reasons = []
+        
+        # Check specialty overlap
+        researcher_specialties = researcher.get("specialties", [])
+        specialty_overlap = set([s.lower() for s in specialties]).intersection(
+            set([s.lower() for s in researcher_specialties])
+        )
+        if specialty_overlap:
+            score += 50
+            reasons.append(f"Shared specialty: {list(specialty_overlap)[0]}")
+        
+        # Check research interest overlap
+        researcher_interests = researcher.get("research_interests", [])
+        interest_overlap = set([i.lower() for i in interests]).intersection(
+            set([i.lower() for i in researcher_interests])
+        )
+        if interest_overlap:
+            score += 40
+            reasons.append(f"Shared interest: {list(interest_overlap)[0]}")
+        
+        # Boost if open to collaboration
+        if researcher.get("open_to_collaboration"):
+            score += 20
+            reasons.append("Open to collaboration")
+        
+        if score > 0:
+            researcher_user = await db.users.find_one({"id": researcher.get("user_id")}, {"_id": 0})
+            if researcher_user:
+                scored_researchers.append({
+                    "id": researcher.get("user_id"),
+                    "name": researcher_user.get("name"),
+                    "picture": researcher_user.get("picture"),
+                    "institution": researcher.get("institution"),
+                    "specialties": researcher_specialties,
+                    "bio": researcher.get("bio"),
+                    "years_experience": researcher.get("years_experience"),
+                    "open_to_collaboration": researcher.get("open_to_collaboration", False),
+                    "relevance_score": score,
+                    "reasons": reasons[:2]
+                })
+    
+    top_researchers = sorted(scored_researchers, key=lambda x: x["relevance_score"], reverse=True)[:3]
+    
+    # Get featured trials relevant to researcher's expertise
+    all_trials = await db.clinical_trials.find({}, {"_id": 0}).to_list(1000)
+    scored_trials = []
+    
+    for trial in all_trials:
+        score = 0
+        reasons = []
+        
+        disease_areas = trial.get("disease_areas", [])
+        
+        # Match with specialties
+        for specialty in specialties:
+            for area in disease_areas:
+                if specialty.lower() in area.lower() or area.lower() in specialty.lower():
+                    score += 40
+                    reasons.append(f"Matches specialty: {specialty}")
+                    break
+        
+        # Match with research interests
+        for interest in interests:
+            for area in disease_areas:
+                if interest.lower() in area.lower() or area.lower() in interest.lower():
+                    score += 30
+                    reasons.append(f"Matches interest: {interest}")
+                    break
+        
+        # Boost recruiting trials
+        if trial.get("status", "").lower() == "recruiting":
+            score += 20
+            reasons.append("Currently recruiting")
+        
+        if score > 0:
+            scored_trials.append({
+                **trial,
+                "relevance_score": score,
+                "reasons": reasons[:2]
+            })
+    
+    featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:3]
+    
+    # Get latest publications in researcher's areas
+    latest_publications = []
+    try:
+        from backend.pubmed_api import search_pubmed
+        
+        # Search for publications matching specialties and interests
+        search_terms = specialties + interests
+        if search_terms:
+            # Combine first 2 terms for more relevant results
+            search_query = " OR ".join(search_terms[:2])
+            pubmed_results = await search_pubmed(search_query, max_results=10)
+            
+            # Score and add relevance
+            for pub in pubmed_results:
+                score = 30  # Base score
+                reasons = []
+                
+                pub_title = pub.get("title", "").lower()
+                pub_abstract = pub.get("abstract", "").lower()
+                
+                for specialty in specialties:
+                    if specialty.lower() in pub_title or specialty.lower() in pub_abstract:
+                        score += 40
+                        reasons.append(f"Related to: {specialty}")
+                        break
+                
+                for interest in interests:
+                    if interest.lower() in pub_title or interest.lower() in pub_abstract:
+                        score += 30
+                        reasons.append(f"Interest area: {interest}")
+                        break
+                
+                # Prioritize recent publications
+                year = pub.get("year", 0)
+                if year >= 2024:
+                    score += 20
+                    reasons.append("Recent publication")
+                
+                latest_publications.append({
+                    **pub,
+                    "relevance_score": score,
+                    "reasons": reasons[:2]
+                })
+            
+            latest_publications = sorted(latest_publications, key=lambda x: x["relevance_score"], reverse=True)[:3]
+    except Exception as e:
+        logging.error(f"Failed to fetch publications: {e}")
+    
+    return {
+        "top_researchers": top_researchers,
+        "featured_trials": featured_trials,
+        "latest_publications": latest_publications
+    }
+
 async def get_forums(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
