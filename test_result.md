@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Verify and implement Patient Dashboard features according to checklist: 1) Search functionality with matching scores for researchers/trials/publications, 2) Top/Featured section showing top researchers, trials, and publications, 3) Enhanced researcher profiles showing their publications and clinical trials. All features should be fully functional with proper data from API."
+user_problem_statement: "Implement missing Researcher Dashboard features: 1) Search functionality for researchers/trials/publications with matching system, 2) Publications tab linked to PubMed, 3) Personalized 'For You' overview tab, 4) Open to collaboration toggle in profile, 5) Institution field in profile, 6) Forum filtering by researcher's field."
 
 backend:
   - task: "Search Endpoint with Matching Scores"
