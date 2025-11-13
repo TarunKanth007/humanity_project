@@ -1496,7 +1496,27 @@ const PatientDashboard = ({ user, logout }) => {
                               </CardDescription>
                             </CardHeader>
                             <CardContent>
-                              <p className="item-description">{trial.description.slice(0, 150)}...</p>
+                              {trial.ai_summarized && (
+                                <div style={{ marginBottom: '12px' }}>
+                                  <span 
+                                    style={{ 
+                                      fontSize: '11px',
+                                      fontWeight: '600',
+                                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                                      WebkitBackgroundClip: 'text',
+                                      WebkitTextFillColor: 'transparent',
+                                      backgroundClip: 'text',
+                                      textTransform: 'uppercase',
+                                      letterSpacing: '0.5px'
+                                    }}
+                                  >
+                                    ✨ AI Summarized
+                                  </span>
+                                </div>
+                              )}
+                              <p className="item-description">
+                                {trial.ai_summary || trial.description.slice(0, 150) + '...'}
+                              </p>
                               <div style={{ marginTop: '12px', padding: '8px', background: 'var(--cream)', borderRadius: '8px' }}>
                                 <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>Why this matches:</p>
                                 <ul style={{ fontSize: '12px', paddingLeft: '20px', margin: 0 }}>
