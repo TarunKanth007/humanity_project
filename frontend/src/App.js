@@ -2407,12 +2407,7 @@ const ResearcherDashboard = ({ user, logout }) => {
 
   const handleOpenCollabChat = async (collaboration) => {
     setSelectedCollab(collaboration);
-    try {
-      const res = await api.get(`/collaborations/${collaboration.id}/messages`);
-      setCollabMessages(res.data);
-    } catch (error) {
-      console.error('Failed to load messages:', error);
-    }
+    // Messages will be loaded by useEffect polling
   };
 
   const handleSendCollabMessage = async () => {
