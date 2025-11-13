@@ -1628,42 +1628,58 @@ async def get_researcher_overview(
     top_researchers = sorted(scored_researchers, key=lambda x: x["relevance_score"], reverse=True)[:3]
     
     # Get featured trials relevant to researcher's expertise
+    # First check database, if empty fetch from API
     all_trials = await db.clinical_trials.find({}, {"_id": 0}).to_list(1000)
+    
+    # If database is empty, fetch from ClinicalTrials.gov API
+    if len(all_trials) == 0:
+        try:
+            from clinical_trials_api import search_clinical_trials
+            # Search with first specialty or interest
+            search_term = specialties[0] if specialties else (interests[0] if interests else "cancer")
+            api_trials = await search_clinical_trials(search_term, max_results=20)
+            all_trials = api_trials
+        except Exception as e:
+            logging.error(f"Failed to fetch trials from API: {e}")
+    
     scored_trials = []
     
     for trial in all_trials:
-        score = 0
-        reasons = []
+        score = 50  # Base relevancy score of 50%
+        reasons = ["General medical trial"]
         
         disease_areas = trial.get("disease_areas", [])
         
-        # Match with specialties
+        # Match with specialties - boost score
         for specialty in specialties:
             for area in disease_areas:
                 if specialty.lower() in area.lower() or area.lower() in specialty.lower():
-                    score += 40
-                    reasons.append(f"Matches specialty: {specialty}")
+                    score += 30
+                    reasons = [f"Matches specialty: {specialty}"]
                     break
         
-        # Match with research interests
+        # Match with research interests - boost score
         for interest in interests:
             for area in disease_areas:
                 if interest.lower() in area.lower() or area.lower() in interest.lower():
-                    score += 30
-                    reasons.append(f"Matches interest: {interest}")
+                    score += 20
+                    if len(reasons) == 1 and reasons[0] == "General medical trial":
+                        reasons = [f"Matches interest: {interest}"]
+                    else:
+                        reasons.append(f"Matches interest: {interest}")
                     break
         
         # Boost recruiting trials
         if trial.get("status", "").lower() == "recruiting":
-            score += 20
-            reasons.append("Currently recruiting")
+            score += 10
+            if "General medical trial" not in reasons:
+                reasons.append("Currently recruiting")
         
-        if score > 0:
-            scored_trials.append({
-                **trial,
-                "relevance_score": score,
-                "reasons": reasons[:2]
-            })
+        scored_trials.append({
+            **trial,
+            "relevance_score": min(score, 100),  # Cap at 100%
+            "reasons": reasons[:2]
+        })
     
     featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:3]
     
