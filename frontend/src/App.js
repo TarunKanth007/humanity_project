@@ -4798,6 +4798,19 @@ const ResearcherDashboard = ({ user, logout }) => {
                         </div>
 
                         <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Institution / Organization</label>
+                          {isEditingProfile ? (
+                            <Input
+                              placeholder="e.g., Harvard Medical School, Mayo Clinic"
+                              value={editedProfile.institution || ''}
+                              onChange={(e) => setEditedProfile({...editedProfile, institution: e.target.value})}
+                            />
+                          ) : (
+                            <p>{profileData?.institution || 'Not provided'}</p>
+                          )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
                           <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>Available Hours</label>
                           {isEditingProfile ? (
                             <Input
@@ -4808,6 +4821,26 @@ const ResearcherDashboard = ({ user, logout }) => {
                           ) : (
                             <p>{profileData?.available_hours || 'Not provided'}</p>
                           )}
+                        </div>
+
+                        <div style={{gridColumn: 'span 2'}}>
+                          <label style={{display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', marginBottom: '8px'}}>
+                            <input
+                              type="checkbox"
+                              checked={isEditingProfile ? (editedProfile.open_to_collaboration || false) : (profileData?.open_to_collaboration || false)}
+                              onChange={(e) => {
+                                if (isEditingProfile) {
+                                  setEditedProfile({...editedProfile, open_to_collaboration: e.target.checked});
+                                }
+                              }}
+                              disabled={!isEditingProfile}
+                              style={{width: '18px', height: '18px', cursor: isEditingProfile ? 'pointer' : 'default'}}
+                            />
+                            Open to Collaboration
+                          </label>
+                          <p style={{fontSize: '14px', color: '#666', marginTop: '4px'}}>
+                            Show other researchers you're interested in collaborating on projects
+                          </p>
                         </div>
 
                         <div style={{gridColumn: 'span 2'}}>
