@@ -3133,6 +3133,20 @@ async def search(
     results["trials"] = results["trials"][:10]
     results["publications"] = results["publications"][:10]
     
+    # Generate AI summaries for top trial results
+    for trial in results["trials"]:
+        if trial.get("source") == "ClinicalTrials.gov API":
+            try:
+                ai_summary = await summarize_clinical_trial(
+                    title=trial.get("title", ""),
+                    description=trial.get("description", ""),
+                    disease_areas=trial.get("disease_areas", [])
+                )
+                trial["ai_summary"] = ai_summary
+                trial["ai_summarized"] = True
+            except Exception as e:
+                logger.error(f"Error summarizing trial in search: {e}")
+    
     return results
 
 # ============ Patient Overview/Featured Section ============
