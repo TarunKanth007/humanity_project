@@ -195,6 +195,18 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ IMPLEMENTATION VERIFIED: Enhanced researcher profile details are properly implemented. Found: 1) viewResearcherDetails() function calls GET /api/researcher/{user_id}/details endpoint, 2) Enhanced dialog with showResearcherDetails state management, 3) Large dialog (max-w-4xl max-h-[80vh] overflow-y-auto) for proper sizing and scrolling, 4) All required sections implemented: Professional Information (experience, sector, hours, rating), About/Bio, Research Interests, Clinical Trials (researcher's trials with phase/status), Publications (authored publications with journal/year/authors), Patient Reviews (with star ratings), 5) 'Request Appointment' button at bottom that opens appointment dialog, 6) Applied to both experts tab and search results via View Profile buttons. Dialog structure matches specifications with proper content organization. **LIMITATION: Cannot test dialog opening and data display due to authentication requirement - manual testing needed for full functionality verification.**"
+  
+  - task: "Favorites Tab Heart Icons"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "USER REPORTED BUG: Heart icons were missing from items in the Favorites tab, preventing users from removing favorites directly from that view. FIXED by adding Heart icon buttons to Favorites tab in both Patient and Researcher Dashboards. Changes: 1) Wrapped CardTitle in card-header-row div with Heart button, 2) Heart button calls addToFavorites(fav.item_type, fav.item.id, fav.item) on click with stopPropagation, 3) Heart icons display filled state (blue #3F51B5) since items are already favorited, 4) Consistent with Heart icon implementation in other tabs. Modified lines ~2168 and ~4038 in App.js. Ready for testing to confirm Heart icons appear and toggle favorites correctly."
 
 metadata:
   created_by: "main_agent"
