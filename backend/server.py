@@ -983,10 +983,11 @@ async def get_publications(
         
         logger.info(f"Fetching publications from PubMed for query: {search_query}")
         
-        # Fetch publications from API (synchronous call)
+        # Fetch publications from API (fetch more based on page)
+        fetch_limit = 20 + (page - 1) * 10  # Fetch enough for all pages
         api_publications = pubmed_api.search_and_fetch(
             query=search_query,
-            max_results=20  # Fetch more to score and filter
+            max_results=min(fetch_limit, 100)  # Max 100 total
         )
         
         logger.info(f"Received {len(api_publications)} publications from PubMed")
