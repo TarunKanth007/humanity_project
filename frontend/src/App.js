@@ -2168,9 +2168,25 @@ const PatientDashboard = ({ user, logout }) => {
                       <PopoverTrigger asChild>
                         <Card className="item-card" style={{ cursor: 'pointer' }}>
                           <CardHeader>
-                            <CardTitle className="item-title">
-                              {fav.item.title || fav.item.name}
-                            </CardTitle>
+                            <div className="card-header-row">
+                              <CardTitle className="item-title">
+                                {fav.item.title || fav.item.name}
+                              </CardTitle>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  addToFavorites(fav.item_type, fav.item.id, fav.item);
+                                }}
+                              >
+                                <Heart 
+                                  className="icon-sm" 
+                                  fill={favoritedItems[fav.item.id] !== false ? '#3F51B5' : 'none'}
+                                  color={favoritedItems[fav.item.id] !== false ? '#3F51B5' : 'currentColor'}
+                                />
+                              </Button>
+                            </div>
                             <CardDescription>
                               <Badge>{fav.item_type}</Badge>
                             </CardDescription>
