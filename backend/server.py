@@ -120,6 +120,12 @@ async def summarize_publication(title: str, abstract: str) -> str:
     Returns:
         Concise AI-generated summary (under 30 words)
     """
+    # Check cache first
+    cache_text = f"{title}:{abstract[:200]}"
+    cached = get_cached_summary(cache_text)
+    if cached:
+        return cached
+    
     try:
         prompt = f"""Summarize this medical research in EXACTLY 25-30 words. Be clear and accessible. Focus on the key finding or discovery.
 
@@ -133,6 +139,10 @@ Provide ONLY the summary (25-30 words), no additional text."""
         response = await llm_chat.send_message(UserMessage(text=prompt))
         # send_message returns the text directly
         summary = str(response).strip() if response else ""
+        
+        # Cache the result
+        if summary:
+            set_cached_summary(cache_text, summary)
         
         # Ensure summary isn't too long (count words)
         words = summary.split()
