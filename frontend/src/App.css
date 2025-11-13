@@ -901,7 +901,10 @@ strong {
   font-size: clamp(32px, 4vw, 48px);
   font-weight: 800;
   margin-bottom: 16px;
-  color: var(--taupe);
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .section-subtitle {
