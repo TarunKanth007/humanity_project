@@ -2748,6 +2748,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                             </div>
                           </div>
                         ))}
+                        <div ref={collabMessagesEndRef} />
                       </div>
                       
                       <div style={{display: 'flex', gap: '8px'}}>
