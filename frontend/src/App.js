@@ -3614,6 +3614,308 @@ const ResearcherDashboard = ({ user, logout }) => {
               </TabsTrigger>
             </TabsList>
 
+
+            {/* Overview Tab */}
+            <TabsContent value="overview">
+              {loading ? (
+                <div className="loading-state">Loading overview...</div>
+              ) : overviewData ? (
+                <div className="overview-sections">
+                  {/* Top Researchers in Field */}
+                  <div className="overview-section">
+                    <h3 className="section-title">Top Researchers in Your Field</h3>
+                    {overviewData.top_researchers?.length > 0 ? (
+                      <div className="items-grid">
+                        {overviewData.top_researchers.map((researcher) => (
+                          <Card key={researcher.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                  {researcher.picture && (
+                                    <img src={researcher.picture} alt={researcher.name} className="collab-avatar" />
+                                  )}
+                                  <div>
+                                    <CardTitle className="item-title">{researcher.name}</CardTitle>
+                                    <CardDescription>{researcher.institution}</CardDescription>
+                                  </div>
+                                </div>
+                                {researcher.open_to_collaboration && (
+                                  <Badge variant="default" style={{ background: 'var(--olive)' }}>
+                                    Open to Collaboration
+                                  </Badge>
+                                )}
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              {researcher.bio && <p className="item-description">{researcher.bio}</p>}
+                              <div className="tags">
+                                {researcher.specialties?.map((spec, idx) => (
+                                  <Badge key={idx} variant="secondary">{spec}</Badge>
+                                ))}
+                              </div>
+                              {researcher.reasons && researcher.reasons.length > 0 && (
+                                <div className="match-reasons">
+                                  <p className="match-reasons-title">Why you might connect:</p>
+                                  {researcher.reasons.map((reason, idx) => (
+                                    <span key={idx} className="match-reason-badge">{reason}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="empty-message">No researchers found in your field yet.</p>
+                    )}
+                  </div>
+
+                  {/* Featured Trials */}
+                  <div className="overview-section">
+                    <h3 className="section-title">Featured Clinical Trials</h3>
+                    {overviewData.featured_trials?.length > 0 ? (
+                      <div className="items-grid">
+                        {overviewData.featured_trials.map((trial) => (
+                          <Card key={trial.id} className="item-card">
+                            <CardHeader>
+                              <CardTitle className="item-title">{trial.title}</CardTitle>
+                              <CardDescription>
+                                <Badge variant="outline">{trial.phase}</Badge>
+                                <Badge className="ml-2">{trial.status}</Badge>
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="item-description">{trial.summary || trial.description}</p>
+                              <div className="item-meta">
+                                <span>📍 {trial.location}</span>
+                              </div>
+                              {trial.disease_areas && trial.disease_areas.length > 0 && (
+                                <div className="tags">
+                                  {trial.disease_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                              {trial.reasons && trial.reasons.length > 0 && (
+                                <div className="match-reasons">
+                                  <p className="match-reasons-title">Relevant because:</p>
+                                  {trial.reasons.map((reason, idx) => (
+                                    <span key={idx} className="match-reason-badge">{reason}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="empty-message">No trials found matching your expertise yet.</p>
+                    )}
+                  </div>
+
+                  {/* Latest Publications */}
+                  <div className="overview-section">
+                    <h3 className="section-title">Latest Research Publications</h3>
+                    {overviewData.latest_publications?.length > 0 ? (
+                      <div className="items-grid">
+                        {overviewData.latest_publications.map((pub, idx) => (
+                          <Card key={idx} className="item-card">
+                            <CardHeader>
+                              <CardTitle className="item-title">{pub.title}</CardTitle>
+                              <CardDescription>
+                                {pub.journal} • {pub.year}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              {pub.authors && <p className="item-meta">Authors: {pub.authors.join(', ')}</p>}
+                              <p className="item-description">{pub.summary || pub.abstract?.slice(0, 200) + '...'}</p>
+                              {pub.reasons && pub.reasons.length > 0 && (
+                                <div className="match-reasons">
+                                  <p className="match-reasons-title">Relevant to:</p>
+                                  {pub.reasons.map((reason, idx) => (
+                                    <span key={idx} className="match-reason-badge">{reason}</span>
+                                  ))}
+                                </div>
+                              )}
+                              {pub.url && (
+                                <a href={pub.url} target="_blank" rel="noopener noreferrer" className="publication-link">
+                                  View Publication →
+                                </a>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="empty-message">No publications found yet.</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <BookOpen className="empty-icon" />
+                  <h3>Complete your profile</h3>
+                  <p>Add your specialties and research interests to see personalized content</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Search Results Tab */}
+            {searchResults && (
+              <TabsContent value="search">
+                <div className="search-results">
+                  <h3 className="section-title">Search Results for "{searchQuery}"</h3>
+                  
+                  {/* Researchers Results */}
+                  {searchResults.researchers?.length > 0 && (
+                    <div className="results-section">
+                      <h4 className="results-category">Researchers ({searchResults.researchers.length})</h4>
+                      <div className="items-grid">
+                        {searchResults.researchers.map((researcher) => (
+                          <Card key={researcher.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1 }}>
+                                  {researcher.picture && (
+                                    <img src={researcher.picture} alt={researcher.name} className="collab-avatar" />
+                                  )}
+                                  <div>
+                                    <CardTitle className="item-title">{researcher.name}</CardTitle>
+                                    <CardDescription>{researcher.institution}</CardDescription>
+                                  </div>
+                                </div>
+                                <Badge className="match-score-badge">
+                                  {researcher.match_score}% Match
+                                </Badge>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              {researcher.bio && <p className="item-description">{researcher.bio}</p>}
+                              <div className="tags">
+                                {researcher.specialties?.map((spec, idx) => (
+                                  <Badge key={idx} variant="secondary">{spec}</Badge>
+                                ))}
+                              </div>
+                              {researcher.match_reasons && researcher.match_reasons.length > 0 && (
+                                <div className="match-reasons">
+                                  <p className="match-reasons-title">Why this matches:</p>
+                                  {researcher.match_reasons.map((reason, idx) => (
+                                    <span key={idx} className="match-reason-badge">{reason}</span>
+                                  ))}
+                                </div>
+                              )}
+                              {researcher.open_to_collaboration && (
+                                <Badge variant="default" style={{ background: 'var(--olive)', marginTop: '8px' }}>
+                                  Open to Collaboration
+                                </Badge>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Trials Results */}
+                  {searchResults.trials?.length > 0 && (
+                    <div className="results-section">
+                      <h4 className="results-category">Clinical Trials ({searchResults.trials.length})</h4>
+                      <div className="items-grid">
+                        {searchResults.trials.map((trial) => (
+                          <Card key={trial.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <CardTitle className="item-title">{trial.title}</CardTitle>
+                                <Badge className="match-score-badge">
+                                  {trial.match_score}% Match
+                                </Badge>
+                              </div>
+                              <CardDescription>
+                                <Badge variant="outline">{trial.phase}</Badge>
+                                <Badge className="ml-2">{trial.status}</Badge>
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="item-description">{trial.summary || trial.description}</p>
+                              <div className="item-meta">
+                                <span>📍 {trial.location}</span>
+                              </div>
+                              {trial.disease_areas && trial.disease_areas.length > 0 && (
+                                <div className="tags">
+                                  {trial.disease_areas.map((area, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                              {trial.match_reasons && trial.match_reasons.length > 0 && (
+                                <div className="match-reasons">
+                                  <p className="match-reasons-title">Why this matches:</p>
+                                  {trial.match_reasons.map((reason, idx) => (
+                                    <span key={idx} className="match-reason-badge">{reason}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Publications Results */}
+                  {searchResults.publications?.length > 0 && (
+                    <div className="results-section">
+                      <h4 className="results-category">Publications ({searchResults.publications.length})</h4>
+                      <div className="items-grid">
+                        {searchResults.publications.map((pub, idx) => (
+                          <Card key={idx} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <CardTitle className="item-title">{pub.title}</CardTitle>
+                                <Badge className="match-score-badge">
+                                  {pub.match_score}% Match
+                                </Badge>
+                              </div>
+                              <CardDescription>
+                                {pub.journal} • {pub.year}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              {pub.authors && <p className="item-meta">Authors: {pub.authors.join(', ')}</p>}
+                              <p className="item-description">{pub.summary || pub.abstract?.slice(0, 200) + '...'}</p>
+                              {pub.match_reasons && pub.match_reasons.length > 0 && (
+                                <div className="match-reasons">
+                                  <p className="match-reasons-title">Why this matches:</p>
+                                  {pub.match_reasons.map((reason, idx) => (
+                                    <span key={idx} className="match-reason-badge">{reason}</span>
+                                  ))}
+                                </div>
+                              )}
+                              {pub.url && (
+                                <a href={pub.url} target="_blank" rel="noopener noreferrer" className="publication-link">
+                                  View Publication →
+                                </a>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {searchResults.researchers?.length === 0 && 
+                   searchResults.trials?.length === 0 && 
+                   searchResults.publications?.length === 0 && (
+                    <div className="empty-state">
+                      <Search className="empty-icon" />
+                      <h3>No results found</h3>
+                      <p>Try a different search query</p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            )}
+
             <TabsContent value="collaborators">
               {loading ? (
                 <div className="loading-state">Loading collaborators...</div>
