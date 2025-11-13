@@ -1256,6 +1256,9 @@ strong {
   border-radius: 16px;
   padding: 32px;
   border: 2px solid rgba(91, 70, 54, 0.15);
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-header {
