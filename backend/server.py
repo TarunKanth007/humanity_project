@@ -34,7 +34,7 @@ llm_chat = LlmChat(
 # Helper function to summarize clinical trials
 async def summarize_clinical_trial(title: str, description: str, disease_areas: list) -> str:
     """
-    Use LLM to create a concise summary of a clinical trial
+    Use LLM to create a concise summary of a clinical trial (under 30 words)
     
     Args:
         title: Trial title
@@ -42,10 +42,10 @@ async def summarize_clinical_trial(title: str, description: str, disease_areas: 
         disease_areas: List of disease areas
         
     Returns:
-        Concise AI-generated summary (2-3 sentences)
+        Concise AI-generated summary (under 30 words)
     """
     try:
-        prompt = f"""Summarize this clinical trial in 2-3 clear, patient-friendly sentences. Focus on what the trial is testing, who it's for, and what patients can expect.
+        prompt = f"""Summarize this clinical trial in EXACTLY 25-30 words. Be clear and patient-friendly. Focus on what the trial tests and who can participate.
 
 Title: {title}
 
@@ -54,20 +54,59 @@ Disease Areas: {', '.join(disease_areas)}
 Full Description:
 {description[:1000]}
 
-Provide only the summary, no additional text."""
+Provide ONLY the summary (25-30 words), no additional text."""
 
         response = llm_chat.send_message(UserMessage(text=prompt))
         summary = response.strip()
         
-        # Ensure summary isn't too long
-        if len(summary) > 300:
-            summary = summary[:297] + "..."
+        # Ensure summary isn't too long (count words)
+        words = summary.split()
+        if len(words) > 30:
+            summary = ' '.join(words[:30]) + "..."
         
         return summary
     except Exception as e:
         logger.error(f"Error summarizing trial: {e}")
         # Fallback to truncated description
-        return description[:200] + "..." if len(description) > 200 else description
+        words = description.split()
+        return ' '.join(words[:30]) + "..." if len(words) > 30 else description
+
+# Helper function to summarize publications
+async def summarize_publication(title: str, abstract: str) -> str:
+    """
+    Use LLM to create a concise summary of a publication (under 30 words)
+    
+    Args:
+        title: Publication title
+        abstract: Publication abstract
+        
+    Returns:
+        Concise AI-generated summary (under 30 words)
+    """
+    try:
+        prompt = f"""Summarize this medical research in EXACTLY 25-30 words. Be clear and accessible. Focus on the key finding or discovery.
+
+Title: {title}
+
+Abstract:
+{abstract[:800]}
+
+Provide ONLY the summary (25-30 words), no additional text."""
+
+        response = llm_chat.send_message(UserMessage(text=prompt))
+        summary = response.strip()
+        
+        # Ensure summary isn't too long (count words)
+        words = summary.split()
+        if len(words) > 30:
+            summary = ' '.join(words[:30]) + "..."
+        
+        return summary
+    except Exception as e:
+        logger.error(f"Error summarizing publication: {e}")
+        # Fallback to truncated abstract
+        words = abstract.split()
+        return ' '.join(words[:30]) + "..." if len(words) > 30 else abstract
 
 # ============ Models ============
 
