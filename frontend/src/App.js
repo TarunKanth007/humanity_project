@@ -1219,6 +1219,50 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const loadMoreTrials = async () => {
+    setLoadingMoreTrials(true);
+    try {
+      const nextPage = trialsPage + 1;
+      const res = await api.get(`/patient/clinical-trials?page=${nextPage}`);
+      
+      // Append new trials to existing ones
+      setClinicalTrials(prev => [...prev, ...res.data]);
+      setTrialsPage(nextPage);
+      
+      // Load favorite statuses for new trials
+      await loadFavoriteStatuses(res.data, 'trial');
+      
+      toast.success(`Loaded ${res.data.length} more trials`);
+    } catch (error) {
+      console.error('Failed to load more trials:', error);
+      toast.error('Failed to load more trials');
+    } finally {
+      setLoadingMoreTrials(false);
+    }
+  };
+
+  const loadMorePublications = async () => {
+    setLoadingMorePubs(true);
+    try {
+      const nextPage = pubsPage + 1;
+      const res = await api.get(`/patient/publications?page=${nextPage}`);
+      
+      // Append new publications to existing ones
+      setPublications(prev => [...prev, ...res.data]);
+      setPubsPage(nextPage);
+      
+      // Load favorite statuses for new publications
+      await loadFavoriteStatuses(res.data, 'publication');
+      
+      toast.success(`Loaded ${res.data.length} more publications`);
+    } catch (error) {
+      console.error('Failed to load more publications:', error);
+      toast.error('Failed to load more publications');
+    } finally {
+      setLoadingMorePubs(false);
+    }
+  };
+
   return (
     <div className="dashboard">
       <nav className="dashboard-nav">
