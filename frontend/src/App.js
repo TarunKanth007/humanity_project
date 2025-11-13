@@ -3589,8 +3589,12 @@ const ResearcherDashboard = ({ user, logout }) => {
                 Collaborators
               </TabsTrigger>
               <TabsTrigger data-testid="trials-tab" value="trials">
-                <Search className="icon-sm" />
+                <FileText className="icon-sm" />
                 My Trials
+              </TabsTrigger>
+              <TabsTrigger data-testid="publications-tab" value="publications">
+                <BookOpen className="icon-sm" />
+                Publications
               </TabsTrigger>
               <TabsTrigger data-testid="forums-tab" value="forums">
                 <MessageSquare className="icon-sm" />
