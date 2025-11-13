@@ -791,6 +791,7 @@ async def get_clinical_trials(
     condition: Optional[str] = None,
     location: Optional[str] = None,
     status: Optional[str] = None,
+    page: int = 1,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
