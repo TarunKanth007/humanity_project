@@ -31,6 +31,44 @@ llm_chat = LlmChat(
     system_message="You are a medical AI assistant that creates clear, concise summaries of clinical research and trials for patients and researchers."
 ).with_model("openai", "gpt-4o-mini")
 
+# Helper function to summarize clinical trials
+async def summarize_clinical_trial(title: str, description: str, disease_areas: list) -> str:
+    """
+    Use LLM to create a concise summary of a clinical trial
+    
+    Args:
+        title: Trial title
+        description: Full trial description
+        disease_areas: List of disease areas
+        
+    Returns:
+        Concise AI-generated summary (2-3 sentences)
+    """
+    try:
+        prompt = f"""Summarize this clinical trial in 2-3 clear, patient-friendly sentences. Focus on what the trial is testing, who it's for, and what patients can expect.
+
+Title: {title}
+
+Disease Areas: {', '.join(disease_areas)}
+
+Full Description:
+{description[:1000]}
+
+Provide only the summary, no additional text."""
+
+        response = llm_chat.chat(UserMessage(content=prompt))
+        summary = response.text.strip()
+        
+        # Ensure summary isn't too long
+        if len(summary) > 300:
+            summary = summary[:297] + "..."
+        
+        return summary
+    except Exception as e:
+        logger.error(f"Error summarizing trial: {e}")
+        # Fallback to truncated description
+        return description[:200] + "..." if len(description) > 200 else description
+
 # ============ Models ============
 
 class User(BaseModel):
