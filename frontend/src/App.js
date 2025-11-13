@@ -2110,6 +2110,31 @@ const ResearcherDashboard = ({ user, logout }) => {
     return () => clearInterval(interval);
   }, [activeTab]);
 
+  // Poll for new collaboration messages every 2 seconds when chat is open
+  useEffect(() => {
+    if (selectedCollab) {
+      const loadCollabMessages = async () => {
+        try {
+          const res = await api.get(`/collaborations/${selectedCollab.id}/messages`);
+          setCollabMessages(res.data);
+        } catch (error) {
+          console.error('Failed to load messages:', error);
+        }
+      };
+
+      loadCollabMessages();
+      const interval = setInterval(loadCollabMessages, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [selectedCollab]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (collabMessagesEndRef.current) {
+      collabMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [collabMessages]);
+
   // Magnetic cursor effect and parallax scroll for tabs
   useEffect(() => {
     const tabs = document.querySelectorAll('.dashboard-tabs [role="tab"]');
