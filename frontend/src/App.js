@@ -4378,7 +4378,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                     <div className="loading-state">Loading forums...</div>
                   ) : (
                     <div className="items-grid">
-                      {forums.filter((forum) => {
+                      {(Array.isArray(forums) ? forums : []).filter((forum) => {
                         if (forumFilter === 'all') return true;
                         // Filter by researcher's specialties and interests
                         if (!profileData) return true;
