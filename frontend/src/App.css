@@ -2526,100 +2526,65 @@ strong {
     font-size: 12px;
   }
 
-  /* PROFILE PAGE RESPONSIVE - ULTRA AGGRESSIVE */
+  /* PROFILE PAGE RESPONSIVE - TARGETED APPROACH */
   
-  /* Container */
+  /* Container max width */
   .researcher-profile-content {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
-  .researcher-profile-content * {
-    box-sizing: border-box !important;
-  }
-
-  /* All grid displays to single column */
-  .researcher-profile-content > div > div[style*="display: grid"],
-  .researcher-profile-content > div > div > div[style*="display: grid"],
-  .researcher-profile-content div[style*="display: grid"] {
+  /* Form grid - only target the form fields grid */
+  .researcher-profile-content > div:first-child > div:last-child > div[style*="gridTemplateColumns"] {
     grid-template-columns: 1fr !important;
   }
 
-  /* Profile avatar section */
-  .researcher-profile-content div[style*="marginBottom: 24px"] img {
+  /* Profile header with avatar - stack on mobile */
+  .researcher-profile-content > div:first-child > div:last-child > div[style*="marginBottom: 24px"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .researcher-profile-content > div:first-child > div:last-child > div[style*="marginBottom: 24px"] img {
     width: 60px !important;
     height: 60px !important;
   }
 
-  .researcher-profile-content div[style*="marginBottom: 24px"] {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-  }
-
-  /* Card headers with buttons */
-  .researcher-profile-content > div > div > div > div[style*="justifyContent"] {
-    flex-direction: column !important;
-    align-items: flex-start !important;
+  /* Card header buttons - keep them visible and horizontal */
+  .researcher-profile-content > div > div:first-child > div {
+    flex-wrap: wrap !important;
     gap: 12px !important;
-    width: 100% !important;
-  }
-
-  /* Button containers */
-  .researcher-profile-content > div > div > div > div > div[style*="display: flex"] {
-    flex-direction: column !important;
-    width: 100% !important;
-    gap: 8px !important;
   }
 
   .researcher-profile-content button {
-    width: 100% !important;
-    font-size: 13px !important;
-    padding: 8px 12px !important;
+    font-size: 13px;
+    padding: 8px 12px;
   }
 
-  /* All inputs */
+  /* Inputs and textareas */
   .researcher-profile-content input,
   .researcher-profile-content textarea {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
   }
 
-  /* Labels and text */
-  .researcher-profile-content label {
-    font-size: 14px !important;
-  }
-
-  .researcher-profile-content h3 {
-    font-size: 18px !important;
-  }
-
-  /* Badge groups */
-  .researcher-profile-content div[style*="flexWrap"] {
-    width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  /* Stats cards - force 2 column */
-  .researcher-profile-content > div:last-child > div > div > div[style*="repeat(5"] {
-    display: grid !important;
+  /* Stats grid - target specifically the 5 column grid */
+  .researcher-profile-content > div:nth-last-child(1) > div:last-child > div[style*="repeat(5"] {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
   }
 
-  .researcher-profile-content svg {
+  .researcher-profile-content > div:nth-last-child(1) > div:last-child > div[style*="repeat(5"] > div svg {
     width: 24px !important;
     height: 24px !important;
   }
 
-  /* Activity tabs */
-  .researcher-profile-content .activity-tabs div[role="tablist"] {
-    overflow-x: auto !important;
+  .researcher-profile-content > div:nth-last-child(1) > div:last-child > div[style*="repeat(5"] > div p:first-of-type {
+    font-size: 20px !important;
   }
 
-  /* All cards */
-  .researcher-profile-content > div > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
+  /* Activity section grids */
+  .researcher-profile-content > div:nth-child(2) div[style*="gridTemplateColumns"][style*="auto-fill"] {
+    grid-template-columns: 1fr !important;
   }
 }
