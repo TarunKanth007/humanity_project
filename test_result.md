@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement researcher collaboration system in CuraLink. Researchers can send connection requests to other researchers with name, purpose, specialization, and custom message. Requests show in notifications. Once accepted, researchers can chat in a dedicated collaboration section. Either researcher can end the collaboration."
+user_problem_statement: "Verify and implement Patient Dashboard features according to checklist: 1) Search functionality with matching scores for researchers/trials/publications, 2) Top/Featured section showing top researchers, trials, and publications, 3) Enhanced researcher profiles showing their publications and clinical trials. All features should be fully functional with proper data from API."
 
 backend:
   - task: "Create Forum Endpoint"
