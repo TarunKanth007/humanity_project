@@ -1837,7 +1837,7 @@ async def add_favorite(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Add to favorites"""
+    """Add to favorites - saves API-fetched items to database if needed"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -1853,6 +1853,25 @@ async def add_favorite(
         # Return the existing favorite ID for toggle functionality
         return {"status": "already_favorited", "favorite_id": existing.get("id"), "action": "exists"}
     
+    # If item_data is provided (API-fetched item), save it to database first
+    if favorite_data.item_data:
+        item_data = favorite_data.item_data
+        
+        if favorite_data.item_type == "trial":
+            # Check if trial already exists
+            existing_trial = await db.clinical_trials.find_one({"id": favorite_data.item_id})
+            if not existing_trial:
+                # Save to clinical_trials collection
+                await db.clinical_trials.insert_one(item_data)
+        
+        elif favorite_data.item_type == "publication":
+            # Check if publication already exists
+            existing_pub = await db.publications.find_one({"id": favorite_data.item_id})
+            if not existing_pub:
+                # Save to publications collection
+                await db.publications.insert_one(item_data)
+    
+    # Create favorite record
     favorite = Favorite(
         user_id=user.id,
         item_type=favorite_data.item_type,
