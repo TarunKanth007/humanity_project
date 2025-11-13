@@ -813,14 +813,14 @@ strong {
 .stat-number {
   font-size: 48px;
   font-weight: 800;
-  color: var(--cream);
+  color: white;
   font-family: 'Poppins', sans-serif;
   margin-bottom: 8px;
 }
 
 .stat-label {
   font-size: 16px;
-  color: var(--cream);
+  color: white;
   opacity: 0.85;
   font-weight: 500;
 }
