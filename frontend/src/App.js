@@ -3666,7 +3666,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                       <CardDescription>Summary of your contributions</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px'}}>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px'}}>
                         <div style={{textAlign: 'center'}}>
                           <Activity style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
                           <p style={{fontSize: '24px', fontWeight: '700', color: 'var(--olive)'}}>
@@ -3680,6 +3680,13 @@ const ResearcherDashboard = ({ user, logout }) => {
                             {userActivity?.trials_created?.length || 0}
                           </p>
                           <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Trials Created</p>
+                        </div>
+                        <div style={{textAlign: 'center'}}>
+                          <Users style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
+                          <p style={{fontSize: '24px', fontWeight: '700', color: 'var(--olive)'}}>
+                            {userActivity?.collaborations_history?.length || 0}
+                          </p>
+                          <p style={{fontSize: '14px', color: 'var(--taupe)'}}>Collaborations</p>
                         </div>
                         <div style={{textAlign: 'center'}}>
                           <Calendar style={{width: '32px', height: '32px', margin: '0 auto 8px', color: 'var(--olive)'}} />
