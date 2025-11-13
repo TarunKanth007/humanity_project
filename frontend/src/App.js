@@ -3899,13 +3899,9 @@ const ResearcherDashboard = ({ user, logout }) => {
                               </div>
                             </CardHeader>
                             <CardContent>
-                              {trial.ai_summary && (
-                                <div className="ai-summary-badge">
-                                  <Sparkles className="icon-xs" />
-                                  <span>AI Summarized</span>
-                                </div>
-                              )}
-                              <p className="item-description">{trial.ai_summary || trial.summary || trial.description}</p>
+                              <p className="item-description">
+                                {truncateToWords(trial.summary || trial.description, 35)}
+                              </p>
                               {trial.match_reasons && trial.match_reasons.length > 0 && (
                                 <div className="match-reasons" style={{ marginTop: '12px', marginBottom: '12px' }}>
                                   <p className="match-reasons-title">Relevant because:</p>
