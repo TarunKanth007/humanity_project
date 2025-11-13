@@ -1497,6 +1497,8 @@ strong {
   box-shadow: var(--card-shadow);
   position: relative;
   overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .item-card::before {
