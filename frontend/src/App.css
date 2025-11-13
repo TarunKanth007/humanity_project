@@ -555,7 +555,7 @@ strong {
   left: 0;
   width: 0;
   height: 100%;
-  background: var(--accent-gradient);
+  background: var(--primary-gradient);
   transition: width 0.3s ease;
   z-index: -1;
 }
@@ -565,10 +565,10 @@ strong {
 }
 
 .cta-secondary:hover {
-  color: var(--cream);
-  border-color: var(--olive-dark);
+  color: white;
+  border-color: var(--primary-indigo);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: var(--glow-olive);
+  box-shadow: var(--glow-primary);
 }
 
 /* Sign In Section */
