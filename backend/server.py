@@ -1755,18 +1755,18 @@ async def get_researcher_overview(
                 
                 # Prioritize recent publications
                 year = pub.get("year", 0)
-                if year >= 2024:
-                    score += 10
-                    if "General medical research" not in reasons:
-                        reasons.append("Recent publication")
-                
-                latest_publications.append({
-                    **pub,
-                    "relevance_score": min(score, 100),  # Cap at 100%
-                    "match_reasons": reasons[:2]
-                })
+            if year >= 2024:
+                score += 10
+                if "General medical research" not in reasons:
+                    reasons.append("Recent publication")
             
-            latest_publications = sorted(latest_publications, key=lambda x: x["relevance_score"], reverse=True)[:3]
+            latest_publications.append({
+                **pub,
+                "relevance_score": min(score, 100),  # Cap at 100%
+                "match_reasons": reasons[:2]
+            })
+        
+        latest_publications = sorted(latest_publications, key=lambda x: x["relevance_score"], reverse=True)[:3]
     except Exception as e:
         logging.error(f"Failed to fetch publications: {e}")
     
