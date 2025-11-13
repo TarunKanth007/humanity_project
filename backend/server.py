@@ -1331,6 +1331,189 @@ async def get_my_trials(
     trials = await db.clinical_trials.find({"created_by": user.id}, {"_id": 0}).to_list(100)
     return trials
 
+@api_router.post("/researcher/search")
+async def researcher_search(
+    search_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Search for researchers, trials, and publications for researcher dashboard
+    Returns results with relevance scores based on query and researcher profile
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    query = search_data.get("query", "").strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query is required")
+    
+    # Get researcher's profile for personalized matching
+    researcher_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    researcher_specialties = researcher_profile.get("specialties", []) if researcher_profile else []
+    researcher_interests = researcher_profile.get("research_interests", []) if researcher_profile else []
+    
+    results = {
+        "researchers": [],
+        "trials": [],
+        "publications": []
+    }
+    
+    # Search for other researchers
+    query_lower = query.lower()
+    all_researchers = await db.researcher_profiles.find({}, {"_id": 0}).to_list(1000)
+    
+    for researcher in all_researchers:
+        # Skip self
+        if researcher.get("user_id") == user.id:
+            continue
+            
+        match_score = 0
+        match_reasons = []
+        
+        # Get user info
+        researcher_user = await db.users.find_one({"id": researcher.get("user_id")}, {"_id": 0})
+        if not researcher_user:
+            continue
+        
+        # Name matching
+        name = researcher_user.get("name", "").lower()
+        if query_lower in name:
+            match_score += 40
+            match_reasons.append(f"Name matches '{query}'")
+        
+        # Institution matching
+        institution = researcher.get("institution", "").lower()
+        if query_lower in institution:
+            match_score += 30
+            match_reasons.append(f"Institution matches '{query}'")
+        
+        # Specialty matching
+        specialties = researcher.get("specialties", [])
+        for specialty in specialties:
+            if query_lower in specialty.lower():
+                match_score += 25
+                match_reasons.append(f"Specialty: {specialty}")
+                break
+        
+        # Research interests matching
+        interests = researcher.get("research_interests", [])
+        for interest in interests:
+            if query_lower in interest.lower():
+                match_score += 20
+                match_reasons.append(f"Research interest: {interest}")
+                break
+        
+        # Collaboration alignment - boost if specialties overlap
+        specialty_overlap = set([s.lower() for s in researcher_specialties]).intersection(
+            set([s.lower() for s in specialties])
+        )
+        if specialty_overlap:
+            match_score += 15
+            match_reasons.append(f"Shared specialty: {list(specialty_overlap)[0]}")
+        
+        if match_score > 0:
+            results["researchers"].append({
+                "id": researcher.get("user_id"),
+                "name": researcher_user.get("name"),
+                "email": researcher_user.get("email"),
+                "picture": researcher_user.get("picture"),
+                "institution": researcher.get("institution"),
+                "specialties": specialties,
+                "research_interests": interests,
+                "bio": researcher.get("bio"),
+                "years_experience": researcher.get("years_experience"),
+                "open_to_collaboration": researcher.get("open_to_collaboration", False),
+                "match_score": min(match_score, 100),
+                "match_reasons": match_reasons[:3]
+            })
+    
+    # Search trials from database
+    trials = await db.clinical_trials.find({}, {"_id": 0}).to_list(1000)
+    for trial in trials:
+        match_score = 0
+        match_reasons = []
+        
+        # Title matching
+        if query_lower in trial.get("title", "").lower():
+            match_score += 40
+            match_reasons.append(f"Title matches '{query}'")
+        
+        # Description matching
+        if query_lower in trial.get("description", "").lower():
+            match_score += 25
+            match_reasons.append(f"Description matches '{query}'")
+        
+        # Disease areas matching
+        disease_areas = trial.get("disease_areas", [])
+        for area in disease_areas:
+            if query_lower in area.lower():
+                match_score += 30
+                match_reasons.append(f"Disease area: {area}")
+                break
+        
+        # Phase/status matching
+        if query_lower in trial.get("phase", "").lower():
+            match_score += 15
+            match_reasons.append(f"Phase: {trial.get('phase')}")
+        
+        # Specialty alignment
+        for specialty in researcher_specialties:
+            for area in disease_areas:
+                if specialty.lower() in area.lower() or area.lower() in specialty.lower():
+                    match_score += 20
+                    match_reasons.append(f"Aligns with your specialty: {specialty}")
+                    break
+        
+        if match_score > 0:
+            results["trials"].append({
+                **trial,
+                "match_score": min(match_score, 100),
+                "match_reasons": match_reasons[:3]
+            })
+    
+    # Search publications via PubMed API
+    try:
+        from backend.pubmed_api import search_pubmed
+        pubmed_results = await search_pubmed(query, max_results=20)
+        
+        for pub in pubmed_results:
+            match_score = 50  # Base score for keyword match
+            match_reasons = [f"Matches '{query}'"]
+            
+            # Boost if aligns with researcher interests
+            pub_title = pub.get("title", "").lower()
+            pub_abstract = pub.get("abstract", "").lower()
+            
+            for interest in researcher_interests:
+                if interest.lower() in pub_title or interest.lower() in pub_abstract:
+                    match_score += 25
+                    match_reasons.append(f"Related to: {interest}")
+                    break
+            
+            for specialty in researcher_specialties:
+                if specialty.lower() in pub_title or specialty.lower() in pub_abstract:
+                    match_score += 20
+                    match_reasons.append(f"Specialty area: {specialty}")
+                    break
+            
+            results["publications"].append({
+                **pub,
+                "match_score": min(match_score, 100),
+                "match_reasons": match_reasons[:3]
+            })
+    except Exception as e:
+        logging.error(f"PubMed search failed: {e}")
+    
+    # Sort by match score
+    results["researchers"] = sorted(results["researchers"], key=lambda x: x["match_score"], reverse=True)[:20]
+    results["trials"] = sorted(results["trials"], key=lambda x: x["match_score"], reverse=True)[:20]
+    results["publications"] = sorted(results["publications"], key=lambda x: x["match_score"], reverse=True)[:20]
+    
+    return results
+
+
 # ============ Common Endpoints ============
 
 @api_router.get("/forums")
