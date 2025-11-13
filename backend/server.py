@@ -870,13 +870,51 @@ async def get_clinical_trials(
         end_idx = start_idx + 10
         top_trials = scored_trials[start_idx:end_idx]
         
-        # Skip AI summarization for speed - return data immediately
-        # Use truncated descriptions instead
-        for trial in top_trials:
-            # Use first 150 chars of description as quick summary
-            desc = trial.get("description", "")
-            trial["ai_summary"] = desc[:150] + "..." if len(desc) > 150 else desc
-            trial["ai_summarized"] = False  # Mark as not AI summarized
+        # Generate AI summaries in parallel with TIMEOUT for speed
+        import asyncio
+        
+        async def summarize_with_timeout(trial):
+            """Summarize with 2 second timeout"""
+            try:
+                # Check cache first for instant return
+                cache_text = f"{trial.get('title', '')}:{trial.get('description', '')[:200]}"
+                cached = get_cached_summary(cache_text)
+                if cached:
+                    return cached
+                
+                # Try to generate with timeout
+                summary = await asyncio.wait_for(
+                    summarize_clinical_trial(
+                        title=trial.get("title", ""),
+                        description=trial.get("description", ""),
+                        disease_areas=trial.get("disease_areas", [])
+                    ),
+                    timeout=2.0  # 2 second timeout per summary
+                )
+                return summary
+            except asyncio.TimeoutError:
+                # Return truncated description if timeout
+                desc = trial.get("description", "")
+                return desc[:150] + "..." if len(desc) > 150 else desc
+            except Exception as e:
+                logger.error(f"Error summarizing trial: {e}")
+                desc = trial.get("description", "")
+                return desc[:150] + "..." if len(desc) > 150 else desc
+        
+        # Run all summaries in parallel with timeout
+        summary_tasks = [summarize_with_timeout(trial) for trial in top_trials]
+        summaries = await asyncio.gather(*summary_tasks, return_exceptions=True)
+        
+        # Add summaries to trials
+        for trial, summary in zip(top_trials, summaries):
+            if isinstance(summary, Exception):
+                desc = trial.get("description", "")
+                trial["ai_summary"] = desc[:150] + "..." if len(desc) > 150 else desc
+                trial["ai_summarized"] = False
+            else:
+                trial["ai_summary"] = summary
+                # Check if it's from cache or newly generated (contains "..."  means fallback)
+                trial["ai_summarized"] = not summary.endswith("...")
         
         return top_trials
         
