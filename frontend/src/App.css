@@ -2521,23 +2521,34 @@ strong {
     font-size: 12px;
   }
 
-  /* PROFILE PAGE RESPONSIVE - TARGETED APPROACH */
+  /* ===== RESEARCHER PROFILE RESPONSIVE ===== */
   
-  /* Container max width */
+  /* Main container - centered and clean */
   .researcher-profile-content {
     max-width: 100%;
     overflow-x: hidden;
+    margin: 0 auto;
+    padding: 0 8px;
   }
 
-  /* Form grid - only target the form fields grid */
+  /* All cards centered */
+  .researcher-profile-content > div {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* 1. PROFILE INFORMATION CARD */
+  
+  /* Form fields grid - single column on mobile */
   .researcher-profile-content > div:first-child > div:last-child > div[style*="gridTemplateColumns"] {
     grid-template-columns: 1fr !important;
   }
 
-  /* Profile header with avatar - stack on mobile */
+  /* Avatar section - stack vertically */
   .researcher-profile-content > div:first-child > div:last-child > div[style*="marginBottom: 24px"] {
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
+    text-align: center !important;
   }
 
   .researcher-profile-content > div:first-child > div:last-child > div[style*="marginBottom: 24px"] img {
@@ -2545,57 +2556,105 @@ strong {
     height: 60px !important;
   }
 
-  /* Card header buttons - keep them visible and horizontal */
-  .researcher-profile-content > div > div:first-child > div {
-    flex-wrap: wrap !important;
+  /* Edit Profile button - ALWAYS VISIBLE */
+  .researcher-profile-content > div:first-child > div:first-child > div {
+    flex-direction: column !important;
+    align-items: stretch !important;
     gap: 12px !important;
   }
 
-  .researcher-profile-content button {
-    font-size: 13px;
-    padding: 8px 12px;
+  .researcher-profile-content > div:first-child > div:first-child button {
+    width: 100% !important;
+    justify-content: center !important;
   }
 
-  /* Inputs and textareas */
+  /* All inputs full width */
   .researcher-profile-content input,
   .researcher-profile-content textarea {
     width: 100%;
     max-width: 100%;
   }
 
-  /* Stats grid - "Your Impact" card with 5 columns */
-  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-
-  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div svg {
-    width: 24px !important;
-    height: 24px !important;
-  }
-
-  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div p {
-    font-size: 16px !important;
-  }
-
-  /* Activity History section - all grids to single column */
-  .researcher-profile-content > div:nth-child(2) div[style*="gridTemplateColumns"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Activity History cards */
-  .researcher-profile-content > div:nth-child(2) div[style*="flexDirection: 'column'"] {
-    gap: 12px !important;
-  }
-
-  /* Activity tabs - scroll horizontally */
+  /* 2. ACTIVITY HISTORY CARD */
+  
+  /* Activity tabs - HORIZONTAL SCROLL */
   .researcher-profile-content > div:nth-child(2) [role="tablist"] {
     overflow-x: auto !important;
+    overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: thin !important;
+  }
+
+  .researcher-profile-content > div:nth-child(2) [role="tablist"]::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .researcher-profile-content > div:nth-child(2) [role="tablist"]::-webkit-scrollbar-track {
+    background: rgba(91, 70, 54, 0.1);
+  }
+
+  .researcher-profile-content > div:nth-child(2) [role="tablist"]::-webkit-scrollbar-thumb {
+    background: var(--olive);
+    border-radius: 2px;
   }
 
   .researcher-profile-content > div:nth-child(2) [role="tab"] {
     flex-shrink: 0 !important;
+    white-space: nowrap !important;
     font-size: 13px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Activity content - single column grids */
+  .researcher-profile-content > div:nth-child(2) div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* 3. YOUR IMPACT CARD - VERTICAL LAYOUT */
+  
+  /* Stats grid - 1 column (vertical) */
+  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Impact stat items - horizontal layout within each */
+  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    text-align: left !important;
+    padding: 12px !important;
+    border: 1px solid rgba(91, 70, 54, 0.1) !important;
+    border-radius: 8px !important;
+  }
+
+  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div svg {
+    width: 28px !important;
+    height: 28px !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div > div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div p:first-of-type {
+    font-size: 24px !important;
+    margin: 0 !important;
+  }
+
+  .researcher-profile-content > div:last-child > div:last-child > div[style*="repeat(5"] > div p:last-of-type {
+    font-size: 14px !important;
+    margin: 0 !important;
+    flex: 1;
   }
 }
