@@ -1,9 +1,13 @@
 <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Medical Cross with gradient -->
+  <!-- Medical Cross with blue gradient -->
   <defs>
     <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#556B2F;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#6B8E3D;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#3F51B5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#536DFE;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="tealAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2CBFAE;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#82CFFD;stop-opacity:1" />
     </linearGradient>
   </defs>
   
@@ -15,8 +19,8 @@
   <rect x="40" y="85" width="120" height="30" rx="5" fill="url(#logoGradient)"/>
   
   <!-- Heart overlay -->
-  <path d="M100 150 C90 140, 70 135, 60 125 C50 115, 50 100, 60 90 C70 80, 85 85, 100 95 C115 85, 130 80, 140 90 C150 100, 150 115, 140 125 C130 135, 110 140, 100 150 Z" fill="#5B4636" opacity="0.2"/>
+  <path d="M100 150 C90 140, 70 135, 60 125 C50 115, 50 100, 60 90 C70 80, 85 85, 100 95 C115 85, 130 80, 140 90 C150 100, 150 115, 140 125 C130 135, 110 140, 100 150 Z" fill="url(#tealAccent)" opacity="0.3"/>
   
   <!-- DNA helix accent -->
-  <path d="M100 60 Q110 70 100 80 Q90 90 100 100 Q110 110 100 120 Q90 130 100 140" stroke="#FFF8F0" stroke-width="3" fill="none" opacity="0.3"/>
+  <path d="M100 60 Q110 70 100 80 Q90 90 100 100 Q110 110 100 120 Q90 130 100 140" stroke="#F7F9FC" stroke-width="3" fill="none" opacity="0.4"/>
 </svg>
