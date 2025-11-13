@@ -1731,7 +1731,23 @@ const PatientDashboard = ({ user, logout }) => {
                       </CardHeader>
                       <CardContent>
                         <p className="item-authors">{pub.authors.join(', ')}</p>
-                        <p className="item-description">{pub.summary || pub.abstract.slice(0, 200) + '...'}</p>
+                        {pub.ai_summarized ? (
+                          <p 
+                            className="item-description"
+                            style={{ 
+                              background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              backgroundClip: 'text',
+                              fontWeight: '500',
+                              fontSize: '15px'
+                            }}
+                          >
+                            {pub.ai_summary}
+                          </p>
+                        ) : (
+                          <p className="item-description">{pub.summary || pub.abstract.slice(0, 200) + '...'}</p>
+                        )}
                         <div className="tags">
                           {pub.disease_areas.map((area, idx) => (
                             <Badge key={idx} variant="secondary">{area}</Badge>
