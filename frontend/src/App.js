@@ -4485,11 +4485,178 @@ const ResearcherDashboard = ({ user, logout }) => {
                   <p>Your publications from PubMed will appear here</p>
                 </div>
               )}
+
+              {/* Publications Section */}
+              <div style={{ marginTop: '48px', marginBottom: '32px' }}>
+                <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: '600' }}>My Publications</h3>
+                  <Dialog open={showCreatePublication} onOpenChange={setShowCreatePublication}>
+                    <DialogTrigger asChild>
+                      <Button style={{ background: 'var(--accent-gradient)', color: 'var(--cream)' }}>
+                        <Plus className="icon-sm" />
+                        Add Publication
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Add New Publication</DialogTitle>
+                        <DialogDescription>
+                          Add a publication to your profile. This can be a paper you've published or contributed to.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div style={{ display: 'grid', gap: '16px', marginTop: '16px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            Title <span style={{ color: 'red' }}>*</span>
+                          </label>
+                          <Input
+                            placeholder="Publication title"
+                            value={newPublication.title}
+                            onChange={(e) => setNewPublication({ ...newPublication, title: e.target.value })}
+                          />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                          <div>
+                            <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                              Journal <span style={{ color: 'red' }}>*</span>
+                            </label>
+                            <Input
+                              placeholder="e.g., Nature, Science"
+                              value={newPublication.journal}
+                              onChange={(e) => setNewPublication({ ...newPublication, journal: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                              Year <span style={{ color: 'red' }}>*</span>
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="2024"
+                              value={newPublication.year}
+                              onChange={(e) => setNewPublication({ ...newPublication, year: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            Authors (comma-separated)
+                          </label>
+                          <Input
+                            placeholder="John Doe, Jane Smith, etc."
+                            value={newPublication.authors}
+                            onChange={(e) => setNewPublication({ ...newPublication, authors: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            Abstract
+                          </label>
+                          <Textarea
+                            placeholder="Brief summary of the publication..."
+                            value={newPublication.abstract}
+                            onChange={(e) => setNewPublication({ ...newPublication, abstract: e.target.value })}
+                            rows={4}
+                          />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                          <div>
+                            <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                              DOI (Optional)
+                            </label>
+                            <Input
+                              placeholder="10.1000/xyz123"
+                              value={newPublication.doi}
+                              onChange={(e) => setNewPublication({ ...newPublication, doi: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                              URL (Optional)
+                            </label>
+                            <Input
+                              placeholder="https://..."
+                              value={newPublication.url}
+                              onChange={(e) => setNewPublication({ ...newPublication, url: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowCreatePublication(false)}>
+                          Cancel
+                        </Button>
+                        <Button 
+                          onClick={handleCreatePublication}
+                          style={{ background: 'var(--accent-gradient)', color: 'var(--cream)' }}
+                        >
+                          Add Publication
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {loading ? (
+                  <div className="loading-state">Loading publications...</div>
+                ) : publications.length > 0 ? (
+                  <div className="items-grid">
+                    {publications.map((pub, idx) => (
+                      <Card key={idx} className="item-card">
+                        <CardHeader>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                            <div>
+                              <CardTitle className="item-title">{pub.title}</CardTitle>
+                              <CardDescription>
+                                {pub.journal} • {pub.year}
+                              </CardDescription>
+                            </div>
+                            {pub.source && (
+                              <Badge variant={pub.source === 'manual' ? 'default' : 'secondary'} style={{ fontSize: '10px' }}>
+                                {pub.source === 'manual' ? 'Added' : 'PubMed'}
+                              </Badge>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          {pub.authors && pub.authors.length > 0 && (
+                            <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
+                              <strong>Authors:</strong> {pub.authors.join(', ')}
+                            </p>
+                          )}
+                          <p className="item-description">
+                            {pub.summary || pub.abstract?.slice(0, 300) + '...'}
+                          </p>
+                          {pub.url && (
+                            <a 
+                              href={pub.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="publication-link"
+                              style={{
+                                display: 'inline-block',
+                                marginTop: '12px',
+                                color: '#3F51B5',
+                                textDecoration: 'none',
+                                fontWeight: '500'
+                              }}
+                            >
+                              View Publication →
+                            </a>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state">
+                    <BookOpen className="empty-icon" />
+                    <h3>No publications found</h3>
+                    <p>Your publications from PubMed will appear here</p>
+                  </div>
+                )}
+              </div>
             </TabsContent>
-
-
- 
-
 
             <TabsContent value="forums">
               {selectedForum ? (
