@@ -294,6 +294,16 @@ class CollaborationMessage(BaseModel):
     message: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class CollaborationReview(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    collaboration_id: str
+    reviewer_id: str
+    reviewed_id: str
+    rating: int  # 1-5 stars
+    text: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # ============ Request/Response Models ============
 
 class SessionDataRequest(BaseModel):
