@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { Heart, Search, Users, FileText, MessageSquare, Star, Plus, Send, LogOut, User, Microscope, Stethoscope, BookOpen, MapPin, Filter, HelpCircle, Bell, Calendar, ChevronLeft, ChevronRight, Trash2, Edit, Save, X, Phone, CheckCircle, Clock, Activity } from "lucide-react";
+import { Heart, Search, Users, FileText, MessageSquare, Star, Plus, Send, LogOut, User, Microscope, Stethoscope, BookOpen, MapPin, Filter, HelpCircle, Bell, Calendar, ChevronLeft, ChevronRight, Trash2, Edit, Save, X, Phone, CheckCircle, Clock, Activity, Sparkles } from "lucide-react";
 import { QACommunity } from "@/components/QACommunity";
 import { Notifications } from "@/components/Notifications";
 import { ChatRoom } from "@/components/ChatRoom";
