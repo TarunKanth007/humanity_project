@@ -11,11 +11,11 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 
 logger = logging.getLogger(__name__)
 
-# Configure caching
+# Configure caching with short expiry for faster responses
 requests_cache.install_cache(
     'clinical_trials_cache',
     backend='sqlite',
-    expire_after=86400  # 24 hours
+    expire_after=3600  # 1 hour - balance between freshness and speed
 )
 
 class ClinicalTrialsAPI:
