@@ -589,6 +589,9 @@ async def process_session(data: SessionDataRequest, response: Response):
             user_dict['created_at'] = user_dict['created_at'].isoformat()
             await db.users.insert_one(user_dict)
         
+        # Delete any existing sessions for this user to prevent duplicates
+        await db.user_sessions.delete_many({"user_id": user.id})
+        
         # Create session
         session_token = session_data["session_token"]
         expires_at = datetime.now(timezone.utc) + timedelta(days=7)
