@@ -1280,6 +1280,300 @@ const PatientDashboard = ({ user, logout }) => {
               </TabsTrigger>
             </TabsList>
 
+            <TabsContent value="overview">
+              {loading ? (
+                <div className="loading-state">Loading your personalized overview...</div>
+              ) : overviewData ? (
+                <div style={{ display: 'grid', gap: '32px' }}>
+                  {/* Top Researchers Section */}
+                  <div>
+                    <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px', color: 'var(--olive)' }}>
+                      Top Rated Researchers
+                    </h2>
+                    {overviewData.top_researchers.length > 0 ? (
+                      <div className="items-grid">
+                        {overviewData.top_researchers.map((expert) => (
+                          <Card key={expert.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <CardTitle className="item-title">{expert.name}</CardTitle>
+                                <Badge variant="default">⭐ {expert.average_rating}</Badge>
+                              </div>
+                              <CardDescription>{expert.specialty}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              {expert.bio && <p className="item-description">{expert.bio.slice(0, 150)}...</p>}
+                              <div className="item-meta">
+                                <span><MapPin className="icon-xs" /> {expert.location}</span>
+                              </div>
+                              <div className="tags">
+                                {expert.research_areas.slice(0, 3).map((area, idx) => (
+                                  <Badge key={idx} variant="secondary">{area}</Badge>
+                                ))}
+                              </div>
+                              <Button 
+                                className="w-full mt-3"
+                                onClick={() => viewResearcherDetails(expert)}
+                              >
+                                View Profile
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ textAlign: 'center', padding: '24px', color: 'var(--taupe)' }}>
+                        No top researchers available yet
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Featured Trials Section */}
+                  <div>
+                    <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px', color: 'var(--olive)' }}>
+                      Featured Clinical Trials
+                    </h2>
+                    {overviewData.featured_trials.length > 0 ? (
+                      <div className="items-grid">
+                        {overviewData.featured_trials.map((trial) => (
+                          <Card key={trial.id} className="item-card">
+                            <CardHeader>
+                              <CardTitle className="item-title">{trial.title}</CardTitle>
+                              <CardDescription>
+                                <Badge variant="outline">{trial.phase}</Badge>
+                                <Badge className="ml-2">{trial.status}</Badge>
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="item-description">{trial.summary || trial.description}</p>
+                              <div className="item-meta">
+                                <span><MapPin className="icon-xs" /> {trial.location}</span>
+                              </div>
+                              <div className="tags">
+                                {trial.disease_areas.map((area, idx) => (
+                                  <Badge key={idx} variant="secondary">{area}</Badge>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ textAlign: 'center', padding: '24px', color: 'var(--taupe)' }}>
+                        No featured trials available
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Latest Publications Section */}
+                  <div>
+                    <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px', color: 'var(--olive)' }}>
+                      Latest Research Publications
+                    </h2>
+                    {overviewData.latest_publications.length > 0 ? (
+                      <div className="items-grid">
+                        {overviewData.latest_publications.map((pub) => (
+                          <Card key={pub.id} className="item-card">
+                            <CardHeader>
+                              <CardTitle className="item-title">{pub.title}</CardTitle>
+                              <CardDescription>
+                                {pub.journal} • {pub.year}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="item-authors">{pub.authors.join(', ')}</p>
+                              <p className="item-description">{pub.summary || pub.abstract.slice(0, 200) + '...'}</p>
+                              <div className="tags">
+                                {pub.disease_areas.map((area, idx) => (
+                                  <Badge key={idx} variant="secondary">{area}</Badge>
+                                ))}
+                              </div>
+                              {pub.url && (
+                                <a href={pub.url} target="_blank" rel="noopener noreferrer" className="item-link">
+                                  View Publication →
+                                </a>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ textAlign: 'center', padding: '24px', color: 'var(--taupe)' }}>
+                        No publications available
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <Stethoscope className="empty-icon" />
+                  <h3>Loading your personalized recommendations...</h3>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="search">
+              {searchResults && (
+                <div style={{ display: 'grid', gap: '32px' }}>
+                  {/* Researchers Results */}
+                  {searchResults.researchers.length > 0 && (
+                    <div>
+                      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px' }}>
+                        Researchers ({searchResults.researchers.length})
+                      </h2>
+                      <div className="items-grid">
+                        {searchResults.researchers.map((expert) => (
+                          <Card key={expert.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <div>
+                                  <CardTitle className="item-title">{expert.name}</CardTitle>
+                                  <Badge 
+                                    variant="default" 
+                                    style={{ 
+                                      marginTop: '4px',
+                                      background: `linear-gradient(135deg, var(--olive), var(--sage))`,
+                                      color: 'white'
+                                    }}
+                                  >
+                                    {expert.match_score}% Match
+                                  </Badge>
+                                </div>
+                              </div>
+                              <CardDescription>{expert.specialty}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              {expert.bio && <p className="item-description">{expert.bio.slice(0, 150)}...</p>}
+                              <div style={{ marginTop: '12px', padding: '8px', background: 'var(--cream)', borderRadius: '8px' }}>
+                                <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>Why this matches:</p>
+                                <ul style={{ fontSize: '12px', paddingLeft: '20px', margin: 0 }}>
+                                  {expert.match_reasons.slice(0, 3).map((reason, idx) => (
+                                    <li key={idx}>{reason}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <Button 
+                                className="w-full mt-3"
+                                onClick={() => viewResearcherDetails(expert)}
+                              >
+                                View Profile
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Trials Results */}
+                  {searchResults.trials.length > 0 && (
+                    <div>
+                      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px' }}>
+                        Clinical Trials ({searchResults.trials.length})
+                      </h2>
+                      <div className="items-grid">
+                        {searchResults.trials.map((trial) => (
+                          <Card key={trial.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <div>
+                                  <CardTitle className="item-title">{trial.title}</CardTitle>
+                                  <Badge 
+                                    variant="default"
+                                    style={{ 
+                                      marginTop: '4px',
+                                      background: `linear-gradient(135deg, var(--olive), var(--sage))`,
+                                      color: 'white'
+                                    }}
+                                  >
+                                    {trial.match_score}% Match
+                                  </Badge>
+                                </div>
+                              </div>
+                              <CardDescription>
+                                <Badge variant="outline">{trial.phase}</Badge>
+                                <Badge className="ml-2">{trial.status}</Badge>
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="item-description">{trial.description.slice(0, 150)}...</p>
+                              <div style={{ marginTop: '12px', padding: '8px', background: 'var(--cream)', borderRadius: '8px' }}>
+                                <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>Why this matches:</p>
+                                <ul style={{ fontSize: '12px', paddingLeft: '20px', margin: 0 }}>
+                                  {trial.match_reasons.slice(0, 3).map((reason, idx) => (
+                                    <li key={idx}>{reason}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Publications Results */}
+                  {searchResults.publications.length > 0 && (
+                    <div>
+                      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px' }}>
+                        Publications ({searchResults.publications.length})
+                      </h2>
+                      <div className="items-grid">
+                        {searchResults.publications.map((pub) => (
+                          <Card key={pub.id} className="item-card">
+                            <CardHeader>
+                              <div className="card-header-row">
+                                <div>
+                                  <CardTitle className="item-title">{pub.title}</CardTitle>
+                                  <Badge 
+                                    variant="default"
+                                    style={{ 
+                                      marginTop: '4px',
+                                      background: `linear-gradient(135deg, var(--olive), var(--sage))`,
+                                      color: 'white'
+                                    }}
+                                  >
+                                    {pub.match_score}% Match
+                                  </Badge>
+                                </div>
+                              </div>
+                              <CardDescription>
+                                {pub.journal} • {pub.year}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="item-description">{pub.abstract.slice(0, 150)}...</p>
+                              <div style={{ marginTop: '12px', padding: '8px', background: 'var(--cream)', borderRadius: '8px' }}>
+                                <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>Why this matches:</p>
+                                <ul style={{ fontSize: '12px', paddingLeft: '20px', margin: 0 }}>
+                                  {pub.match_reasons.slice(0, 3).map((reason, idx) => (
+                                    <li key={idx}>{reason}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              {pub.url && (
+                                <a href={pub.url} target="_blank" rel="noopener noreferrer" className="item-link">
+                                  View Publication →
+                                </a>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {searchResults.researchers.length === 0 && searchResults.trials.length === 0 && searchResults.publications.length === 0 && (
+                    <div className="empty-state">
+                      <Search className="empty-icon" />
+                      <h3>No results found</h3>
+                      <p>Try different search terms or browse the categories above</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </TabsContent>
+
             <TabsContent value="trials">
               {loading ? (
                 <div className="loading-state">Loading trials...</div>
