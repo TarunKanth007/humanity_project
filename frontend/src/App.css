@@ -1013,12 +1013,12 @@ strong {
 
 .testimonial-text {
   font-size: 16px;
-  line-height: 1.8;
-  color: var(--taupe);
-  font-style: italic;
+  line-height: 1.7;
+  color: #000000;
+  margin-bottom: 24px;
   text-align: left;
-  margin-bottom: 32px;
-  flex: 1;
+  font-style: italic;
+  opacity: 0.85;
 }
 
 .testimonial-dots {
