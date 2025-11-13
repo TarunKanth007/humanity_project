@@ -3196,7 +3196,14 @@ const ResearcherDashboard = ({ user, logout }) => {
     try {
       const res = await api.post('/researcher/search', { query: searchQuery });
       setSearchResults(res.data);
-
+      setActiveTab('search');
+    } catch (error) {
+      console.error('Search failed:', error);
+      toast.error('Search failed. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   const loadMoreTrials = async () => {
     try {
@@ -3217,15 +3224,6 @@ const ResearcherDashboard = ({ user, logout }) => {
       setPubsPage(nextPage);
     } catch (error) {
       console.error('Failed to load more publications:', error);
-    }
-  };
-
-      setActiveTab('search');
-    } catch (error) {
-      console.error('Search failed:', error);
-      toast.error('Search failed. Please try again.');
-    } finally {
-      setIsSearching(false);
     }
   };
 
