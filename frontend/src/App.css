@@ -2394,13 +2394,13 @@ strong {
   }
 
   [role="tab"] {
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: 11px;
+    padding: 6px 10px;
   }
 
   .icon-sm {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
   .item-card {
@@ -2413,6 +2413,25 @@ strong {
 
   .card-description {
     font-size: 13px;
+  }
+
+  /* Profile extra small */
+  .profile-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .profile-details h3 {
+    font-size: 16px;
+  }
+
+  label {
+    font-size: 13px;
+  }
+
+  button {
+    font-size: 13px;
+    padding: 8px 12px;
   }
 
   /* Profile page responsive */
