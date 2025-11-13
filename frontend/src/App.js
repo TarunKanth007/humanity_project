@@ -1860,6 +1860,25 @@ const PatientDashboard = ({ user, logout }) => {
                   ))}
                 </div>
               )}
+              
+              {!loading && clinicalTrials.length > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '32px' }}>
+                  <Button
+                    onClick={loadMoreTrials}
+                    disabled={loadingMoreTrials}
+                    size="lg"
+                    style={{
+                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                      color: 'white',
+                      padding: '12px 32px',
+                      fontSize: '16px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    {loadingMoreTrials ? 'Loading...' : 'Get 10 More'}
+                  </Button>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="experts">
