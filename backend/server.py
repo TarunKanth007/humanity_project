@@ -2692,10 +2692,14 @@ async def search(
 ):
     """
     Search across researchers, trials, and publications with relevance scoring
+    Uses real-time data from ClinicalTrials.gov and PubMed APIs
     """
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    from clinical_trials_api import ClinicalTrialsAPI
+    from pubmed_api import PubMedAPI
     
     query = search_request.query.lower()
     results = {
@@ -2708,7 +2712,7 @@ async def search(
     patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
     patient_conditions = patient_profile.get("conditions", []) if patient_profile else []
     
-    # Search Researchers/Experts
+    # Search Researchers/Experts (from database - not available via public API)
     experts = await db.health_experts.find({}, {"_id": 0}).to_list(100)
     for expert in experts:
         score = 0
@@ -2771,97 +2775,141 @@ async def search(
                 "match_reasons": match_reasons
             })
     
-    # Search Clinical Trials
-    trials = await db.clinical_trials.find({}, {"_id": 0}).to_list(100)
-    for trial in trials:
-        score = 0
-        match_reasons = []
+    # Search Clinical Trials from ClinicalTrials.gov API
+    try:
+        ct_api = ClinicalTrialsAPI()
+        # Use first patient condition if available, otherwise use query
+        search_condition = patient_conditions[0] if patient_conditions else query
+        api_trials = ct_api.search_and_normalize(
+            condition=search_condition,
+            status="RECRUITING",
+            limit=50
+        )
         
-        # Check title match
-        if query in trial.get("title", "").lower():
-            score += 30
-            match_reasons.append("Title match")
-        
-        # Check description match
-        if query in trial.get("description", "").lower():
-            score += 15
-            match_reasons.append("Description match")
-        
-        # Check disease areas match
-        disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
-        if any(query in area for area in disease_areas):
-            score += 25
-            match_reasons.append("Disease area match")
-        
-        # Personalized matching based on patient conditions
-        for condition in patient_conditions:
-            condition_lower = condition.lower()
-            if any(condition_lower in area for area in disease_areas):
-                score += 20
-                match_reasons.append(f"Targets your condition: {condition}")
-            if condition_lower in trial.get("title", "").lower():
+        for trial in api_trials:
+            score = 0
+            match_reasons = ["Live data from ClinicalTrials.gov"]
+            
+            # Check title match
+            if query in trial.get("title", "").lower():
+                score += 30
+                match_reasons.append("Title match")
+            
+            # Check description match
+            if query in trial.get("description", "").lower():
                 score += 15
-                match_reasons.append(f"Title mentions your condition: {condition}")
-        
-        # Boost for active trials
-        if trial.get("status", "").lower() == "recruiting":
-            score += 10
-            match_reasons.append("Currently recruiting")
-        
-        if score > 0:
+                match_reasons.append("Description match")
+            
+            # Check disease areas match
+            disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
+            if any(query in area for area in disease_areas):
+                score += 25
+                match_reasons.append("Disease area match")
+            
+            # Personalized matching based on patient conditions
+            for condition in patient_conditions:
+                condition_lower = condition.lower()
+                if any(condition_lower in area for area in disease_areas):
+                    score += 25
+                    match_reasons.append(f"Targets your condition: {condition}")
+                if condition_lower in trial.get("title", "").lower():
+                    score += 15
+                    match_reasons.append(f"Title mentions your condition: {condition}")
+            
+            # Boost for recruiting trials
+            if trial.get("status", "").upper() == "RECRUITING":
+                score += 15
+                match_reasons.append("Currently recruiting patients")
+            
+            # Always include API results if they match at all
+            if score > 0 or len(match_reasons) > 1:
+                results["trials"].append({
+                    **trial,
+                    "match_score": min(max(score, 50), 100),  # Min 50% for API results
+                    "match_reasons": match_reasons
+                })
+    except Exception as e:
+        logger.error(f"Error fetching from ClinicalTrials.gov: {e}")
+        # Fallback to database if API fails
+        db_trials = await db.clinical_trials.find({}, {"_id": 0}).limit(10).to_list(10)
+        for trial in db_trials:
+            score = 50  # Default score for fallback
             results["trials"].append({
                 **trial,
-                "match_score": min(score, 100),
-                "match_reasons": match_reasons
+                "match_score": score,
+                "match_reasons": ["Database result (API unavailable)"]
             })
     
-    # Search Publications
-    publications = await db.publications.find({}, {"_id": 0}).to_list(100)
-    for pub in publications:
-        score = 0
-        match_reasons = []
+    # Search Publications from PubMed API
+    try:
+        pubmed_api = PubMedAPI()
+        # Enhance query with disease area if available
+        search_query = query
+        if patient_conditions:
+            search_query = f"{query} {patient_conditions[0]}"
         
-        # Check title match
-        if query in pub.get("title", "").lower():
-            score += 30
-            match_reasons.append("Title match")
+        api_publications = pubmed_api.search_and_fetch(
+            query=search_query,
+            max_results=50
+        )
         
-        # Check abstract match
-        if query in pub.get("abstract", "").lower():
-            score += 15
-            match_reasons.append("Abstract match")
-        
-        # Check disease areas match
-        disease_areas = [area.lower() for area in pub.get("disease_areas", [])]
-        if any(query in area for area in disease_areas):
-            score += 25
-            match_reasons.append("Disease area match")
-        
-        # Check authors match
-        authors = [author.lower() for author in pub.get("authors", [])]
-        if any(query in author for author in authors):
-            score += 20
-            match_reasons.append("Author match")
-        
-        # Personalized matching based on patient conditions
-        for condition in patient_conditions:
-            condition_lower = condition.lower()
-            if any(condition_lower in area for area in disease_areas):
+        for pub in api_publications:
+            score = 0
+            match_reasons = ["Live data from PubMed"]
+            
+            # Check title match
+            if query in pub.get("title", "").lower():
+                score += 30
+                match_reasons.append("Title match")
+            
+            # Check abstract match
+            if query in pub.get("abstract", "").lower():
                 score += 15
-                match_reasons.append(f"Relevant to your condition: {condition}")
-        
-        # Boost for recent publications
-        current_year = datetime.now(timezone.utc).year
-        pub_year = pub.get("year", 2000)
-        if current_year - pub_year <= 2:
-            score += 10
-            match_reasons.append("Recent publication")
-        
-        if score > 0:
+                match_reasons.append("Abstract match")
+            
+            # Check disease areas match (MeSH terms)
+            disease_areas = [area.lower() for area in pub.get("disease_areas", [])]
+            if any(query in area for area in disease_areas):
+                score += 25
+                match_reasons.append("Medical topic match")
+            
+            # Check authors match
+            authors = [author.lower() for author in pub.get("authors", [])]
+            if any(query in author for author in authors):
+                score += 20
+                match_reasons.append("Author match")
+            
+            # Personalized matching based on patient conditions
+            for condition in patient_conditions:
+                condition_lower = condition.lower()
+                if any(condition_lower in area for area in disease_areas):
+                    score += 20
+                    match_reasons.append(f"Relevant to your condition: {condition}")
+            
+            # Boost for recent publications
+            current_year = datetime.now(timezone.utc).year
+            pub_year = pub.get("year") or 2000
+            if current_year - pub_year <= 2:
+                score += 10
+                match_reasons.append("Recent publication")
+            
+            # Always include API results if they match at all
+            if score > 0 or len(match_reasons) > 1:
+                results["publications"].append({
+                    **pub,
+                    "match_score": min(max(score, 50), 100),  # Min 50% for API results
+                    "match_reasons": match_reasons
+                })
+    except Exception as e:
+        logger.error(f"Error fetching from PubMed: {e}")
+        # Fallback to database if API fails
+        db_pubs = await db.publications.find({}, {"_id": 0}).limit(10).to_list(10)
+        for pub in db_pubs:
+            score = 50  # Default score for fallback
             results["publications"].append({
                 **pub,
-                "match_score": min(score, 100),
-                "match_reasons": match_reasons
+                "match_score": score,
+                "match_reasons": ["Database result (API unavailable)"]
             })
     
     # Sort each category by match score
