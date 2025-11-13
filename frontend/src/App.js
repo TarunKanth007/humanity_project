@@ -4378,10 +4378,8 @@ const ResearcherDashboard = ({ user, logout }) => {
                   
                   {loading ? (
                     <div className="loading-state">Loading forums...</div>
-                  ) : (
-                    <>
-                      {(() => {
-                        const filteredForums = (Array.isArray(forums) ? forums : []).filter((forum) => {
+                  ) : (() => {
+                      const filteredForums = (Array.isArray(forums) ? forums : []).filter((forum) => {
                         if (forumFilter === 'all') return true;
                         // Filter by researcher's specialties and interests
                         if (!profileData) return true;
@@ -4396,7 +4394,25 @@ const ResearcherDashboard = ({ user, logout }) => {
                         ) || interests.some(i => 
                           category.includes(i.toLowerCase()) || description.includes(i.toLowerCase())
                         );
-                      }).map((forum) => {
+                      });
+                      
+                      if (filteredForums.length === 0) {
+                        return (
+                          <div className="empty-state">
+                            <MessageSquare className="empty-icon" />
+                            <h3>No forums found</h3>
+                            <p>
+                              {forumFilter === 'myfield' 
+                                ? "No forums match your field. Try switching to 'All Forums' or create a new one."
+                                : "No forums available yet. Create the first one!"}
+                            </p>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className="items-grid">
+                          {filteredForums.map((forum) => {
                         const membership = forumMemberships[forum.id];
                         const isMember = membership?.is_member;
                         const isOwner = forum.created_by === user.id;
