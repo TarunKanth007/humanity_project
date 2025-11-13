@@ -2344,26 +2344,27 @@ strong {
   }
 
   /* Profile tablet responsive */
-  [data-testid="profile-tab"] div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"],
-  [data-testid="profile-tab"] div[style*="grid-template-columns"][style*="repeat(5"] {
+  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"],
+  .researcher-profile-content div[style*="grid-template-columns"][style*="repeat(5"] {
     grid-template-columns: repeat(3, 1fr) !important;
   }
 
-  [data-testid="profile-tab"] div[style*="gridTemplateColumns: 'repeat(2, 1fr)'"],
-  [data-testid="profile-tab"] div[style*="grid-template-columns"][style*="repeat(2"] {
+  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(2, 1fr)'"],
+  .researcher-profile-content div[style*="grid-template-columns"][style*="repeat(2"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
   /* Tablet - keep horizontal layout for headers */
-  [data-testid="profile-tab"] div[style*="justifyContent: 'space-between'"] {
+  .researcher-profile-content div[style*="justifyContent: 'space-between'"] {
     flex-direction: row !important;
   }
 
-  [data-testid="profile-tab"] div[style*="display: flex"][style*="gap: 24px"] {
+  .researcher-profile-content div[style*="display: flex"][style*="gap: 24px"] {
     flex-direction: row !important;
   }
 
-  [data-testid="profile-tab"] img[style*="width: 80px"] {
+  .researcher-profile-content img[style*="width: 80px"],
+  .researcher-profile-content img[style*="width: '80px'"] {
     width: 70px !important;
     height: 70px !important;
   }
