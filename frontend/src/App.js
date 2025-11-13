@@ -2443,6 +2443,62 @@ const ResearcherDashboard = ({ user, logout }) => {
       </nav>
 
       <div className="dashboard-container">
+        {/* Collaboration Request Dialog */}
+        <Dialog open={showCollabRequest} onOpenChange={setShowCollabRequest}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Send Collaboration Request</DialogTitle>
+              <DialogDescription>
+                Connect with {selectedCollaborator?.name} for research collaboration
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSendCollabRequest}>
+              <div style={{display: 'grid', gap: '16px'}}>
+                <div>
+                  <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>
+                    Purpose of Collaboration
+                  </label>
+                  <Input
+                    placeholder="e.g., Joint research on cancer treatment"
+                    value={collabRequestForm.purpose}
+                    onChange={(e) => setCollabRequestForm({...collabRequestForm, purpose: e.target.value})}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>
+                    Your Specialization/Sector
+                  </label>
+                  <Input
+                    placeholder="e.g., Oncology, Cardiology"
+                    value={collabRequestForm.sector}
+                    onChange={(e) => setCollabRequestForm({...collabRequestForm, sector: e.target.value})}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label style={{display: 'block', fontWeight: '600', marginBottom: '8px'}}>
+                    Formal Introduction Message
+                  </label>
+                  <Textarea
+                    placeholder="Introduce yourself and explain why you'd like to collaborate..."
+                    value={collabRequestForm.message}
+                    onChange={(e) => setCollabRequestForm({...collabRequestForm, message: e.target.value})}
+                    rows={4}
+                    required
+                  />
+                </div>
+                
+                <Button type="submit" style={{marginTop: '8px'}}>
+                  Send Request
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
         <div data-testid="researcher-dashboard" className="dashboard-content">
           <div className="dashboard-header">
             <div>
