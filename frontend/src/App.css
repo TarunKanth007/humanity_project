@@ -532,9 +532,9 @@ strong {
 
 .cta-secondary {
   background: transparent;
-  color: var(--olive);
-  border: 2px solid var(--olive);
-  box-shadow: 0 2px 8px rgba(85, 107, 47, 0.15);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.15);
   position: relative;
   overflow: hidden;
   padding: 16px 36px;
