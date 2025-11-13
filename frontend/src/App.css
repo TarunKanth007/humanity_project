@@ -1114,7 +1114,7 @@ strong {
 }
 
 .role-card p {
-  color: var(--primary-blue);
+  color: #000000;
   line-height: 1.6;
   opacity: 0.8;
 }
