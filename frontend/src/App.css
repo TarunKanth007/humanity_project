@@ -2479,4 +2479,38 @@ strong {
   .stat-item p:last-of-type {
     font-size: 12px;
   }
+
+  /* Override inline styles for profile grids */
+  [style*="gridTemplateColumns"][style*="repeat(2, 1fr)"],
+  [style*="grid-template-columns"][style*="repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [style*="gridTemplateColumns"][style*="repeat(5, 1fr)"],
+  [style*="grid-template-columns"][style*="repeat(5, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Profile content width fix */
+  .profile-content {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* Card content responsive */
+  [class*="CardContent"] > div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Textarea full width on mobile */
+  textarea {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Input full width */
+  input {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 }
