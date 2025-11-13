@@ -3886,9 +3886,11 @@ async def get_patient_overview(
     if len(publications) == 0:
         # Fetch from PubMed API
         try:
-            from pubmed_api import search_pubmed
+            from pubmed_api import PubMedAPI
+            api_client = PubMedAPI()
             search_term = patient_conditions[0] if patient_conditions else "medicine"
-            publications = await search_pubmed(search_term, max_results=15)
+            publications = api_client.search_and_fetch(query=search_term, max_results=15)
+            logging.info(f"Fetched {len(publications)} publications from PubMed API")
         except Exception as e:
             logging.error(f"Failed to fetch publications: {e}")
             publications = []
