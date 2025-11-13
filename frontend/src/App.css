@@ -492,10 +492,10 @@ strong {
 }
 
 .cta-primary {
-  background: var(--accent-gradient);
-  color: var(--cream);
+  background: var(--primary-gradient);
+  color: white;
   border: none;
-  box-shadow: var(--glow-olive);
+  box-shadow: var(--glow-primary);
   position: relative;
   overflow: hidden;
   padding: 16px 36px;
