@@ -478,11 +478,11 @@ strong {
 
 .hero-description {
   font-size: 16px;
-  color: var(--taupe);
+  color: #000000;
   line-height: 1.6;
   max-width: 650px;
   margin: 0 auto 28px;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .cta-buttons {
