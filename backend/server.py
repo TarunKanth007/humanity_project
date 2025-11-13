@@ -2277,7 +2277,7 @@ async def accept_collaboration_request(
         user_id=request["sender_id"],
         type="collaboration_accepted",
         title="Collaboration Request Accepted",
-        content=f"Your collaboration request was accepted! You can now start chatting.",
+        content="Your collaboration request was accepted! You can now start chatting.",
         link="/dashboard"
     )
     notif_dict = notification.dict()
