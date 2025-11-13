@@ -2198,6 +2198,10 @@ const ResearcherDashboard = ({ user, logout }) => {
         // Load activity data
         const activityRes = await api.get('/profile/activity');
         setUserActivity(activityRes.data);
+      } else if (activeTab === 'collaborations') {
+        // Load active collaborations
+        const res = await api.get('/collaborations');
+        setCollaborations(res.data);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
