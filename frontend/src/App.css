@@ -1270,6 +1270,14 @@ strong {
   gap: 16px;
 }
 
+.nav-actions button {
+  color: white !important;
+}
+
+.nav-actions button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
 .nav-user {
   display: flex;
   align-items: center;
