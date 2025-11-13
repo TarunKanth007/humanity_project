@@ -210,18 +210,13 @@ frontend:
 
 metadata:
   created_by: "main_agent"
-  version: "2.0"
-  test_sequence: 6
-  run_ui: false
+  version: "2.1"
+  test_sequence: 7
+  run_ui: true
 
 test_plan:
   current_focus:
-    - "Search Endpoint with Matching Scores"
-    - "Patient Overview Endpoint"
-    - "Enhanced Researcher Details Endpoint"
-    - "Search Functionality UI"
-    - "Overview/For You Tab"
-    - "Enhanced Researcher Profile Details"
+    - "Favorites Tab Heart Icons"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -233,3 +228,5 @@ agent_communication:
     message: "✅ BACKEND TESTING COMPLETED SUCCESSFULLY: All three Patient Dashboard backend endpoints are fully functional and ready for production. Comprehensive testing performed on: 1) POST /api/search - Intelligent search with match scoring (0-100%) across researchers/trials/publications, proper authentication, error handling, and personalized matching. 2) GET /api/patient/overview - Personalized overview with top 3 researchers (by rating), featured trials (by relevance), latest publications, all based on patient conditions. 3) GET /api/researcher/{id}/details - Complete researcher portfolio including profile, trials created, publications authored, reviews/ratings. All endpoints properly authenticate, handle errors, validate input, and return expected data structures. Total tests: 111 passed, 0 failed. Backend implementation is production-ready."
   - agent: "testing"
     message: "✅ FRONTEND CODE VERIFICATION COMPLETED: All three Patient Dashboard frontend features are properly implemented and ready for production. Code analysis confirmed: 1) SEARCH FUNCTIONALITY - Search bar with proper testids, handleSearch function, dynamic Search Results tab, match score badges with gradient styling, 'Why this matches' boxes, researcher profile integration. 2) OVERVIEW/FOR YOU TAB - 'For You' as first tab, loads from /api/patient/overview, three required sections (Top Rated Researchers, Featured Clinical Trials, Latest Research Publications) with proper styling and data display. 3) ENHANCED RESEARCHER PROFILES - viewResearcherDetails function, large scrollable dialog (max-w-4xl), all required sections (Professional Info, Clinical Trials, Publications, Reviews), Request Appointment integration. **AUTHENTICATION LIMITATION**: Cannot perform runtime testing due to Google OAuth requirement - manual authentication needed to verify data loading, user interactions, and visual elements. Code structure and implementation are production-ready."
+  - agent: "main"
+    message: "BUG FIX: User reported missing Heart icons in Favorites tab preventing removal of favorite items. Fixed by adding Heart icon buttons to favorite items in both Patient and Researcher dashboards. Heart icons now appear next to each favorite item's title with filled blue state (#3F51B5), clicking toggles favorite status via addToFavorites() function. Implementation mirrors heart icon behavior in other tabs (Clinical Trials, Experts, Publications). Changes made to /app/frontend/src/App.js at lines ~2168 and ~4038. Frontend testing needed to verify: 1) Heart icons visible in Favorites tab, 2) Clicking heart successfully removes item from favorites, 3) Visual feedback works correctly (filled/unfilled states), 4) No breaking of existing functionality."
