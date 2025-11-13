@@ -1127,7 +1127,7 @@ strong {
 .profile-setup-page {
   min-height: 100vh;
   padding: 60px 24px;
-  background: linear-gradient(135deg, var(--cream) 0%, #F5EFE7 100%);
+  background: var(--soft-gradient);
 }
 
 .profile-setup-container {
