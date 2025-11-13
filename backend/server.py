@@ -56,8 +56,8 @@ Full Description:
 
 Provide only the summary, no additional text."""
 
-        response = llm_chat.chat(UserMessage(content=prompt))
-        summary = response.text.strip()
+        response = llm_chat.send_message(UserMessage(content=prompt))
+        summary = response.strip()
         
         # Ensure summary isn't too long
         if len(summary) > 300:
