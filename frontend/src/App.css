@@ -1219,12 +1219,12 @@ strong {
 /* Dashboard */
 .dashboard {
   min-height: 100vh;
-  background: var(--cream);
+  background: var(--soft-gradient);
 }
 
 .dashboard-nav {
-  background: white;
-  border-bottom: 2px solid rgba(91, 70, 54, 0.15);
+  background: var(--primary-gradient);
+  border-bottom: none;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
@@ -1232,6 +1232,7 @@ strong {
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.15);
 }
 
 .nav-brand {
@@ -1241,13 +1242,13 @@ strong {
   font-family: 'Poppins', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--olive);
+  color: white;
 }
 
 .brand-icon {
   width: 32px;
   height: 32px;
-  color: var(--olive);
+  color: white;
 }
 
 .nav-actions {
