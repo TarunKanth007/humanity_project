@@ -4114,14 +4114,10 @@ const ResearcherDashboard = ({ user, logout }) => {
                               </CardDescription>
                             </CardHeader>
                             <CardContent>
-                              {pub.ai_summary && (
-                                <div className="ai-summary-badge">
-                                  <Sparkles className="icon-xs" />
-                                  <span>AI Summarized</span>
-                                </div>
-                              )}
                               {pub.authors && <p className="item-meta">Authors: {pub.authors.join(', ')}</p>}
-                              <p className="item-description">{pub.ai_summary || pub.summary || pub.abstract?.slice(0, 200) + '...'}</p>
+                              <p className="item-description">
+                                {truncateToWords(pub.summary || pub.abstract, 35)}
+                              </p>
                               {pub.match_reasons && pub.match_reasons.length > 0 && (
                                 <div className="match-reasons">
                                   <p className="match-reasons-title">Why this matches:</p>
