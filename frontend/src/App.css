@@ -32,9 +32,14 @@
   --card-shadow: 0 2px 8px rgba(63, 81, 181, 0.08);
   --card-shadow-hover: 0 8px 24px rgba(63, 81, 181, 0.12);
   
+  /* Text colors */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.6);
+  
   /* Legacy variable mapping for compatibility */
   --cream: #F7F9FC;
-  --taupe: #3F51B5;
+  --taupe: #000000;
   --olive: #3F51B5;
   --olive-light: #536DFE;
   --olive-dark: #303F9F;
