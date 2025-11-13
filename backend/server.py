@@ -1692,6 +1692,27 @@ async def get_researcher_overview(
         "latest_publications": latest_publications
     }
 
+
+@api_router.get("/researcher/publications")
+async def get_researcher_publications(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get publications for logged-in researcher from PubMed"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        from backend.pubmed_api import search_pubmed_by_author
+        
+        # Search by researcher name
+        publications = await search_pubmed_by_author(user.name, max_results=50)
+        return publications
+    except Exception as e:
+        logging.error(f"Failed to fetch publications: {e}")
+        return []
+
 async def get_forums(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
