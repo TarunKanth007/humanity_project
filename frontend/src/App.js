@@ -1604,7 +1604,7 @@ const PatientDashboard = ({ user, logout }) => {
               {loading ? (
                 <div className="loading-state">Loading profile...</div>
               ) : (
-                <div style={{display: 'grid', gap: '24px'}}>
+                <div className="researcher-profile-content" style={{display: 'grid', gap: '24px'}}>
                   {/* Profile Information Card */}
                   <Card>
                     <CardHeader>
@@ -3295,7 +3295,7 @@ const ResearcherDashboard = ({ user, logout }) => {
               {loading ? (
                 <div className="loading-state">Loading profile...</div>
               ) : (
-                <div style={{display: 'grid', gap: '24px'}}>
+                <div className="researcher-profile-content" style={{display: 'grid', gap: '24px'}}>
                   {/* Profile Information Card */}
                   <Card>
                     <CardHeader>
