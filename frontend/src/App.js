@@ -3110,6 +3110,14 @@ const ResearcherDashboard = ({ user, logout }) => {
       } else if (activeTab === 'favorites') {
         const res = await api.get('/favorites');
         setFavorites(res.data);
+        // Update favorited items state for all loaded favorites
+        const favoritedIds = {};
+        res.data.forEach(fav => {
+          if (fav.item?.id) {
+            favoritedIds[fav.item.id] = true;
+          }
+        });
+        setFavoritedItems(prev => ({ ...prev, ...favoritedIds }));
       } else if (activeTab === 'profile') {
         // Load profile data
         const profileRes = await api.get('/researcher/profile');
