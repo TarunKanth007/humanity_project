@@ -435,8 +435,8 @@ strong {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: var(--olive);
-  color: var(--cream);
+  background: var(--primary-gradient);
+  color: white;
   padding: 8px 20px;
   border-radius: 50px;
   font-size: 13px;
