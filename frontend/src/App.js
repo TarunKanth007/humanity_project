@@ -3299,6 +3299,14 @@ const ResearcherDashboard = ({ user, logout }) => {
               )}
             </TabsContent>
 
+            <TabsContent value="collaborations">
+              <div className="empty-state">
+                <Users className="empty-icon" />
+                <h3>Collaborations</h3>
+                <p>Connect with other patients and researchers for collaborative opportunities</p>
+              </div>
+            </TabsContent>
+
             <TabsContent value="profile">
               {loading ? (
                 <div className="loading-state">Loading profile...</div>
