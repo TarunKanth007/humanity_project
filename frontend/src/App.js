@@ -1190,10 +1190,6 @@ const PatientDashboard = ({ user, logout }) => {
                 <Star className="icon-sm" />
                 Favorites
               </TabsTrigger>
-              <TabsTrigger data-testid="collaborations-tab" value="collaborations">
-                <Users className="icon-sm" />
-                Collaborations
-              </TabsTrigger>
               <TabsTrigger data-testid="profile-tab" value="profile">
                 <User className="icon-sm" />
                 Profile
