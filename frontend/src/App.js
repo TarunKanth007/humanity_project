@@ -795,6 +795,14 @@ const ProfileSetup = ({ user }) => {
 };
 
 // Patient Dashboard
+// Helper function to truncate text to word count
+const truncateToWords = (text, maxWords = 40) => {
+  if (!text) return '';
+  const words = text.split(' ');
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(' ') + '...';
+};
+
 const PatientDashboard = ({ user, logout }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
