@@ -1658,7 +1658,7 @@ const PatientDashboard = ({ user, logout }) => {
                         {expert.is_platform_member && (
                           <Button 
                             className="w-full mt-3"
-                            onClick={() => viewExpertDetails(expert)}
+                            onClick={() => viewResearcherDetails(expert)}
                           >
                             <Calendar className="icon-sm mr-1" />
                             View Details & Book
