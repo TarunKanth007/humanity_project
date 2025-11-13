@@ -2416,6 +2416,23 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!selectedCollab) return;
+    
+    try {
+      await api.post(`/collaborations/${selectedCollab.id}/review`, {
+        rating: reviewForm.rating,
+        text: reviewForm.text
+      });
+      toast.success('Review submitted successfully!');
+      setShowReviewDialog(false);
+      setReviewForm({ rating: 5, text: '' });
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to submit review');
+    }
+  };
+
   return (
     <div className="dashboard">
       <nav className="dashboard-nav">
