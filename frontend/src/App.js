@@ -3164,6 +3164,26 @@ const ResearcherDashboard = ({ user, logout }) => {
   const loadForumMemberships = async (forumsList) => {
     try {
       const memberships = {};
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      toast.error('Please enter a search query');
+      return;
+    }
+    
+    setIsSearching(true);
+    try {
+      const res = await api.post('/researcher/search', { query: searchQuery });
+      setSearchResults(res.data);
+      setActiveTab('search');
+    } catch (error) {
+      console.error('Search failed:', error);
+      toast.error('Search failed. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
       for (const forum of forumsList) {
         const res = await api.get(`/forums/${forum.id}/membership`);
         memberships[forum.id] = res.data;
