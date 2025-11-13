@@ -1860,6 +1860,26 @@ async def get_user_activity(
     favorites_count = await db.favorites.count_documents({"user_id": user.id})
     activity["favorites_count"] = favorites_count
     
+    # Get collaboration history (for researchers)
+    if "researcher" in user.roles:
+        collaborations_history = await db.collaborations.find(
+            {"$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}]},
+            {"_id": 0}
+        ).to_list(100)
+        
+        # Enrich with partner details
+        for collab in collaborations_history:
+            partner_id = collab["researcher2_id"] if collab["researcher1_id"] == user.id else collab["researcher1_id"]
+            partner_profile = await db.researcher_profiles.find_one({"user_id": partner_id}, {"_id": 0})
+            if partner_profile:
+                collab["partner_name"] = partner_profile.get("name", "Unknown")
+                collab["partner_sector"] = partner_profile.get("sector", "Unknown")
+            collab["created_at"] = collab["created_at"].isoformat() if isinstance(collab.get("created_at"), datetime) else collab.get("created_at")
+            if collab.get("ended_at"):
+                collab["ended_at"] = collab["ended_at"].isoformat() if isinstance(collab.get("ended_at"), datetime) else collab.get("ended_at")
+        
+        activity["collaborations_history"] = collaborations_history
+    
     return activity
 
 # ============ Collaboration Endpoints ============
