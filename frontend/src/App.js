@@ -929,7 +929,10 @@ const PatientDashboard = ({ user, logout }) => {
   const loadData = async () => {
     setLoading(true);
     try {
-      if (activeTab === 'trials') {
+      if (activeTab === 'overview') {
+        const res = await api.get('/patient/overview');
+        setOverviewData(res.data);
+      } else if (activeTab === 'trials') {
         const res = await api.get('/patient/clinical-trials');
         setClinicalTrials(res.data);
       } else if (activeTab === 'experts') {
