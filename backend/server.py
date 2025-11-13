@@ -1732,29 +1732,29 @@ async def get_researcher_overview(
         
         # Score and add relevance
         for pub in pubmed_results:
-                score = 50  # Base relevancy score of 50%
-                reasons = ["General medical research"]
-                
-                pub_title = pub.get("title", "").lower()
-                pub_abstract = pub.get("abstract", "").lower()
-                
-                for specialty in specialties:
-                    if specialty.lower() in pub_title or specialty.lower() in pub_abstract:
-                        score += 30
-                        reasons = [f"Related to: {specialty}"]
-                        break
-                
-                for interest in interests:
-                    if interest.lower() in pub_title or interest.lower() in pub_abstract:
-                        score += 20
-                        if len(reasons) == 1 and reasons[0] == "General medical research":
-                            reasons = [f"Interest area: {interest}"]
-                        else:
-                            reasons.append(f"Interest area: {interest}")
-                        break
-                
-                # Prioritize recent publications
-                year = pub.get("year", 0)
+            score = 50  # Base relevancy score of 50%
+            reasons = ["General medical research"]
+            
+            pub_title = pub.get("title", "").lower()
+            pub_abstract = pub.get("abstract", "").lower()
+            
+            for specialty in specialties:
+                if specialty.lower() in pub_title or specialty.lower() in pub_abstract:
+                    score += 30
+                    reasons = [f"Related to: {specialty}"]
+                    break
+            
+            for interest in interests:
+                if interest.lower() in pub_title or interest.lower() in pub_abstract:
+                    score += 20
+                    if len(reasons) == 1 and reasons[0] == "General medical research":
+                        reasons = [f"Interest area: {interest}"]
+                    else:
+                        reasons.append(f"Interest area: {interest}")
+                    break
+            
+            # Prioritize recent publications
+            year = pub.get("year", 0)
             if year >= 2024:
                 score += 10
                 if "General medical research" not in reasons:
