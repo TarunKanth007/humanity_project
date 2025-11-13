@@ -1523,6 +1523,17 @@ async def researcher_search(
 # ============ Common Endpoints ============
 
 @api_router.get("/forums")
+async def get_forums(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get all forums"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    forums = await db.forums.find({}, {"_id": 0}).to_list(1000)
+    return forums
 
 @api_router.get("/researcher/overview")
 async def get_researcher_overview(
