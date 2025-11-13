@@ -967,7 +967,7 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
-  const addToFavorites = async (itemType, itemId) => {
+  const addToFavorites = async (itemType, itemId, itemData = null) => {
     try {
       // Check if already favorited
       const checkRes = await api.get(`/favorites/check/${itemType}/${itemId}`);
@@ -981,8 +981,12 @@ const PatientDashboard = ({ user, logout }) => {
           loadData();
         }
       } else {
-        // Add to favorites
-        await api.post('/favorites', { item_type: itemType, item_id: itemId });
+        // Add to favorites with item data for API-fetched items
+        await api.post('/favorites', { 
+          item_type: itemType, 
+          item_id: itemId,
+          item_data: itemData  // Include full item for API-fetched content
+        });
         toast.success('Added to favorites');
       }
     } catch (error) {
