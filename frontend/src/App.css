@@ -625,10 +625,10 @@ strong {
 .signin-button {
   width: 100%;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border: 2px solid var(--olive);
+  background: white;
+  border: 2px solid var(--primary-blue);
   border-radius: 12px;
-  color: var(--taupe);
+  color: var(--primary-blue);
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -639,7 +639,7 @@ strong {
   gap: 8px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(85, 107, 47, 0.1);
+  box-shadow: 0 4px 15px rgba(63, 81, 181, 0.1);
 }
 
 .signin-button::before {
