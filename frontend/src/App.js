@@ -2984,6 +2984,12 @@ const ResearcherDashboard = ({ user, logout }) => {
   // Publications state
   const [publications, setPublications] = useState([]);
   
+  // Browse trials and publications (from APIs)
+  const [browseClinicalTrials, setBrowseClinicalTrials] = useState([]);
+  const [browsePublications, setBrowsePublications] = useState([]);
+  const [trialsPage, setTrialsPage] = useState(1);
+  const [pubsPage, setPubsPage] = useState(1);
+  
   // Overview states
   const [overviewData, setOverviewData] = useState(null);
   
