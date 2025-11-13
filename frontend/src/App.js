@@ -2501,6 +2501,21 @@ const ResearcherDashboard = ({ user, logout }) => {
                             <Badge key={idx} variant="outline">{interest}</Badge>
                           ))}
                         </div>
+                        <Button 
+                          onClick={() => {
+                            setSelectedCollaborator(collab);
+                            setShowCollabRequest(true);
+                          }}
+                          style={{
+                            marginTop: '16px',
+                            width: '100%',
+                            background: 'var(--accent-gradient)',
+                            color: 'var(--cream)'
+                          }}
+                        >
+                          <Users className="icon-sm" />
+                          Connect & Collaborate
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
