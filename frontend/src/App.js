@@ -2531,6 +2531,134 @@ const ResearcherDashboard = ({ user, logout }) => {
               )}
             </TabsContent>
 
+            <TabsContent value="collaborations">
+              {selectedCollab ? (
+                <div>
+                  <Button 
+                    onClick={() => setSelectedCollab(null)} 
+                    variant="outline"
+                    style={{marginBottom: '16px'}}
+                  >
+                    <ChevronLeft className="icon-sm" />
+                    Back to Collaborations
+                  </Button>
+                  
+                  <Card>
+                    <CardHeader>
+                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <div>
+                          <CardTitle>Chat with {selectedCollab.partner?.name}</CardTitle>
+                          <CardDescription>{selectedCollab.partner?.sector}</CardDescription>
+                        </div>
+                        <Button 
+                          variant="destructive"
+                          onClick={() => handleEndCollaboration(selectedCollab.id)}
+                        >
+                          End Collaboration
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div style={{
+                        height: '400px',
+                        overflowY: 'auto',
+                        border: '1px solid var(--border)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        marginBottom: '16px'
+                      }}>
+                        {collabMessages.map((msg) => (
+                          <div 
+                            key={msg.id}
+                            style={{
+                              marginBottom: '12px',
+                              textAlign: msg.sender_id === user.id ? 'right' : 'left'
+                            }}
+                          >
+                            <div style={{
+                              display: 'inline-block',
+                              maxWidth: '70%',
+                              padding: '8px 12px',
+                              borderRadius: '12px',
+                              background: msg.sender_id === user.id ? 'var(--olive)' : 'var(--cream-dark)',
+                              color: msg.sender_id === user.id ? 'white' : 'var(--taupe)'
+                            }}>
+                              <p>{msg.message}</p>
+                              <p style={{fontSize: '12px', marginTop: '4px', opacity: 0.7}}>
+                                {new Date(msg.created_at).toLocaleTimeString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div style={{display: 'flex', gap: '8px'}}>
+                        <Input
+                          placeholder="Type your message..."
+                          value={collabMessageInput}
+                          onChange={(e) => setCollabMessageInput(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && handleSendCollabMessage()}
+                        />
+                        <Button onClick={handleSendCollabMessage}>
+                          <Send className="icon-sm" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : loading ? (
+                <div className="loading-state">Loading collaborations...</div>
+              ) : collaborations.length > 0 ? (
+                <div className="items-grid">
+                  {collaborations.map((collab) => (
+                    <Card key={collab.id} className="item-card" style={{cursor: 'pointer'}}>
+                      <CardHeader onClick={() => handleOpenCollabChat(collab)}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          <img 
+                            src={collab.partner?.picture || '/default-avatar.png'} 
+                            alt={collab.partner?.name} 
+                            style={{width: '48px', height: '48px', borderRadius: '50%'}}
+                          />
+                          <div>
+                            <CardTitle className="item-title">{collab.partner?.name}</CardTitle>
+                            <CardDescription>{collab.partner?.sector}</CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="tags">
+                          {collab.partner?.specialties?.map((spec, idx) => (
+                            <Badge key={idx} variant="secondary">{spec}</Badge>
+                          ))}
+                        </div>
+                        <p style={{fontSize: '12px', color: 'var(--taupe)', marginTop: '8px'}}>
+                          Active since {new Date(collab.created_at).toLocaleDateString()}
+                        </p>
+                        <Button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenCollabChat(collab);
+                          }}
+                          style={{marginTop: '12px', width: '100%'}}
+                        >
+                          <MessageSquare className="icon-sm" />
+                          Open Chat
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div style={{textAlign: 'center', padding: '48px'}}>
+                  <Users style={{width: '64px', height: '64px', margin: '0 auto 16px', opacity: 0.3}} />
+                  <h3>No Active Collaborations</h3>
+                  <p style={{color: 'var(--taupe)', marginTop: '8px'}}>
+                    Connect with researchers from the Collaborators tab to start collaborating
+                  </p>
+                </div>
+              )}
+            </TabsContent>
+
             <TabsContent value="trials">
               <div className="tab-header">
                 <Dialog open={showTrialDialog} onOpenChange={setShowTrialDialog}>
