@@ -305,6 +305,47 @@ export const Notifications = ({ user, logout }) => {
           )}
         </div>
       </div>
+
+      {/* Reject Collaboration Dialog */}
+      <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Collaboration Request</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for rejecting this collaboration request from {selectedRequest?.sender_name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Enter your reason for rejection..."
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              rows={4}
+              required
+            />
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleRejectCollab}
+                variant="destructive"
+                className="flex-1"
+              >
+                Confirm Rejection
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setShowRejectDialog(false);
+                  setRejectionReason('');
+                  setSelectedRequest(null);
+                }}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
