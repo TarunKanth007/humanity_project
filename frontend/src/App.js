@@ -3605,6 +3605,56 @@ const ResearcherDashboard = ({ user, logout }) => {
                             </p>
                           )}
                         </TabsContent>
+
+                        <TabsContent value="collabs">
+                          {userActivity?.collaborations_history?.length > 0 ? (
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                              {userActivity.collaborations_history.map((collab) => (
+                                <Card key={collab.id} style={{padding: '16px'}}>
+                                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
+                                    <div style={{flex: 1}}>
+                                      <div style={{display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px'}}>
+                                        <Users style={{width: '20px', height: '20px', color: 'var(--olive)'}} />
+                                        <p style={{fontWeight: '600'}}>{collab.partner_name}</p>
+                                      </div>
+                                      <p style={{fontSize: '14px', color: 'var(--taupe)', marginBottom: '4px'}}>
+                                        <strong>Sector:</strong> {collab.partner_sector}
+                                      </p>
+                                      <p style={{fontSize: '12px', color: 'var(--taupe)', marginTop: '8px'}}>
+                                        Started: {new Date(collab.created_at).toLocaleDateString()}
+                                      </p>
+                                      {collab.ended_at && (
+                                        <p style={{fontSize: '12px', color: 'var(--taupe)'}}>
+                                          Ended: {new Date(collab.ended_at).toLocaleDateString()}
+                                        </p>
+                                      )}
+                                    </div>
+                                    <Badge variant={collab.status === 'active' ? 'default' : 'secondary'}>
+                                      {collab.status}
+                                    </Badge>
+                                  </div>
+                                  
+                                  {collab.status === 'ended' && (
+                                    <div style={{
+                                      marginTop: '12px',
+                                      padding: '8px',
+                                      background: 'var(--cream-dark)',
+                                      borderRadius: '6px',
+                                      fontSize: '12px',
+                                      color: 'var(--taupe)'
+                                    }}>
+                                      Duration: {Math.ceil((new Date(collab.ended_at) - new Date(collab.created_at)) / (1000 * 60 * 60 * 24))} days
+                                    </div>
+                                  )}
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{textAlign: 'center', padding: '24px', color: 'var(--taupe)'}}>
+                              No collaboration history yet
+                            </p>
+                          )}
+                        </TabsContent>
                       </Tabs>
                     </CardContent>
                   </Card>
