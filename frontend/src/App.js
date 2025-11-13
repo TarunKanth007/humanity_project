@@ -4474,14 +4474,8 @@ const ResearcherDashboard = ({ user, logout }) => {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          {trial.ai_summary && (
-                            <div className="ai-summary-badge">
-                              <Sparkles className="icon-xs" />
-                              <span>AI Summarized</span>
-                            </div>
-                          )}
                           <p className="item-description">
-                            {trial.ai_summary || trial.summary || trial.description}
+                            {truncateToWords(trial.summary || trial.description, 35)}
                           </p>
                           <div className="item-meta">
                             <span>📍 {trial.location}</span>
