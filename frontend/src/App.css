@@ -2289,6 +2289,33 @@ strong {
 
 /* Tablet styles */
 @media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-nav {
+    padding: 14px 20px;
+  }
+
+  .nav-brand {
+    font-size: 18px;
+  }
+
+  .brand-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-actions {
+    gap: 12px;
+  }
+
+  .nav-actions button {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
   .dashboard-container {
     padding: 32px 20px;
   }
