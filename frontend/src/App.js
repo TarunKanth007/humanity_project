@@ -3131,9 +3131,14 @@ const ResearcherDashboard = ({ user, logout }) => {
       if (activeTab === 'collaborators') {
         const res = await api.get('/researcher/collaborators');
         setCollaborators(res.data);
-      } else if (activeTab === 'trials') {
-        const res = await api.get('/researcher/trials');
-        setMyTrials(res.data);
+      } else if (activeTab === 'my-work') {
+        // Load both trials and publications
+        const [trialsRes, pubsRes] = await Promise.all([
+          api.get('/researcher/trials'),
+          api.get('/researcher/publications')
+        ]);
+        setMyTrials(trialsRes.data);
+        setPublications(pubsRes.data);
       } else if (activeTab === 'forums') {
         const res = await api.get('/forums');
         setForums(res.data);
