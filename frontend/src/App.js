@@ -1873,7 +1873,11 @@ const PatientDashboard = ({ user, logout }) => {
                             size="sm"
                             onClick={() => addToFavorites('publication', pub.id, pub)}
                           >
-                            <Heart className="icon-sm" />
+                            <Heart 
+                              className="icon-sm" 
+                              fill={favoritedItems[pub.id] ? '#3F51B5' : 'none'}
+                              color={favoritedItems[pub.id] ? '#3F51B5' : 'currentColor'}
+                            />
                           </Button>
                         </div>
                         <CardDescription>
