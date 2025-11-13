@@ -3164,10 +3164,6 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
-  const loadForumMemberships = async (forumsList) => {
-    try {
-      const memberships = {};
-
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       toast.error('Please enter a search query');
@@ -3187,6 +3183,9 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
+  const loadForumMemberships = async (forumsList) => {
+    try {
+      const memberships = {};
       for (const forum of forumsList) {
         const res = await api.get(`/forums/${forum.id}/membership`);
         memberships[forum.id] = res.data;
