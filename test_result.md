@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement Create and Delete Forum feature for researchers in CuraLink. Researchers should be able to create new forum groups for specific health issues with name, specialty/category, and description. They should also be able to delete forums they created."
+user_problem_statement: "Implement researcher collaboration system in CuraLink. Researchers can send connection requests to other researchers with name, purpose, specialization, and custom message. Requests show in notifications. Once accepted, researchers can chat in a dedicated collaboration section. Either researcher can end the collaboration."
 
 backend:
   - task: "Create Forum Endpoint"
