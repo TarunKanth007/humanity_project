@@ -56,7 +56,7 @@ Full Description:
 
 Provide ONLY the summary (25-30 words), no additional text."""
 
-        response = llm_chat.send_message(UserMessage(text=prompt))
+        response = await llm_chat.send_message(UserMessage(text=prompt))
         # send_message returns the text directly
         summary = str(response).strip() if response else ""
         
@@ -94,7 +94,7 @@ Abstract:
 
 Provide ONLY the summary (25-30 words), no additional text."""
 
-        response = llm_chat.send_message(UserMessage(text=prompt))
+        response = await llm_chat.send_message(UserMessage(text=prompt))
         # send_message returns the text directly
         summary = str(response).strip() if response else ""
         
