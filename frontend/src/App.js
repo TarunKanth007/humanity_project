@@ -1390,14 +1390,6 @@ const PatientDashboard = ({ user, logout }) => {
                 <BookOpen className="icon-sm" />
                 Publications
               </TabsTrigger>
-              <TabsTrigger data-testid="browse-trials-tab" value="browse-trials">
-                <FileText className="icon-sm" />
-                Browse Trials
-              </TabsTrigger>
-              <TabsTrigger data-testid="browse-publications-tab" value="browse-publications">
-                <BookOpen className="icon-sm" />
-                Browse Publications
-              </TabsTrigger>
               <TabsTrigger data-testid="forums-tab" value="forums">
                 <MessageSquare className="icon-sm" />
                 Forums
