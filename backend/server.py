@@ -1035,26 +1035,13 @@ async def get_publications(
         end_idx = start_idx + 10
         top_pubs = scored_pubs[start_idx:end_idx]
         
-        # Generate AI summaries in parallel for speed
-        import asyncio
-        summary_tasks = [
-            summarize_publication(
-                title=pub.get("title", ""),
-                abstract=pub.get("abstract", "")
-            )
-            for pub in top_pubs
-        ]
-        
-        summaries = await asyncio.gather(*summary_tasks, return_exceptions=True)
-        
-        # Add summaries to publications
-        for pub, summary in zip(top_pubs, summaries):
-            if isinstance(summary, Exception):
-                logger.error(f"Error summarizing publication: {summary}")
-                pub["ai_summary"] = pub.get("abstract", "")[:150] + "..."
-            else:
-                pub["ai_summary"] = summary
-            pub["ai_summarized"] = True
+        # Skip AI summarization for speed - return data immediately
+        # Use truncated abstracts instead
+        for pub in top_pubs:
+            # Use first 150 chars of abstract as quick summary
+            abstract = pub.get("abstract", "")
+            pub["ai_summary"] = abstract[:150] + "..." if len(abstract) > 150 else abstract
+            pub["ai_summarized"] = False  # Mark as not AI summarized
         
         return top_pubs
         
