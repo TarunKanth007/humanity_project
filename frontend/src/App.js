@@ -1388,7 +1388,7 @@ const PatientDashboard = ({ user, logout }) => {
               </TabsTrigger>
               <TabsTrigger data-testid="publications-tab" value="publications">
                 <BookOpen className="icon-sm" />
-                My Publications
+                Publications
               </TabsTrigger>
               <TabsTrigger data-testid="browse-trials-tab" value="browse-trials">
                 <FileText className="icon-sm" />
