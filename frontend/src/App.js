@@ -2414,11 +2414,11 @@ const ResearcherDashboard = ({ user, logout }) => {
     if (!collabMessageInput.trim() || !selectedCollab) return;
     
     try {
-      const res = await api.post(`/collaborations/${selectedCollab.id}/messages`, {
+      await api.post(`/collaborations/${selectedCollab.id}/messages`, {
         message: collabMessageInput
       });
-      setCollabMessages([...collabMessages, res.data]);
       setCollabMessageInput('');
+      // Message will appear via polling in 2 seconds max
     } catch (error) {
       toast.error('Failed to send message');
     }
