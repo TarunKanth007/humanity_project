@@ -772,13 +772,13 @@ strong {
 .trusted-by-section {
   margin-top: 80px;
   padding: 80px 60px;
-  background: linear-gradient(135deg, var(--olive) 0%, #6B8E3D 100%);
+  background: var(--teal-gradient);
   border-radius: 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 60px;
-  box-shadow: 0 20px 60px rgba(85, 107, 47, 0.2);
+  box-shadow: 0 20px 60px rgba(44, 191, 174, 0.25);
 }
 
 .trusted-content {
@@ -789,14 +789,14 @@ strong {
 .trusted-title {
   font-size: clamp(28px, 3vw, 40px);
   font-weight: 800;
-  color: var(--cream);
+  color: white;
   margin-bottom: 16px;
 }
 
 .trusted-description {
   font-size: 18px;
-  color: var(--cream);
-  opacity: 0.9;
+  color: white;
+  opacity: 0.95;
   line-height: 1.6;
 }
 
