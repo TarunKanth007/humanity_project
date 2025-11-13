@@ -1373,6 +1373,16 @@ class BackendTester:
                     False,
                     f"Request failed for query '{query}': {str(e)}"
                 )
+
+    def run_all_tests(self):
+        """Run all backend tests"""
+        print("🚀 Starting CuraLink Backend Tests - Patient Dashboard Features Focus")
+        print(f"Testing backend at: {BACKEND_URL}")
+        print(f"Expected CORS origins: {EXPECTED_CORS_ORIGINS}")
+        
+        self.test_backend_health()
+        self.test_cors_configuration()
+        self.test_cors_preflight()
         self.test_auth_endpoints()
         self.test_core_endpoints()
         
