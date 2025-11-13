@@ -1571,7 +1571,7 @@ strong {
 }
 
 .item-description {
-  color: var(--taupe);
+  color: #000000;
   line-height: 1.6;
   margin-bottom: 16px;
   opacity: 0.8;
@@ -1579,7 +1579,7 @@ strong {
 
 .item-authors {
   font-size: 14px;
-  color: var(--taupe);
+  color: #000000;
   margin-bottom: 12px;
   opacity: 0.7;
 }
@@ -1589,10 +1589,10 @@ strong {
   align-items: center;
   gap: 12px;
   font-size: 14px;
-  color: var(--taupe);
+  color: #000000;
   margin-bottom: 12px;
   flex-wrap: wrap;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .item-meta span {
