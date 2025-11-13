@@ -4309,6 +4309,129 @@ const ResearcherDashboard = ({ user, logout }) => {
             </TabsContent>
 
 
+
+            {/* Browse Clinical Trials Tab */}
+            <TabsContent value="browse-trials">
+              {loading ? (
+                <div className="loading-state">Loading clinical trials...</div>
+              ) : browseClinicalTrials.length > 0 ? (
+                <>
+                  <div className="items-grid">
+                    {browseClinicalTrials.map((trial) => (
+                      <Card key={trial.id} className="item-card">
+                        <CardHeader>
+                          <CardTitle className="item-title">{trial.title}</CardTitle>
+                          <CardDescription>
+                            <Badge variant="outline">{trial.phase}</Badge>
+                            <Badge className="ml-2">{trial.status}</Badge>
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          {trial.ai_summary && (
+                            <div className="ai-summary-badge">
+                              <Sparkles className="icon-xs" />
+                              <span>AI Summarized</span>
+                            </div>
+                          )}
+                          <p className="item-description">
+                            {trial.ai_summary || trial.summary || trial.description}
+                          </p>
+                          <div className="item-meta">
+                            <span>📍 {trial.location}</span>
+                          </div>
+                          {trial.disease_areas && trial.disease_areas.length > 0 && (
+                            <div className="tags">
+                              {trial.disease_areas.map((area, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs">{area}</Badge>
+                              ))}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <Button onClick={loadMoreTrials} variant="outline">
+                      Get 10 More
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="empty-state">
+                  <FileText className="empty-icon" />
+                  <h3>No clinical trials found</h3>
+                  <p>Clinical trials from ClinicalTrials.gov will appear here</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Browse Publications Tab */}
+            <TabsContent value="browse-publications">
+              {loading ? (
+                <div className="loading-state">Loading publications...</div>
+              ) : browsePublications.length > 0 ? (
+                <>
+                  <div className="items-grid">
+                    {browsePublications.map((pub, idx) => (
+                      <Card key={idx} className="item-card">
+                        <CardHeader>
+                          <CardTitle className="item-title">{pub.title}</CardTitle>
+                          <CardDescription>
+                            {pub.journal} • {pub.year}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          {pub.ai_summary && (
+                            <div className="ai-summary-badge">
+                              <Sparkles className="icon-xs" />
+                              <span>AI Summarized</span>
+                            </div>
+                          )}
+                          {pub.authors && pub.authors.length > 0 && (
+                            <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
+                              <strong>Authors:</strong> {pub.authors.slice(0, 3).join(', ')}{pub.authors.length > 3 ? ' et al.' : ''}
+                            </p>
+                          )}
+                          <p className="item-description">
+                            {pub.ai_summary || pub.summary || pub.abstract?.slice(0, 250) + '...'}
+                          </p>
+                          {pub.url && (
+                            <a 
+                              href={pub.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="publication-link"
+                              style={{
+                                display: 'inline-block',
+                                marginTop: '12px',
+                                color: '#3F51B5',
+                                textDecoration: 'none',
+                                fontWeight: '500'
+                              }}
+                            >
+                              View on PubMed →
+                            </a>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <Button onClick={loadMorePublications} variant="outline">
+                      Get 10 More
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="empty-state">
+                  <BookOpen className="empty-icon" />
+                  <h3>No publications found</h3>
+                  <p>Research publications from PubMed will appear here</p>
+                </div>
+              )}
+            </TabsContent>
+
+
             {/* Publications Tab */}
 
             <TabsContent value="forums">
