@@ -3183,7 +3183,7 @@ async def search(
     results["trials"] = results["trials"][:10]
     results["publications"] = results["publications"][:10]
     
-    # Generate AI summaries for top trial results
+    # Generate AI summaries for top trial and publication results
     for trial in results["trials"]:
         if trial.get("source") == "ClinicalTrials.gov API":
             try:
@@ -3196,6 +3196,18 @@ async def search(
                 trial["ai_summarized"] = True
             except Exception as e:
                 logger.error(f"Error summarizing trial in search: {e}")
+    
+    for pub in results["publications"]:
+        if pub.get("source") == "PubMed API":
+            try:
+                ai_summary = await summarize_publication(
+                    title=pub.get("title", ""),
+                    abstract=pub.get("abstract", "")
+                )
+                pub["ai_summary"] = ai_summary
+                pub["ai_summarized"] = True
+            except Exception as e:
+                logger.error(f"Error summarizing publication in search: {e}")
     
     return results
 
