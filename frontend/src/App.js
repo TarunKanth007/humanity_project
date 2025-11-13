@@ -3188,6 +3188,30 @@ const ResearcherDashboard = ({ user, logout }) => {
     try {
       const res = await api.post('/researcher/search', { query: searchQuery });
       setSearchResults(res.data);
+
+
+  const loadMoreTrials = async () => {
+    try {
+      const nextPage = trialsPage + 1;
+      const res = await api.get(`/patient/clinical-trials?page=${nextPage}`);
+      setBrowseClinicalTrials(prev => [...prev, ...res.data]);
+      setTrialsPage(nextPage);
+    } catch (error) {
+      console.error('Failed to load more trials:', error);
+    }
+  };
+
+  const loadMorePublications = async () => {
+    try {
+      const nextPage = pubsPage + 1;
+      const res = await api.get(`/patient/publications?page=${nextPage}`);
+      setBrowsePublications(prev => [...prev, ...res.data]);
+      setPubsPage(nextPage);
+    } catch (error) {
+      console.error('Failed to load more publications:', error);
+    }
+  };
+
       setActiveTab('search');
     } catch (error) {
       console.error('Search failed:', error);
