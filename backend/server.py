@@ -1564,15 +1564,15 @@ async def get_researcher_overview(
     
     # Get researcher profile
     researcher_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
-    if not researcher_profile:
-        return {
-            "top_researchers": [],
-            "featured_trials": [],
-            "latest_publications": []
-        }
     
-    specialties = researcher_profile.get("specialties", [])
-    interests = researcher_profile.get("research_interests", [])
+    specialties = researcher_profile.get("specialties", []) if researcher_profile else []
+    interests = researcher_profile.get("research_interests", []) if researcher_profile else []
+    
+    # Use default medical topics if no specialties/interests
+    if not specialties:
+        specialties = ["oncology", "cardiology", "neurology"]
+    if not interests:
+        interests = ["clinical trials", "medical research", "patient care"]
     
     # Get top researchers in the same field
     all_researchers = await db.researcher_profiles.find({}, {"_id": 0}).to_list(1000)
