@@ -1172,6 +1172,12 @@ const PatientDashboard = ({ user, logout }) => {
         filters: {}
       });
       setSearchResults(res.data);
+      
+      // Load favorite statuses for search results
+      if (res.data.researchers) await loadFavoriteStatuses(res.data.researchers, 'expert');
+      if (res.data.trials) await loadFavoriteStatuses(res.data.trials, 'trial');
+      if (res.data.publications) await loadFavoriteStatuses(res.data.publications, 'publication');
+      
       setActiveTab('search');
     } catch (error) {
       toast.error('Search failed. Please try again.');
