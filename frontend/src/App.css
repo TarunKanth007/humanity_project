@@ -592,7 +592,7 @@ strong {
   top: 50%;
   width: 45%;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--taupe), transparent);
+  background: linear-gradient(to right, transparent, var(--primary-blue), transparent);
   opacity: 0.3;
 }
 
