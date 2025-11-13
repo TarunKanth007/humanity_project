@@ -2625,12 +2625,21 @@ const ResearcherDashboard = ({ user, logout }) => {
                           <CardTitle>Chat with {selectedCollab.partner?.name}</CardTitle>
                           <CardDescription>{selectedCollab.partner?.sector}</CardDescription>
                         </div>
-                        <Button 
-                          variant="destructive"
-                          onClick={() => handleEndCollaboration(selectedCollab.id)}
-                        >
-                          End Collaboration
-                        </Button>
+                        <div style={{display: 'flex', gap: '8px'}}>
+                          <Button 
+                            variant="outline"
+                            onClick={() => setShowReviewDialog(true)}
+                          >
+                            <Star className="icon-sm" />
+                            Leave Review
+                          </Button>
+                          <Button 
+                            variant="destructive"
+                            onClick={() => handleEndCollaboration(selectedCollab.id)}
+                          >
+                            End Collaboration
+                          </Button>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent>
