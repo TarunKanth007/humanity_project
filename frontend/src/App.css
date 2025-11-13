@@ -2403,4 +2403,80 @@ strong {
   .card-description {
     font-size: 13px;
   }
+
+  /* Profile page responsive */
+  .profile-card {
+    padding: 16px;
+  }
+
+  .profile-info {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-details h3 {
+    font-size: 18px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .profile-actions button {
+    width: 100%;
+  }
+
+  /* Profile form fields responsive */
+  .profile-form > div {
+    grid-column: span 1 !important;
+  }
+
+  /* Activity tabs in profile */
+  .activity-tabs [role="tablist"] {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .activity-tabs [role="tab"] {
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  /* Progress tracker responsive */
+  .progress-tracker {
+    gap: 12px;
+  }
+
+  .progress-item {
+    font-size: 14px;
+  }
+
+  /* Stats summary responsive */
+  .stats-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+
+  .stat-item {
+    padding: 12px;
+  }
+
+  .stat-item svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .stat-item p:first-of-type {
+    font-size: 20px;
+  }
+
+  .stat-item p:last-of-type {
+    font-size: 12px;
+  }
 }
