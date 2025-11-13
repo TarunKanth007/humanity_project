@@ -1628,20 +1628,37 @@ async def get_researcher_overview(
     top_researchers = sorted(scored_researchers, key=lambda x: x["relevance_score"], reverse=True)[:3]
     
     # Get featured trials relevant to researcher's expertise
-    # First check database, if empty fetch from API
-    all_trials = await db.clinical_trials.find({}, {"_id": 0}).to_list(1000)
+    # ALWAYS fetch from API for fresh, relevant data based on researcher's fields
+    all_trials = []
     
-    # If database is empty, fetch from ClinicalTrials.gov API
-    if len(all_trials) == 0:
-        try:
-            from clinical_trials_api import ClinicalTrialsAPI
-            api_client = ClinicalTrialsAPI()
-            # Search with first specialty or interest
-            search_term = specialties[0] if specialties else (interests[0] if interests else "cancer")
-            all_trials = api_client.search_and_normalize(condition=search_term, status="RECRUITING", limit=20)
-            logging.info(f"Fetched {len(all_trials)} trials from ClinicalTrials.gov API for researcher")
-        except Exception as e:
-            logging.error(f"Failed to fetch trials from API: {e}")
+    try:
+        from clinical_trials_api import ClinicalTrialsAPI
+        api_client = ClinicalTrialsAPI()
+        
+        # Search with all specialties and interests for maximum relevance
+        search_terms = specialties[:2] if specialties else interests[:2] if interests else ["cancer"]
+        
+        for search_term in search_terms:
+            trials_batch = api_client.search_and_normalize(
+                condition=search_term, 
+                status="RECRUITING", 
+                limit=15
+            )
+            all_trials.extend(trials_batch)
+            logging.info(f"Fetched {len(trials_batch)} trials for '{search_term}' from ClinicalTrials.gov")
+        
+        # Remove duplicates by ID
+        seen_ids = set()
+        unique_trials = []
+        for trial in all_trials:
+            if trial.get('id') not in seen_ids:
+                seen_ids.add(trial.get('id'))
+                unique_trials.append(trial)
+        all_trials = unique_trials
+        
+        logging.info(f"Total unique trials: {len(all_trials)}")
+    except Exception as e:
+        logging.error(f"Failed to fetch trials from API: {e}")
     
     scored_trials = []
     
