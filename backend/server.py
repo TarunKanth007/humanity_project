@@ -1729,9 +1729,9 @@ async def get_researcher_overview(
         
         pubmed_results = unique_pubs
         logging.info(f"Total unique publications: {len(pubmed_results)}")
-            
-            # Score and add relevance
-            for pub in pubmed_results:
+        
+        # Score and add relevance
+        for pub in pubmed_results:
                 score = 50  # Base relevancy score of 50%
                 reasons = ["General medical research"]
                 
