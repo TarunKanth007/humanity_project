@@ -969,10 +969,25 @@ const PatientDashboard = ({ user, logout }) => {
 
   const addToFavorites = async (itemType, itemId) => {
     try {
-      await api.post('/favorites', { item_type: itemType, item_id: itemId });
-      toast.success('Added to favorites');
+      // Check if already favorited
+      const checkRes = await api.get(`/favorites/check/${itemType}/${itemId}`);
+      
+      if (checkRes.data.is_favorited) {
+        // Remove from favorites
+        await api.delete(`/favorites/${checkRes.data.favorite_id}`);
+        toast.success('Removed from favorites');
+        // Reload data to update UI
+        if (activeTab === 'favorites') {
+          loadData();
+        }
+      } else {
+        // Add to favorites
+        await api.post('/favorites', { item_type: itemType, item_id: itemId });
+        toast.success('Added to favorites');
+      }
     } catch (error) {
-      toast.error('Failed to add to favorites');
+      console.error('Favorite toggle error:', error);
+      toast.error('Failed to update favorites');
     }
   };
 
