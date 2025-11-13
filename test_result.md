@@ -198,11 +198,11 @@ frontend:
   
   - task: "Favorites Tab Heart Icons"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -210,6 +210,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ HEART ICONS IMPLEMENTATION VERIFIED: Comprehensive code analysis confirms Heart icons are properly implemented in Favorites tab for both Patient and Researcher dashboards. Verified: 1) Heart icon buttons correctly added at lines ~2168 and ~4038 in App.js, 2) Proper event handling with onClick calling addToFavorites(fav.item_type, fav.item.id, fav.item) and stopPropagation, 3) Correct styling with blue fill (#3F51B5) and color properties for favorited state, 4) Heart icons positioned in card-header-row with CardTitle as specified, 5) Implementation consistent with Heart icon pattern used in other tabs. **AUTHENTICATION LIMITATION**: Cannot perform runtime testing due to Google OAuth requirement - manual authentication needed to verify visual appearance and user interactions. Code implementation is production-ready and follows all specifications."
+      - working: "NA"
+        agent: "main"
+        comment: "USER REPORTED: Heart icons still not showing. INVESTIGATION REVEALED: favoritedItems state was not being updated when favorites were loaded. ROOT CAUSE: When loading favorites (line ~966 and ~3103), only setFavorites() was called but favoritedItems state remained empty, causing Heart icons to render as unfilled/invisible. ADDITIONAL FIX APPLIED: Added code to update favoritedItems state when favorites are loaded. After api.get('/favorites'), now iterating through res.data and building favoritedIds object mapping each fav.item.id to true, then updating setFavoritedItems. Applied to both Patient Dashboard (line ~966) and Researcher Dashboard (line ~3110). Frontend restarted. Ready for user testing."
 
 metadata:
   created_by: "main_agent"
