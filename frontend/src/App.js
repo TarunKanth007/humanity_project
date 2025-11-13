@@ -1598,7 +1598,27 @@ const PatientDashboard = ({ user, logout }) => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="item-description">{trial.summary || trial.description}</p>
+                        {trial.ai_summarized && (
+                          <div style={{ marginBottom: '12px' }}>
+                            <span 
+                              style={{ 
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                              }}
+                            >
+                              ✨ AI Summarized
+                            </span>
+                          </div>
+                        )}
+                        <p className="item-description">
+                          {trial.ai_summary || trial.summary || trial.description}
+                        </p>
                         <div className="item-meta">
                           <span><MapPin className="icon-xs" /> {trial.location}</span>
                         </div>
