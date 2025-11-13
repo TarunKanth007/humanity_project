@@ -1601,7 +1601,7 @@ strong {
 }
 
 .item-link {
-  color: var(--olive);
+  color: var(--primary-blue);
   font-weight: 500;
   text-decoration: none;
   font-size: 14px;
@@ -1611,6 +1611,7 @@ strong {
 
 .item-link:hover {
   text-decoration: underline;
+  color: var(--primary-indigo);
 }
 
 .collab-header {
