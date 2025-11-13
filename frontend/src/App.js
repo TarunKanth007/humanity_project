@@ -4210,6 +4210,67 @@ const ResearcherDashboard = ({ user, logout }) => {
               )}
             </TabsContent>
 
+
+            {/* Publications Tab */}
+            <TabsContent value="publications">
+              {loading ? (
+                <div className="loading-state">Loading publications...</div>
+              ) : publications.length > 0 ? (
+                <div className="items-grid">
+                  {publications.map((pub, idx) => (
+                    <Card key={idx} className="item-card">
+                      <CardHeader>
+                        <CardTitle className="item-title">{pub.title}</CardTitle>
+                        <CardDescription>
+                          {pub.journal} • {pub.year}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {pub.authors && pub.authors.length > 0 && (
+                          <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
+                            <strong>Authors:</strong> {pub.authors.join(', ')}
+                          </p>
+                        )}
+                        <p className="item-description">
+                          {pub.summary || pub.abstract?.slice(0, 300) + '...'}
+                        </p>
+                        {pub.disease_areas && pub.disease_areas.length > 0 && (
+                          <div className="tags">
+                            {pub.disease_areas.map((area, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">{area}</Badge>
+                            ))}
+                          </div>
+                        )}
+                        {pub.url && (
+                          <a 
+                            href={pub.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="publication-link"
+                            style={{
+                              display: 'inline-block',
+                              marginTop: '12px',
+                              color: '#3F51B5',
+                              textDecoration: 'none',
+                              fontWeight: '500'
+                            }}
+                          >
+                            View Publication →
+                          </a>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <BookOpen className="empty-icon" />
+                  <h3>No publications found</h3>
+                  <p>Your publications from PubMed will appear here</p>
+                </div>
+              )}
+            </TabsContent>
+
             <TabsContent value="forums">
               {selectedForum ? (
                 <ForumDiscussion 
