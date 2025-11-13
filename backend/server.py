@@ -1701,14 +1701,6 @@ async def get_researcher_overview(
     
     featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:3]
     
-    # Add AI summaries to top trials
-    for trial in featured_trials:
-        if not trial.get("ai_summary"):
-            description = trial.get("description", "") or trial.get("summary", "")
-            if description:
-                ai_summary = await generate_ai_summary(description, "clinical trial")
-                trial["ai_summary"] = ai_summary
-    
     # Get latest publications in researcher's areas
     # ALWAYS fetch from PubMed API for fresh, relevant publications
     latest_publications = []
