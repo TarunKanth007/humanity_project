@@ -1058,20 +1058,14 @@ async def get_publications(
         publications = await db.publications.find(query, {"_id": 0}).limit(10).to_list(10)
         logger.info(f"Fallback: Found {len(publications)} publications in database")
         
-        # Add default scores and AI summaries to database results
+        # Add default scores and quick summaries to database results
         for pub in publications:
             pub["relevance_score"] = 50
             pub["match_reasons"] = ["Database result"]
-            # Generate AI summary for database results too
-            try:
-                ai_summary = await summarize_publication(
-                    title=pub.get("title", ""),
-                    abstract=pub.get("abstract", "")
-                )
-                pub["ai_summary"] = ai_summary
-                pub["ai_summarized"] = True
-            except Exception as summ_error:
-                logger.error(f"Error summarizing database publication: {summ_error}")
+            # Use truncated abstract instead of AI summary for speed
+            abstract = pub.get("abstract", "")
+            pub["ai_summary"] = abstract[:150] + "..." if len(abstract) > 150 else abstract
+            pub["ai_summarized"] = False
         
         return publications
 
