@@ -2344,30 +2344,25 @@ strong {
   }
 
   /* Profile tablet responsive */
-  .researcher-profile-content > div:last-child > div > div > div[style*="repeat(5"] {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  .researcher-profile-content div[style*="display: grid"] {
+  
+  /* Form grid - 2 columns on tablet */
+  .researcher-profile-content > div:first-child > div:last-child > div[style*="gridTemplateColumns"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Tablet - restore horizontal layouts */
-  .researcher-profile-content > div > div > div > div[style*="justifyContent"] {
+  /* Avatar section - horizontal on tablet */
+  .researcher-profile-content > div:first-child > div:last-child > div[style*="marginBottom: 24px"] {
     flex-direction: row !important;
   }
 
-  .researcher-profile-content div[style*="marginBottom: 24px"] {
-    flex-direction: row !important;
-  }
-
-  .researcher-profile-content div[style*="marginBottom: 24px"] img {
+  .researcher-profile-content > div:first-child > div:last-child > div[style*="marginBottom: 24px"] img {
     width: 70px !important;
     height: 70px !important;
   }
 
-  .researcher-profile-content button {
-    width: auto !important;
+  /* Stats grid - 3 columns on tablet */
+  .researcher-profile-content > div:nth-last-child(1) > div:last-child > div[style*="repeat(5"] {
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 }
 
