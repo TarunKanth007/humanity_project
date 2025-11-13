@@ -1389,6 +1389,13 @@ class BackendTester:
         self.test_forum_favorites_feature()
         self.test_favorites_api_integration()
         
+        # NEW: Patient Dashboard Feature Tests
+        self.test_search_endpoint_without_auth()
+        self.test_patient_overview_endpoint_without_auth()
+        self.test_researcher_details_endpoint_without_auth()
+        self.test_patient_dashboard_endpoints_structure()
+        self.test_search_endpoint_data_validation()
+        
         # Summary
         print("\n" + "="*50)
         print("TEST SUMMARY")
