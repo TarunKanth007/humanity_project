@@ -919,9 +919,9 @@ strong {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid var(--olive);
+  border: 2px solid var(--primary-blue);
   background: white;
-  color: var(--olive);
+  color: var(--primary-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -931,8 +931,8 @@ strong {
 }
 
 .carousel-btn:hover {
-  background: var(--olive);
-  color: var(--cream);
+  background: var(--primary-gradient);
+  color: white;
   transform: scale(1.1);
 }
 
