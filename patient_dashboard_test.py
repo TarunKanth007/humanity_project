@@ -14,7 +14,7 @@ import uuid
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://medbridge-21.preview.emergentagent.com/api"
+BACKEND_URL = "https://healthbridge-52.preview.emergentagent.com/api"
 
 class PatientDashboardTester:
     def __init__(self):
