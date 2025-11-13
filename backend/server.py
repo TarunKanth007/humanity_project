@@ -775,8 +775,20 @@ async def get_clinical_trials(
         # Sort by relevance score
         scored_trials.sort(key=lambda x: x["relevance_score"], reverse=True)
         
-        # Return top 10 most relevant
-        return scored_trials[:10]
+        # Get top 10 most relevant
+        top_trials = scored_trials[:10]
+        
+        # Generate AI summaries for top trials
+        for trial in top_trials:
+            ai_summary = await summarize_clinical_trial(
+                title=trial.get("title", ""),
+                description=trial.get("description", ""),
+                disease_areas=trial.get("disease_areas", [])
+            )
+            trial["ai_summary"] = ai_summary
+            trial["ai_summarized"] = True
+        
+        return top_trials
         
     except Exception as e:
         logger.error(f"Error fetching trials from API: {e}")
