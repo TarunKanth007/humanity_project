@@ -2342,6 +2342,17 @@ strong {
   .impact-stats-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
+
+  /* Profile tablet responsive */
+  [style*="gridTemplateColumns"][style*="repeat(5, 1fr)"],
+  [style*="grid-template-columns"][style*="repeat(5, 1fr)"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  [style*="gridTemplateColumns"][style*="repeat(2, 1fr)"],
+  [style*="grid-template-columns"][style*="repeat(2, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 /* Extra small mobile */
