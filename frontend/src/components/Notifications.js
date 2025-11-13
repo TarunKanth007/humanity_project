@@ -24,6 +24,10 @@ export const Notifications = ({ user, logout }) => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [collabRequests, setCollabRequests] = useState([]);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     loadData();
