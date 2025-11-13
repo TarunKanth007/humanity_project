@@ -4280,8 +4280,26 @@ const ResearcherDashboard = ({ user, logout }) => {
                 />
               ) : (
                 <>
-                  <div style={{marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <h2 style={{fontSize: '20px', fontWeight: 600, color: 'var(--olive)'}}>Forum Groups</h2>
+                  <div style={{marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px'}}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
+                      <h2 style={{fontSize: '20px', fontWeight: 600, color: 'var(--olive)'}}>Forum Groups</h2>
+                      <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                        <Button
+                          variant={forumFilter === 'all' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setForumFilter('all')}
+                        >
+                          All Forums
+                        </Button>
+                        <Button
+                          variant={forumFilter === 'myfield' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setForumFilter('myfield')}
+                        >
+                          My Field
+                        </Button>
+                      </div>
+                    </div>
                     <Dialog open={showCreateForum} onOpenChange={setShowCreateForum}>
                       <DialogTrigger asChild>
                         <Button 
