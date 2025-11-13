@@ -1591,38 +1591,9 @@ const PatientDashboard = ({ user, logout }) => {
                                 </div>
                               )}
                               <p className="item-authors">{pub.authors.join(', ')}</p>
-                              {pub.ai_summarized ? (
-                                <div>
-                                  <div style={{ marginBottom: '8px' }}>
-                                    <span 
-                                      style={{ 
-                                        fontSize: '11px',
-                                        fontWeight: '600',
-                                        color: '#3F51B5',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.5px'
-                                      }}
-                                    >
-                                      ✨ AI Summarized
-                                    </span>
-                                  </div>
-                                  <p 
-                                    className="item-description"
-                                    style={{ 
-                                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
-                                      WebkitBackgroundClip: 'text',
-                                      WebkitTextFillColor: 'transparent',
-                                      backgroundClip: 'text',
-                                      fontWeight: '500',
-                                      fontSize: '15px'
-                                    }}
-                                  >
-                                    {pub.ai_summary}
-                                  </p>
-                                </div>
-                              ) : (
-                                <p className="item-description">{pub.summary || pub.abstract.slice(0, 200) + '...'}</p>
-                              )}
+                              <p className="item-description">
+                                {truncateToWords(pub.summary || pub.abstract, 35)}
+                              </p>
                               <div className="tags">
                                 {pub.disease_areas.map((area, idx) => (
                                   <Badge key={idx} variant="secondary">{area}</Badge>
