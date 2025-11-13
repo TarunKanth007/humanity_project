@@ -1881,10 +1881,15 @@ async def send_collaboration_request(
     # Get sender profile for name
     sender_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
     
+    # Get receiver profile for name
+    receiver_profile = await db.researcher_profiles.find_one({"user_id": request_data["receiver_id"]}, {"_id": 0})
+    receiver_name = receiver_profile.get("name", "Unknown") if receiver_profile else "Unknown"
+    
     collab_request = CollaborationRequest(
         sender_id=user.id,
         sender_name=sender_profile.get("name", user.name) if sender_profile else user.name,
         receiver_id=request_data["receiver_id"],
+        receiver_name=receiver_name,
         purpose=request_data["purpose"],
         sector=request_data["sector"],
         message=request_data["message"]
