@@ -2526,98 +2526,99 @@ strong {
 
   /* PROFILE PAGE RESPONSIVE - AGGRESSIVE OVERRIDES */
   
-  /* All profile tab content */
-  [data-testid="profile-tab"],
-  [data-testid="profile-tab"] * {
+  /* All profile content */
+  .researcher-profile-content,
+  .researcher-profile-content * {
     max-width: 100%;
     box-sizing: border-box;
   }
 
   /* Main profile grid container */
-  [data-testid="profile-tab"] > div[style*="display: grid"] {
+  .researcher-profile-content {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
     padding: 0 !important;
   }
 
   /* Profile info header - stack vertically */
-  [data-testid="profile-tab"] div[style*="display: flex"][style*="gap: 24px"] {
+  .researcher-profile-content div[style*="display: flex"][style*="gap: 24px"] {
     flex-direction: column !important;
     gap: 16px !important;
     align-items: flex-start !important;
   }
 
   /* Avatar size on mobile */
-  [data-testid="profile-tab"] img[style*="width: 80px"] {
+  .researcher-profile-content img[style*="width: 80px"],
+  .researcher-profile-content img[style*="width: '80px'"] {
     width: 60px !important;
     height: 60px !important;
   }
 
   /* Form grid - all fields single column */
-  [data-testid="profile-tab"] div[style*="gridTemplateColumns: 'repeat(2, 1fr)'"],
-  [data-testid="profile-tab"] div[style*="grid-template-columns"][style*="repeat(2"] {
+  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(2, 1fr)'"],
+  .researcher-profile-content div[style*="grid-template-columns"][style*="repeat(2"] {
     grid-template-columns: 1fr !important;
   }
 
   /* Stats grid 5 columns to 2 */
-  [data-testid="profile-tab"] div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"],
-  [data-testid="profile-tab"] div[style*="grid-template-columns"][style*="repeat(5"] {
+  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"],
+  .researcher-profile-content div[style*="grid-template-columns"][style*="repeat(5"] {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
   }
 
   /* Card headers - stack buttons vertically */
-  [data-testid="profile-tab"] div[style*="justifyContent: 'space-between'"] {
+  .researcher-profile-content div[style*="justifyContent: 'space-between'"] {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 12px !important;
   }
 
   /* Button groups in headers */
-  [data-testid="profile-tab"] div[style*="display: flex"][style*="gap: 8px"] button {
+  .researcher-profile-content div[style*="display: flex"][style*="gap: 8px"] button {
     font-size: 13px !important;
     padding: 8px 12px !important;
   }
 
   /* All inputs full width */
-  [data-testid="profile-tab"] input {
+  .researcher-profile-content input {
     width: 100% !important;
     max-width: 100% !important;
   }
 
   /* All textareas full width */
-  [data-testid="profile-tab"] textarea {
+  .researcher-profile-content textarea {
     width: 100% !important;
     max-width: 100% !important;
   }
 
   /* Labels */
-  [data-testid="profile-tab"] label {
+  .researcher-profile-content label {
     font-size: 14px !important;
   }
 
   /* Badge containers */
-  [data-testid="profile-tab"] div[style*="flexWrap: 'wrap'"] {
+  .researcher-profile-content div[style*="flexWrap: 'wrap'"] {
     width: 100% !important;
   }
 
   /* Stat cards */
-  [data-testid="profile-tab"] div[style*="textAlign: 'center'"] svg {
+  .researcher-profile-content div[style*="textAlign: 'center'"] svg {
     width: 24px !important;
     height: 24px !important;
   }
 
-  [data-testid="profile-tab"] div[style*="textAlign: 'center'"] p {
+  .researcher-profile-content div[style*="textAlign: 'center'"] p {
     font-size: 16px !important;
   }
 
   /* Activity cards */
-  [data-testid="profile-tab"] div[style*="gridTemplateColumns: 'repeat(auto-fill"] {
+  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(auto-fill"] {
     grid-template-columns: 1fr !important;
   }
 
   /* Flex direction column for nested layouts */
-  [data-testid="profile-tab"] div[style*="justifyContent: 'space-between'"][style*="alignItems: 'start'"] {
+  .researcher-profile-content div[style*="justifyContent: 'space-between'"][style*="alignItems: 'start'"] {
     flex-direction: column !important;
   }
 }
