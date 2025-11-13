@@ -3145,6 +3145,14 @@ const ResearcherDashboard = ({ user, logout }) => {
         // Load active collaborations
         const res = await api.get('/collaborations');
         setCollaborations(res.data);
+      } else if (activeTab === 'publications') {
+        // Load publications
+        const res = await api.get('/researcher/publications');
+        setPublications(res.data);
+      } else if (activeTab === 'overview') {
+        // Load personalized overview
+        const res = await api.get('/researcher/overview');
+        setOverviewData(res.data);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
