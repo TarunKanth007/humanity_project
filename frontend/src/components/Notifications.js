@@ -38,12 +38,23 @@ export const Notifications = ({ user, logout }) => {
 
   const loadData = async () => {
     try {
-      const [notifsRes, appointmentsRes] = await Promise.all([
+      const promises = [
         api.get('/notifications'),
         api.get('/appointments')
-      ]);
-      setNotifications(notifsRes.data);
-      setAppointments(appointmentsRes.data.filter(a => a.status === 'pending'));
+      ];
+      
+      // Only load collab requests if user is researcher
+      if (user.roles?.includes('researcher')) {
+        promises.push(api.get('/collaborations/requests'));
+      }
+      
+      const results = await Promise.all(promises);
+      setNotifications(results[0].data);
+      setAppointments(results[1].data.filter(a => a.status === 'pending'));
+      
+      if (results[2]) {
+        setCollabRequests(results[2].data);
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
     }
