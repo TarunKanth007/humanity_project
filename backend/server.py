@@ -426,6 +426,7 @@ class ForumPostCreateRequest(BaseModel):
 class FavoriteCreateRequest(BaseModel):
     item_type: str
     item_id: str
+    item_data: Optional[Dict[str, Any]] = None  # Full item data for API-fetched items
 
 class MeetingRequestCreate(BaseModel):
     expert_id: str
