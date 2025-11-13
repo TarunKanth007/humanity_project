@@ -31,6 +31,31 @@ llm_chat = LlmChat(
     system_message="You are a medical AI assistant that creates clear, concise summaries of clinical research and trials for patients and researchers."
 ).with_model("openai", "gpt-4o-mini")
 
+# In-memory cache for summaries (with TTL)
+from collections import defaultdict
+import hashlib
+summary_cache = {}
+cache_timestamps = {}
+
+def get_cache_key(text: str) -> str:
+    """Generate cache key from text"""
+    return hashlib.md5(text.encode()).hexdigest()
+
+def get_cached_summary(text: str) -> Optional[str]:
+    """Get cached summary if available and not expired"""
+    key = get_cache_key(text)
+    if key in summary_cache:
+        # Check if cache is still valid (1 hour)
+        if time.time() - cache_timestamps.get(key, 0) < 3600:
+            return summary_cache[key]
+    return None
+
+def set_cached_summary(text: str, summary: str):
+    """Cache a summary"""
+    key = get_cache_key(text)
+    summary_cache[key] = summary
+    cache_timestamps[key] = time.time()
+
 # Helper function to summarize clinical trials
 async def summarize_clinical_trial(title: str, description: str, disease_areas: list) -> str:
     """
