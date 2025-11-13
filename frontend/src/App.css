@@ -2525,101 +2525,100 @@ strong {
     font-size: 12px;
   }
 
-  /* PROFILE PAGE RESPONSIVE - AGGRESSIVE OVERRIDES */
+  /* PROFILE PAGE RESPONSIVE - ULTRA AGGRESSIVE */
   
-  /* All profile content */
-  .researcher-profile-content,
-  .researcher-profile-content * {
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* Main profile grid container */
+  /* Container */
   .researcher-profile-content {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .researcher-profile-content * {
+    box-sizing: border-box !important;
+  }
+
+  /* All grid displays to single column */
+  .researcher-profile-content > div > div[style*="display: grid"],
+  .researcher-profile-content > div > div > div[style*="display: grid"],
+  .researcher-profile-content div[style*="display: grid"] {
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
-    padding: 0 !important;
   }
 
-  /* Profile info header - stack vertically */
-  .researcher-profile-content div[style*="display: flex"][style*="gap: 24px"] {
-    flex-direction: column !important;
-    gap: 16px !important;
-    align-items: flex-start !important;
-  }
-
-  /* Avatar size on mobile */
-  .researcher-profile-content img[style*="width: 80px"],
-  .researcher-profile-content img[style*="width: '80px'"] {
+  /* Profile avatar section */
+  .researcher-profile-content div[style*="marginBottom: 24px"] img {
     width: 60px !important;
     height: 60px !important;
   }
 
-  /* Form grid - all fields single column */
-  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(2, 1fr)'"],
-  .researcher-profile-content div[style*="grid-template-columns"][style*="repeat(2"] {
-    grid-template-columns: 1fr !important;
+  .researcher-profile-content div[style*="marginBottom: 24px"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
   }
 
-  /* Stats grid 5 columns to 2 */
-  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"],
-  .researcher-profile-content div[style*="grid-template-columns"][style*="repeat(5"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-
-  /* Card headers - stack buttons vertically */
-  .researcher-profile-content div[style*="justifyContent: 'space-between'"] {
+  /* Card headers with buttons */
+  .researcher-profile-content > div > div > div > div[style*="justifyContent"] {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 12px !important;
+    width: 100% !important;
   }
 
-  /* Button groups in headers */
-  .researcher-profile-content div[style*="display: flex"][style*="gap: 8px"] button {
+  /* Button containers */
+  .researcher-profile-content > div > div > div > div > div[style*="display: flex"] {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .researcher-profile-content button {
+    width: 100% !important;
     font-size: 13px !important;
     padding: 8px 12px !important;
   }
 
-  /* All inputs full width */
-  .researcher-profile-content input {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* All textareas full width */
+  /* All inputs */
+  .researcher-profile-content input,
   .researcher-profile-content textarea {
     width: 100% !important;
     max-width: 100% !important;
   }
 
-  /* Labels */
+  /* Labels and text */
   .researcher-profile-content label {
     font-size: 14px !important;
   }
 
-  /* Badge containers */
-  .researcher-profile-content div[style*="flexWrap: 'wrap'"] {
-    width: 100% !important;
+  .researcher-profile-content h3 {
+    font-size: 18px !important;
   }
 
-  /* Stat cards */
-  .researcher-profile-content div[style*="textAlign: 'center'"] svg {
+  /* Badge groups */
+  .researcher-profile-content div[style*="flexWrap"] {
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Stats cards - force 2 column */
+  .researcher-profile-content > div:last-child > div > div > div[style*="repeat(5"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .researcher-profile-content svg {
     width: 24px !important;
     height: 24px !important;
   }
 
-  .researcher-profile-content div[style*="textAlign: 'center'"] p {
-    font-size: 16px !important;
+  /* Activity tabs */
+  .researcher-profile-content .activity-tabs div[role="tablist"] {
+    overflow-x: auto !important;
   }
 
-  /* Activity cards */
-  .researcher-profile-content div[style*="gridTemplateColumns: 'repeat(auto-fill"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Flex direction column for nested layouts */
-  .researcher-profile-content div[style*="justifyContent: 'space-between'"][style*="alignItems: 'start'"] {
-    flex-direction: column !important;
+  /* All cards */
+  .researcher-profile-content > div > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
 }
