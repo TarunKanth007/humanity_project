@@ -89,6 +89,37 @@ export const Notifications = ({ user, logout }) => {
     }
   };
 
+  const handleAcceptCollab = async (requestId) => {
+    try {
+      await api.post(`/collaborations/requests/${requestId}/accept`);
+      toast.success('Collaboration request accepted!');
+      loadData();
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error('Failed to accept collaboration request');
+    }
+  };
+
+  const handleRejectCollab = async () => {
+    if (!rejectionReason.trim()) {
+      toast.error('Please provide a reason for rejection');
+      return;
+    }
+    
+    try {
+      await api.post(`/collaborations/requests/${selectedRequest.id}/reject`, {
+        reason: rejectionReason
+      });
+      toast.success('Collaboration request rejected');
+      setShowRejectDialog(false);
+      setRejectionReason('');
+      setSelectedRequest(null);
+      loadData();
+    } catch (error) {
+      toast.error('Failed to reject collaboration request');
+    }
+  };
+
   const isResearcher = user.roles?.includes('researcher');
 
   return (
