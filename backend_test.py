@@ -1103,6 +1103,41 @@ class BackendTester:
                     {"endpoint": endpoint, "method": method}
                 )
 
+    # ============ Patient Dashboard Features Tests ============
+    
+    def test_search_endpoint_without_auth(self):
+        """Test search endpoint authentication requirement"""
+        print("\n=== Patient Dashboard - Search Endpoint Tests ===")
+        
+        # Test 1: Search without authentication
+        try:
+            search_data = {"query": "cancer"}
+            response = self.session.post(
+                f"{BACKEND_URL}/search",
+                json=search_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Search Endpoint - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Search Endpoint - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Search Endpoint - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("🚀 Starting CuraLink Backend Tests - Forum Favorites Feature Focus")
