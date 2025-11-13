@@ -253,6 +253,45 @@ class MeetingRequest(BaseModel):
     status: str = "pending"  # pending, accepted, declined
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class OneOnOneRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    patient_id: str
+    expert_id: str
+    message: str
+    status: str = "pending"  # pending, accepted, declined
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CollaborationRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    sender_id: str
+    sender_name: str
+    receiver_id: str
+    purpose: str
+    sector: str
+    message: str
+    status: str = "pending"  # pending, accepted, rejected
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Collaboration(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    researcher1_id: str
+    researcher2_id: str
+    request_id: str
+    status: str = "active"  # active, ended
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    ended_at: Optional[datetime] = None
+
+class CollaborationMessage(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    collaboration_id: str
+    sender_id: str
+    message: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # ============ Request/Response Models ============
 
 class SessionDataRequest(BaseModel):
