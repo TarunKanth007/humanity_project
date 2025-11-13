@@ -3809,6 +3809,10 @@ async def get_patient_overview(
     patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
     patient_conditions = patient_profile.get("conditions", []) if patient_profile else []
     
+    # Use default medical topics if no conditions
+    if not patient_conditions:
+        patient_conditions = ["cancer", "diabetes", "heart disease", "mental health"]
+    
     # Get top rated researchers
     experts = await db.health_experts.find({"is_platform_member": True}, {"_id": 0}).to_list(100)
     
@@ -3832,51 +3836,89 @@ async def get_patient_overview(
     experts_with_ratings.sort(key=lambda x: x.get("average_rating", 0), reverse=True)
     overview["top_researchers"] = experts_with_ratings[:3]
     
-    # Get relevant trials (active, matching conditions if available)
-    trials_query = {"status": "Recruiting"}
-    if patient_conditions:
-        # Find trials matching any patient condition
-        trials_query["disease_areas"] = {"$in": [
-            {"$regex": condition, "$options": "i"} for condition in patient_conditions
-        ]}
-    
+    # Get relevant trials - fetch from API if database is empty
     trials = await db.clinical_trials.find({}, {"_id": 0}).sort("created_at", -1).limit(50).to_list(50)
     
-    # Score trials by relevance
+    if len(trials) == 0:
+        # Fetch from ClinicalTrials.gov API
+        try:
+            from clinical_trials_api import search_clinical_trials
+            search_term = patient_conditions[0] if patient_conditions else "cancer"
+            trials = await search_clinical_trials(search_term, max_results=20)
+        except Exception as e:
+            logging.error(f"Failed to fetch trials: {e}")
+            trials = []
+    
+    # Score trials by relevance - always start at 50%
     scored_trials = []
     for trial in trials:
-        score = 0
+        score = 50  # Base 50% relevancy
+        reasons = ["General medical trial"]
+        
         if trial.get("status", "").lower() == "recruiting":
-            score += 50
+            score += 20
+            reasons = ["Currently recruiting"]
         
         # Boost if matches patient conditions
         disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
+        matched = False
         for condition in patient_conditions:
             if any(condition.lower() in area for area in disease_areas):
                 score += 30
+                reasons = [f"Matches: {condition}"]
+                matched = True
                 break
         
-        scored_trials.append({**trial, "relevance_score": score})
+        scored_trials.append({
+            **trial,
+            "relevance_score": min(score, 100),
+            "match_reasons": reasons
+        })
     
     scored_trials.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
     overview["featured_trials"] = scored_trials[:3]
     
-    # Get latest publications
+    # Get latest publications - fetch from PubMed if database empty
     publications = await db.publications.find({}, {"_id": 0}).sort("year", -1).limit(50).to_list(50)
     
-    # Score publications by relevance
+    if len(publications) == 0:
+        # Fetch from PubMed API
+        try:
+            from pubmed_api import search_pubmed
+            search_term = patient_conditions[0] if patient_conditions else "medicine"
+            publications = await search_pubmed(search_term, max_results=15)
+        except Exception as e:
+            logging.error(f"Failed to fetch publications: {e}")
+            publications = []
+    
+    # Score publications by relevance - always start at 50%
     scored_pubs = []
     for pub in publications:
-        score = pub.get("year", 2000) - 2000  # Newer = higher score
+        score = 50  # Base 50% relevancy
+        reasons = ["Medical research"]
+        
+        # Recent publications get boost
+        year = pub.get("year", 0)
+        if year >= 2024:
+            score += 20
+            reasons = ["Recent publication"]
+        elif year >= 2020:
+            score += 10
         
         # Boost if matches patient conditions
-        disease_areas = [area.lower() for area in pub.get("disease_areas", [])]
+        pub_title = pub.get("title", "").lower()
+        pub_abstract = pub.get("abstract", "").lower()
         for condition in patient_conditions:
-            if any(condition.lower() in area for area in disease_areas):
+            if condition.lower() in pub_title or condition.lower() in pub_abstract:
                 score += 30
+                reasons = [f"Related to: {condition}"]
                 break
         
-        scored_pubs.append({**pub, "relevance_score": score})
+        scored_pubs.append({
+            **pub,
+            "relevance_score": min(score, 100),
+            "match_reasons": reasons
+        })
     
     scored_pubs.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
     overview["latest_publications"] = scored_pubs[:3]
