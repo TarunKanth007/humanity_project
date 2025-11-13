@@ -2144,6 +2144,103 @@ async def send_collaboration_message(
     
     return msg_dict
 
+@api_router.post("/collaborations/{collaboration_id}/review")
+async def submit_collaboration_review(
+    collaboration_id: str,
+    review_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Submit review for collaboration partner"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user is part of collaboration
+    collaboration = await db.collaborations.find_one({
+        "id": collaboration_id,
+        "$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}]
+    })
+    
+    if not collaboration:
+        raise HTTPException(status_code=404, detail="Collaboration not found")
+    
+    # Determine partner ID
+    partner_id = collaboration["researcher2_id"] if collaboration["researcher1_id"] == user.id else collaboration["researcher1_id"]
+    
+    # Check if review already exists
+    existing_review = await db.collaboration_reviews.find_one({
+        "collaboration_id": collaboration_id,
+        "reviewer_id": user.id
+    })
+    
+    if existing_review:
+        raise HTTPException(status_code=400, detail="You have already reviewed this collaboration")
+    
+    # Create review
+    review = CollaborationReview(
+        collaboration_id=collaboration_id,
+        reviewer_id=user.id,
+        reviewed_id=partner_id,
+        rating=review_data["rating"],
+        text=review_data["text"]
+    )
+    
+    review_dict = review.dict()
+    review_dict["created_at"] = review_dict["created_at"].isoformat()
+    await db.collaboration_reviews.insert_one(review_dict)
+    
+    # Notify the partner
+    reviewer_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    reviewer_name = reviewer_profile.get("name", user.name) if reviewer_profile else user.name
+    
+    notification = Notification(
+        user_id=partner_id,
+        type="collaboration_review",
+        title="New Collaboration Review",
+        content=f"{reviewer_name} left you a {review_data['rating']}-star review",
+        link="/dashboard"
+    )
+    notif_dict = notification.dict()
+    notif_dict["created_at"] = notif_dict["created_at"].isoformat()
+    await db.notifications.insert_one(notif_dict)
+    
+    return {"status": "success", "review_id": review.id}
+
+@api_router.get("/collaborations/{collaboration_id}/reviews")
+async def get_collaboration_reviews(
+    collaboration_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get reviews for a collaboration"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user is part of collaboration
+    collaboration = await db.collaborations.find_one({
+        "id": collaboration_id,
+        "$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}]
+    })
+    
+    if not collaboration:
+        raise HTTPException(status_code=404, detail="Collaboration not found")
+    
+    # Get reviews
+    reviews = await db.collaboration_reviews.find(
+        {"collaboration_id": collaboration_id},
+        {"_id": 0}
+    ).to_list(10)
+    
+    # Enrich with reviewer details
+    for review in reviews:
+        reviewer_profile = await db.researcher_profiles.find_one({"user_id": review["reviewer_id"]}, {"_id": 0})
+        if reviewer_profile:
+            review["reviewer_name"] = reviewer_profile.get("name", "Unknown")
+    
+    return reviews
+
 # ============ Notification Endpoints ============
 
 @api_router.get("/notifications")
