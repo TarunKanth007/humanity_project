@@ -870,50 +870,11 @@ async def get_clinical_trials(
         end_idx = start_idx + 10
         top_trials = scored_trials[start_idx:end_idx]
         
-        # Generate AI summaries with STRICT 2-second global timeout
-        import asyncio
-        
-        async def generate_all_summaries():
-            """Generate all summaries with cache check first"""
-            tasks = []
-            for trial in top_trials:
-                # Check cache first
-                cache_text = f"{trial.get('title', '')}:{trial.get('description', '')[:200]}"
-                cached = get_cached_summary(cache_text)
-                if cached:
-                    tasks.append(asyncio.create_task(asyncio.sleep(0, result=cached)))
-                else:
-                    tasks.append(summarize_clinical_trial(
-                        title=trial.get("title", ""),
-                        description=trial.get("description", ""),
-                        disease_areas=trial.get("disease_areas", [])
-                    ))
-            return await asyncio.gather(*tasks, return_exceptions=True)
-        
-        try:
-            # Global timeout of 2 seconds for ALL summaries
-            summaries = await asyncio.wait_for(
-                generate_all_summaries(),
-                timeout=2.0
-            )
-            
-            # Add summaries to trials
-            for trial, summary in zip(top_trials, summaries):
-                if isinstance(summary, Exception):
-                    desc = trial.get("description", "")
-                    trial["ai_summary"] = desc[:150] + "..." if len(desc) > 150 else desc
-                    trial["ai_summarized"] = False
-                else:
-                    trial["ai_summary"] = summary
-                    trial["ai_summarized"] = True
-                    
-        except asyncio.TimeoutError:
-            # If timeout, use truncated descriptions for all
-            logger.warning("AI summarization timed out, using truncated descriptions")
-            for trial in top_trials:
-                desc = trial.get("description", "")
-                trial["ai_summary"] = desc[:150] + "..." if len(desc) > 150 else desc
-                trial["ai_summarized"] = False
+        # Return data immediately without AI summarization for speed
+        for trial in top_trials:
+            desc = trial.get("description", "")
+            trial["summary"] = desc[:150] + "..." if len(desc) > 150 else desc
+            trial["ai_summarized"] = False
         
         return top_trials
         
