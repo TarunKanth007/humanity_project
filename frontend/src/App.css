@@ -2716,3 +2716,33 @@ strong {
     flex: 1;
   }
 }
+
+
+/* Role Badge Glow Animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(63, 81, 181, 0.5), 0 0 40px rgba(83, 109, 254, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(63, 81, 181, 0.7), 0 0 60px rgba(83, 109, 254, 0.5);
+  }
+}
+
+/* Role Badge Styles */
+.role-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 0 20px rgba(63, 81, 181, 0.5), 0 0 40px rgba(83, 109, 254, 0.3);
+  animation: pulse-glow 2s ease-in-out infinite;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
