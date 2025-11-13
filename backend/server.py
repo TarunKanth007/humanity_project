@@ -1702,19 +1702,33 @@ async def get_researcher_overview(
     featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:3]
     
     # Get latest publications in researcher's areas
+    # ALWAYS fetch from PubMed API for fresh, relevant publications
     latest_publications = []
     try:
-        from pubmed_api import search_pubmed
+        from pubmed_api import PubMedAPI
+        api_client = PubMedAPI()
         
         # Search for publications matching specialties and interests
-        search_terms = specialties + interests
-        if search_terms:
-            # Combine first 2 terms for more relevant results
-            from pubmed_api import PubMedAPI
-            api_client = PubMedAPI()
-            search_query = " OR ".join(search_terms[:2])
-            pubmed_results = api_client.search_and_fetch(query=search_query, max_results=15)
-            logging.info(f"Fetched {len(pubmed_results)} publications from PubMed for researcher")
+        all_search_terms = specialties + interests
+        search_terms = all_search_terms[:3] if all_search_terms else ["medical research"]
+        
+        all_pubs = []
+        for search_term in search_terms:
+            pubs_batch = api_client.search_and_fetch(query=search_term, max_results=10)
+            all_pubs.extend(pubs_batch)
+            logging.info(f"Fetched {len(pubs_batch)} publications for '{search_term}' from PubMed")
+        
+        # Remove duplicates by title
+        seen_titles = set()
+        unique_pubs = []
+        for pub in all_pubs:
+            title = pub.get('title', '').lower()
+            if title and title not in seen_titles:
+                seen_titles.add(title)
+                unique_pubs.append(pub)
+        
+        pubmed_results = unique_pubs
+        logging.info(f"Total unique publications: {len(pubmed_results)}")
             
             # Score and add relevance
             for pub in pubmed_results:
