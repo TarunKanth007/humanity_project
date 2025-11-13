@@ -2976,6 +2976,20 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [specialtyInput, setSpecialtyInput] = useState('');
   const [interestInput, setInterestInput] = useState('');
   
+  // Search states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // Publications state
+  const [publications, setPublications] = useState([]);
+  
+  // Overview states
+  const [overviewData, setOverviewData] = useState(null);
+  
+  // Forum filter state
+  const [forumFilter, setForumFilter] = useState('all'); // 'all' or 'myfield'
+  
   // Collaboration states
   const [showCollabRequest, setShowCollabRequest] = useState(false);
   const [selectedCollaborator, setSelectedCollaborator] = useState(null);
