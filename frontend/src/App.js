@@ -2355,6 +2355,61 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleSendCollabRequest = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/collaborations/request', {
+        receiver_id: selectedCollaborator.user_id,
+        purpose: collabRequestForm.purpose,
+        sector: collabRequestForm.sector,
+        message: collabRequestForm.message
+      });
+      toast.success('Collaboration request sent!');
+      setShowCollabRequest(false);
+      setCollabRequestForm({ purpose: '', sector: '', message: '' });
+      setSelectedCollaborator(null);
+    } catch (error) {
+      toast.error('Failed to send request');
+    }
+  };
+
+  const handleOpenCollabChat = async (collaboration) => {
+    setSelectedCollab(collaboration);
+    try {
+      const res = await api.get(`/collaborations/${collaboration.id}/messages`);
+      setCollabMessages(res.data);
+    } catch (error) {
+      console.error('Failed to load messages:', error);
+    }
+  };
+
+  const handleSendCollabMessage = async () => {
+    if (!collabMessageInput.trim() || !selectedCollab) return;
+    
+    try {
+      const res = await api.post(`/collaborations/${selectedCollab.id}/messages`, {
+        message: collabMessageInput
+      });
+      setCollabMessages([...collabMessages, res.data]);
+      setCollabMessageInput('');
+    } catch (error) {
+      toast.error('Failed to send message');
+    }
+  };
+
+  const handleEndCollaboration = async (collabId) => {
+    if (!window.confirm('Are you sure you want to end this collaboration?')) return;
+    
+    try {
+      await api.post(`/collaborations/${collabId}/end`);
+      toast.success('Collaboration ended');
+      setSelectedCollab(null);
+      loadData();
+    } catch (error) {
+      toast.error('Failed to end collaboration');
+    }
+  };
+
   return (
     <div className="dashboard">
       <nav className="dashboard-nav">
