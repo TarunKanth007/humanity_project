@@ -192,11 +192,13 @@ class ResearcherProfile(BaseModel):
     age: int
     years_experience: int
     sector: str
+    institution: Optional[str] = None
     available_hours: str  # e.g., "9 AM - 5 PM" or "Flexible"
     phone_number: Optional[str] = None
     orcid: Optional[str] = None
     researchgate: Optional[str] = None
     available_for_meetings: bool = True
+    open_to_collaboration: bool = False
     bio: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
