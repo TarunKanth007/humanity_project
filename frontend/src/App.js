@@ -4434,10 +4434,19 @@ const ResearcherDashboard = ({ user, logout }) => {
                   {publications.map((pub, idx) => (
                     <Card key={idx} className="item-card">
                       <CardHeader>
-                        <CardTitle className="item-title">{pub.title}</CardTitle>
-                        <CardDescription>
-                          {pub.journal} • {pub.year}
-                        </CardDescription>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                          <div>
+                            <CardTitle className="item-title">{pub.title}</CardTitle>
+                            <CardDescription>
+                              {pub.journal} • {pub.year}
+                            </CardDescription>
+                          </div>
+                          {pub.source && (
+                            <Badge variant={pub.source === 'manual' ? 'default' : 'secondary'} style={{ fontSize: '10px' }}>
+                              {pub.source === 'manual' ? 'Added' : 'PubMed'}
+                            </Badge>
+                          )}
+                        </div>
                       </CardHeader>
                       <CardContent>
                         {pub.authors && pub.authors.length > 0 && (
