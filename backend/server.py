@@ -2678,6 +2678,359 @@ async def seed_data():
     
     return {"status": "success", "message": "Data seeded"}
 
+# ============ Search Functionality ============
+
+class SearchRequest(BaseModel):
+    query: str
+    filters: Optional[Dict[str, Any]] = {}
+
+@api_router.post("/search")
+async def search(
+    search_request: SearchRequest,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Search across researchers, trials, and publications with relevance scoring
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    query = search_request.query.lower()
+    results = {
+        "researchers": [],
+        "trials": [],
+        "publications": []
+    }
+    
+    # Get patient profile for personalized matching
+    patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    patient_conditions = patient_profile.get("conditions", []) if patient_profile else []
+    
+    # Search Researchers/Experts
+    experts = await db.health_experts.find({}, {"_id": 0}).to_list(100)
+    for expert in experts:
+        score = 0
+        match_reasons = []
+        
+        # Check name match
+        if query in expert.get("name", "").lower():
+            score += 30
+            match_reasons.append("Name match")
+        
+        # Check specialty match
+        specialty = expert.get("specialty", "").lower()
+        if query in specialty:
+            score += 25
+            match_reasons.append("Specialty match")
+        
+        # Check research areas match
+        research_areas = [area.lower() for area in expert.get("research_areas", [])]
+        if any(query in area for area in research_areas):
+            score += 20
+            match_reasons.append("Research area match")
+        
+        # Check bio match
+        bio = expert.get("bio", "").lower()
+        if query in bio:
+            score += 10
+            match_reasons.append("Bio match")
+        
+        # Personalized matching based on patient conditions
+        for condition in patient_conditions:
+            condition_lower = condition.lower()
+            if condition_lower in specialty:
+                score += 15
+                match_reasons.append(f"Specialty matches your condition: {condition}")
+            if any(condition_lower in area for area in research_areas):
+                score += 10
+                match_reasons.append(f"Research area matches your condition: {condition}")
+        
+        # Add ratings if platform member
+        if expert.get("is_platform_member") and expert.get("user_id"):
+            reviews = await db.reviews.find(
+                {"researcher_id": expert["user_id"]},
+                {"_id": 0}
+            ).to_list(100)
+            
+            if reviews:
+                avg_rating = sum(r["rating"] for r in reviews) / len(reviews)
+                expert["average_rating"] = round(avg_rating, 1)
+                expert["total_reviews"] = len(reviews)
+                # Boost score based on rating
+                score += int(avg_rating * 2)
+            else:
+                expert["average_rating"] = 0
+                expert["total_reviews"] = 0
+        
+        if score > 0:
+            results["researchers"].append({
+                **expert,
+                "match_score": min(score, 100),  # Cap at 100%
+                "match_reasons": match_reasons
+            })
+    
+    # Search Clinical Trials
+    trials = await db.clinical_trials.find({}, {"_id": 0}).to_list(100)
+    for trial in trials:
+        score = 0
+        match_reasons = []
+        
+        # Check title match
+        if query in trial.get("title", "").lower():
+            score += 30
+            match_reasons.append("Title match")
+        
+        # Check description match
+        if query in trial.get("description", "").lower():
+            score += 15
+            match_reasons.append("Description match")
+        
+        # Check disease areas match
+        disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
+        if any(query in area for area in disease_areas):
+            score += 25
+            match_reasons.append("Disease area match")
+        
+        # Personalized matching based on patient conditions
+        for condition in patient_conditions:
+            condition_lower = condition.lower()
+            if any(condition_lower in area for area in disease_areas):
+                score += 20
+                match_reasons.append(f"Targets your condition: {condition}")
+            if condition_lower in trial.get("title", "").lower():
+                score += 15
+                match_reasons.append(f"Title mentions your condition: {condition}")
+        
+        # Boost for active trials
+        if trial.get("status", "").lower() == "recruiting":
+            score += 10
+            match_reasons.append("Currently recruiting")
+        
+        if score > 0:
+            results["trials"].append({
+                **trial,
+                "match_score": min(score, 100),
+                "match_reasons": match_reasons
+            })
+    
+    # Search Publications
+    publications = await db.publications.find({}, {"_id": 0}).to_list(100)
+    for pub in publications:
+        score = 0
+        match_reasons = []
+        
+        # Check title match
+        if query in pub.get("title", "").lower():
+            score += 30
+            match_reasons.append("Title match")
+        
+        # Check abstract match
+        if query in pub.get("abstract", "").lower():
+            score += 15
+            match_reasons.append("Abstract match")
+        
+        # Check disease areas match
+        disease_areas = [area.lower() for area in pub.get("disease_areas", [])]
+        if any(query in area for area in disease_areas):
+            score += 25
+            match_reasons.append("Disease area match")
+        
+        # Check authors match
+        authors = [author.lower() for author in pub.get("authors", [])]
+        if any(query in author for author in authors):
+            score += 20
+            match_reasons.append("Author match")
+        
+        # Personalized matching based on patient conditions
+        for condition in patient_conditions:
+            condition_lower = condition.lower()
+            if any(condition_lower in area for area in disease_areas):
+                score += 15
+                match_reasons.append(f"Relevant to your condition: {condition}")
+        
+        # Boost for recent publications
+        current_year = datetime.now(timezone.utc).year
+        pub_year = pub.get("year", 2000)
+        if current_year - pub_year <= 2:
+            score += 10
+            match_reasons.append("Recent publication")
+        
+        if score > 0:
+            results["publications"].append({
+                **pub,
+                "match_score": min(score, 100),
+                "match_reasons": match_reasons
+            })
+    
+    # Sort each category by match score
+    results["researchers"].sort(key=lambda x: x["match_score"], reverse=True)
+    results["trials"].sort(key=lambda x: x["match_score"], reverse=True)
+    results["publications"].sort(key=lambda x: x["match_score"], reverse=True)
+    
+    # Limit results
+    results["researchers"] = results["researchers"][:10]
+    results["trials"] = results["trials"][:10]
+    results["publications"] = results["publications"][:10]
+    
+    return results
+
+# ============ Patient Overview/Featured Section ============
+
+@api_router.get("/patient/overview")
+async def get_patient_overview(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Get personalized overview with top researchers, trials, and publications
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    overview = {
+        "top_researchers": [],
+        "featured_trials": [],
+        "latest_publications": []
+    }
+    
+    # Get patient profile for personalization
+    patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    patient_conditions = patient_profile.get("conditions", []) if patient_profile else []
+    
+    # Get top rated researchers
+    experts = await db.health_experts.find({"is_platform_member": True}, {"_id": 0}).to_list(100)
+    
+    for expert in experts:
+        if expert.get("user_id"):
+            reviews = await db.reviews.find(
+                {"researcher_id": expert["user_id"]},
+                {"_id": 0}
+            ).to_list(100)
+            
+            if reviews:
+                avg_rating = sum(r["rating"] for r in reviews) / len(reviews)
+                expert["average_rating"] = round(avg_rating, 1)
+                expert["total_reviews"] = len(reviews)
+            else:
+                expert["average_rating"] = 0
+                expert["total_reviews"] = 0
+    
+    # Sort by rating and get top 3
+    experts_with_ratings = [e for e in experts if e.get("average_rating", 0) > 0]
+    experts_with_ratings.sort(key=lambda x: x.get("average_rating", 0), reverse=True)
+    overview["top_researchers"] = experts_with_ratings[:3]
+    
+    # Get relevant trials (active, matching conditions if available)
+    trials_query = {"status": "Recruiting"}
+    if patient_conditions:
+        # Find trials matching any patient condition
+        trials_query["disease_areas"] = {"$in": [
+            {"$regex": condition, "$options": "i"} for condition in patient_conditions
+        ]}
+    
+    trials = await db.clinical_trials.find({}, {"_id": 0}).sort("created_at", -1).limit(50).to_list(50)
+    
+    # Score trials by relevance
+    scored_trials = []
+    for trial in trials:
+        score = 0
+        if trial.get("status", "").lower() == "recruiting":
+            score += 50
+        
+        # Boost if matches patient conditions
+        disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
+        for condition in patient_conditions:
+            if any(condition.lower() in area for area in disease_areas):
+                score += 30
+                break
+        
+        scored_trials.append({**trial, "relevance_score": score})
+    
+    scored_trials.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
+    overview["featured_trials"] = scored_trials[:3]
+    
+    # Get latest publications
+    publications = await db.publications.find({}, {"_id": 0}).sort("year", -1).limit(50).to_list(50)
+    
+    # Score publications by relevance
+    scored_pubs = []
+    for pub in publications:
+        score = pub.get("year", 2000) - 2000  # Newer = higher score
+        
+        # Boost if matches patient conditions
+        disease_areas = [area.lower() for area in pub.get("disease_areas", [])]
+        for condition in patient_conditions:
+            if any(condition.lower() in area for area in disease_areas):
+                score += 30
+                break
+        
+        scored_pubs.append({**pub, "relevance_score": score})
+    
+    scored_pubs.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
+    overview["latest_publications"] = scored_pubs[:3]
+    
+    return overview
+
+# ============ Enhanced Researcher Profile Details ============
+
+@api_router.get("/researcher/{researcher_user_id}/details")
+async def get_researcher_details(
+    researcher_user_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Get detailed researcher information including their publications and trials
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get researcher profile
+    researcher = await db.researcher_profiles.find_one({"user_id": researcher_user_id}, {"_id": 0})
+    if not researcher:
+        raise HTTPException(status_code=404, detail="Researcher not found")
+    
+    # Get user info
+    researcher_user = await db.users.find_one({"id": researcher_user_id}, {"_id": 0})
+    
+    # Get their clinical trials
+    trials = await db.clinical_trials.find(
+        {"created_by": researcher_user_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Get publications authored by this researcher
+    # Search by researcher name in authors list
+    researcher_name = researcher.get("name", "")
+    publications = await db.publications.find(
+        {"authors": {"$regex": researcher_name, "$options": "i"}},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Get reviews/ratings
+    reviews = await db.reviews.find(
+        {"researcher_id": researcher_user_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    avg_rating = 0
+    if reviews:
+        avg_rating = round(sum(r["rating"] for r in reviews) / len(reviews), 1)
+    
+    return {
+        "profile": researcher,
+        "user": researcher_user,
+        "trials": trials,
+        "publications": publications,
+        "average_rating": avg_rating,
+        "total_reviews": len(reviews),
+        "reviews": reviews
+    }
+
 # Include router
 app.include_router(api_router)
 
