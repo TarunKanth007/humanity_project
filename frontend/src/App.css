@@ -345,6 +345,10 @@ strong {
   transition: all 0.3s ease;
 }
 
+.dashboard-nav .icon-sm {
+  color: white;
+}
+
 .icon-md {
   width: 32px;
   height: 32px;
