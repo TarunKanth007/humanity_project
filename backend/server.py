@@ -69,6 +69,12 @@ async def summarize_clinical_trial(title: str, description: str, disease_areas: 
     Returns:
         Concise AI-generated summary (under 30 words)
     """
+    # Check cache first
+    cache_text = f"{title}:{description[:200]}"
+    cached = get_cached_summary(cache_text)
+    if cached:
+        return cached
+    
     try:
         prompt = f"""Summarize this clinical trial in EXACTLY 25-30 words. Be clear and patient-friendly. Focus on what the trial tests and who can participate.
 
@@ -84,6 +90,10 @@ Provide ONLY the summary (25-30 words), no additional text."""
         response = await llm_chat.send_message(UserMessage(text=prompt))
         # send_message returns the text directly
         summary = str(response).strip() if response else ""
+        
+        # Cache the result
+        if summary:
+            set_cached_summary(cache_text, summary)
         
         # Ensure summary isn't too long (count words)
         words = summary.split()
