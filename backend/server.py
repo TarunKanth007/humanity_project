@@ -995,17 +995,33 @@ async def get_publications(
         return top_pubs
         
     except Exception as e:
-        logger.error(f"Error fetching publications from API: {e}")
+        logger.error(f"Error fetching publications from API: {e}", exc_info=True)
         # Fallback to database
         query = {}
         if disease_area:
             query["disease_areas"] = {"$regex": disease_area, "$options": "i"}
+        elif patient_conditions:
+            # Try to match patient conditions
+            query["disease_areas"] = {"$regex": patient_conditions[0], "$options": "i"}
         
         publications = await db.publications.find(query, {"_id": 0}).limit(10).to_list(10)
-        # Add default scores to database results
+        logger.info(f"Fallback: Found {len(publications)} publications in database")
+        
+        # Add default scores and AI summaries to database results
         for pub in publications:
             pub["relevance_score"] = 50
             pub["match_reasons"] = ["Database result"]
+            # Generate AI summary for database results too
+            try:
+                ai_summary = await summarize_publication(
+                    title=pub.get("title", ""),
+                    abstract=pub.get("abstract", "")
+                )
+                pub["ai_summary"] = ai_summary
+                pub["ai_summarized"] = True
+            except Exception as summ_error:
+                logger.error(f"Error summarizing database publication: {summ_error}")
+        
         return publications
 
 @api_router.post("/patient/meeting-request")
