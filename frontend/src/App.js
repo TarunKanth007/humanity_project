@@ -970,6 +970,25 @@ const PatientDashboard = ({ user, logout }) => {
     }
   };
 
+  const checkFavoriteStatus = async (itemType, itemId) => {
+    try {
+      const res = await api.get(`/favorites/check/${itemType}/${itemId}`);
+      return res.data.is_favorited;
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+      return false;
+    }
+  };
+
+  const loadFavoriteStatuses = async (items, itemType) => {
+    const statuses = {};
+    for (const item of items) {
+      const isFavorited = await checkFavoriteStatus(itemType, item.id);
+      statuses[item.id] = isFavorited;
+    }
+    setFavoritedItems(prev => ({ ...prev, ...statuses }));
+  };
+
   const addToFavorites = async (itemType, itemId, itemData = null) => {
     try {
       // Check if already favorited
@@ -979,6 +998,8 @@ const PatientDashboard = ({ user, logout }) => {
         // Remove from favorites
         await api.delete(`/favorites/${checkRes.data.favorite_id}`);
         toast.success('Removed from favorites');
+        // Update state immediately for visual feedback
+        setFavoritedItems(prev => ({ ...prev, [itemId]: false }));
         // Reload data to update UI
         if (activeTab === 'favorites') {
           loadData();
@@ -991,6 +1012,8 @@ const PatientDashboard = ({ user, logout }) => {
           item_data: itemData  // Include full item for API-fetched content
         });
         toast.success('Added to favorites');
+        // Update state immediately for visual feedback
+        setFavoritedItems(prev => ({ ...prev, [itemId]: true }));
       }
     } catch (error) {
       console.error('Favorite toggle error:', error);
