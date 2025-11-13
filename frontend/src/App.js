@@ -1110,6 +1110,43 @@ const PatientDashboard = ({ user, logout }) => {
     setShowExpertDetails(true);
   };
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    setIsSearching(true);
+    try {
+      const res = await api.post('/search', {
+        query: searchQuery,
+        filters: {}
+      });
+      setSearchResults(res.data);
+      setActiveTab('search');
+    } catch (error) {
+      toast.error('Search failed. Please try again.');
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const viewResearcherDetails = async (expert) => {
+    if (!expert.user_id) {
+      // If not a platform member, show basic details
+      viewExpertDetails(expert);
+      return;
+    }
+    
+    try {
+      const res = await api.get(`/researcher/${expert.user_id}/details`);
+      setResearcherDetails(res.data);
+      setShowResearcherDetails(true);
+    } catch (error) {
+      console.error('Failed to load researcher details:', error);
+      toast.error('Failed to load researcher details');
+    }
+  };
+
   return (
     <div className="dashboard">
       <nav className="dashboard-nav">
