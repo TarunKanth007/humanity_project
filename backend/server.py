@@ -1980,22 +1980,45 @@ async def accept_collaboration_request(
 @api_router.post("/collaborations/requests/{request_id}/reject")
 async def reject_collaboration_request(
     request_id: str,
+    rejection_data: dict,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Reject collaboration request"""
+    """Reject collaboration request with reason"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    # Update request status
-    result = await db.collaboration_requests.update_one(
-        {"id": request_id, "receiver_id": user.id, "status": "pending"},
-        {"$set": {"status": "rejected"}}
+    # Get the request first
+    request = await db.collaboration_requests.find_one({"id": request_id, "receiver_id": user.id, "status": "pending"})
+    if not request:
+        raise HTTPException(status_code=404, detail="Request not found or already processed")
+    
+    # Get receiver profile for name
+    receiver_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    receiver_name = receiver_profile.get("name", user.name) if receiver_profile else user.name
+    
+    # Update request status with reason
+    await db.collaboration_requests.update_one(
+        {"id": request_id},
+        {"$set": {
+            "status": "rejected",
+            "rejection_reason": rejection_data.get("reason", ""),
+            "receiver_name": receiver_name
+        }}
     )
     
-    if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Request not found or already processed")
+    # Notify sender about rejection
+    notification = Notification(
+        user_id=request["sender_id"],
+        type="collaboration_rejected",
+        title="Collaboration Request Declined",
+        content=f"{receiver_name} declined your collaboration request. Reason: {rejection_data.get('reason', 'No reason provided')}",
+        link="/notifications"
+    )
+    notif_dict = notification.dict()
+    notif_dict["created_at"] = notif_dict["created_at"].isoformat()
+    await db.notifications.insert_one(notif_dict)
     
     return {"status": "success"}
 
