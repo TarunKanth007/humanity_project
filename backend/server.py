@@ -1696,7 +1696,7 @@ async def get_researcher_overview(
         scored_trials.append({
             **trial,
             "relevance_score": min(score, 100),  # Cap at 100%
-            "reasons": reasons[:2]
+            "match_reasons": reasons[:2]
         })
     
     featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:3]
