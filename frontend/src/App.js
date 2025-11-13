@@ -1302,9 +1302,27 @@ const PatientDashboard = ({ user, logout }) => {
       <div className="dashboard-container">
         <div data-testid="patient-dashboard" className="dashboard-content">
           <div className="dashboard-header">
-            <div>
-              <h1>Welcome back, {user.name.split(' ')[0]}!</h1>
-              <p className="dashboard-subtitle">Explore clinical trials, experts, and research</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1 }}>
+                <h1>Welcome back, {user.name.split(' ')[0]}!</h1>
+                <p className="dashboard-subtitle">Explore clinical trials, experts, and research</p>
+              </div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 20px',
+                background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                borderRadius: '50px',
+                color: 'white',
+                fontWeight: '600',
+                fontSize: '14px',
+                boxShadow: '0 0 20px rgba(63, 81, 181, 0.5), 0 0 40px rgba(83, 109, 254, 0.3)',
+                animation: 'pulse-glow 2s ease-in-out infinite'
+              }}>
+                <Stethoscope style={{ width: '20px', height: '20px' }} />
+                <span>PATIENT</span>
+              </div>
             </div>
           </div>
 
