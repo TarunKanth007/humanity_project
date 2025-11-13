@@ -3542,8 +3542,48 @@ const ResearcherDashboard = ({ user, logout }) => {
             </div>
           </div>
 
+          {/* Search Bar */}
+          <div className="search-container" style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="Search for researchers, trials, or publications..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                data-testid="search-input"
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '16px'
+                }}
+              />
+              <Button 
+                onClick={handleSearch} 
+                disabled={isSearching || !searchQuery.trim()}
+                data-testid="search-button"
+                style={{ padding: '12px 24px' }}
+              >
+                <Search className="icon-sm" style={{ marginRight: '8px' }} />
+                {isSearching ? 'Searching...' : 'Search'}
+              </Button>
+            </div>
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="dashboard-tabs">
             <TabsList>
+              <TabsTrigger data-testid="overview-tab" value="overview">
+                <Stethoscope className="icon-sm" />
+                For You
+              </TabsTrigger>
+              {searchResults && (
+                <TabsTrigger data-testid="search-tab" value="search">
+                  <Search className="icon-sm" />
+                  Search Results
+                </TabsTrigger>
+              )}
               <TabsTrigger data-testid="collaborators-tab" value="collaborators">
                 <Users className="icon-sm" />
                 Collaborators
