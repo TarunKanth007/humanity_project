@@ -1088,20 +1088,20 @@ strong {
   background: white;
   padding: 48px 32px;
   border-radius: 20px;
-  border: 2px solid rgba(91, 70, 54, 0.15);
+  border: 2px solid rgba(63, 81, 181, 0.15);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .role-card:hover {
-  border-color: var(--olive);
+  border-color: var(--primary-blue);
   transform: translateY(-6px);
 }
 
 .role-icon {
   width: 72px;
   height: 72px;
-  color: var(--olive);
+  color: var(--primary-blue);
   margin: 0 auto 24px;
 }
 
@@ -1109,18 +1109,18 @@ strong {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 12px;
-  color: var(--taupe);
+  color: var(--primary-blue);
 }
 
 .role-card p {
-  color: var(--taupe);
+  color: var(--primary-blue);
   line-height: 1.6;
   opacity: 0.8;
 }
 
 .role-card.selected {
-  border-color: var(--olive);
-  background: rgba(85, 107, 47, 0.05);
+  border-color: var(--primary-blue);
+  background: rgba(63, 81, 181, 0.05);
 }
 
 /* Profile Setup */
