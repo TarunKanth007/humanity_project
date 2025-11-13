@@ -1693,8 +1693,11 @@ async def get_researcher_overview(
         search_terms = specialties + interests
         if search_terms:
             # Combine first 2 terms for more relevant results
+            from pubmed_api import PubMedAPI
+            api_client = PubMedAPI()
             search_query = " OR ".join(search_terms[:2])
-            pubmed_results = await search_pubmed(search_query, max_results=10)
+            pubmed_results = api_client.search_and_fetch(query=search_query, max_results=15)
+            logging.info(f"Fetched {len(pubmed_results)} publications from PubMed for researcher")
             
             # Score and add relevance
             for pub in pubmed_results:
