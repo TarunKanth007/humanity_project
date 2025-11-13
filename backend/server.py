@@ -1955,8 +1955,9 @@ async def accept_collaboration_request(
     notification = Notification(
         user_id=request["sender_id"],
         type="collaboration_accepted",
-        message=f"Your collaboration request was accepted!",
-        data={"collaboration_id": collaboration.id}
+        title="Collaboration Request Accepted",
+        content=f"Your collaboration request was accepted! You can now start chatting.",
+        link="/dashboard"
     )
     notif_dict = notification.dict()
     notif_dict["created_at"] = notif_dict["created_at"].isoformat()
