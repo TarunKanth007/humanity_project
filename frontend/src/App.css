@@ -1282,6 +1282,11 @@ strong {
   display: flex;
   align-items: center;
   gap: 12px;
+  color: white;
+}
+
+.nav-user span {
+  color: white;
 }
 
 .user-avatar {
