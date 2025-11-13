@@ -1503,7 +1503,13 @@ const PatientDashboard = ({ user, logout }) => {
                               </div>
                             </CardHeader>
                             <CardContent>
-                              <p className="item-description">{trial.summary || trial.description}</p>
+                              {trial.ai_summary && (
+                                <div className="ai-summary-badge">
+                                  <Sparkles className="icon-xs" />
+                                  <span>AI Summarized</span>
+                                </div>
+                              )}
+                              <p className="item-description">{trial.ai_summary || trial.summary || trial.description}</p>
                               {trial.match_reasons && trial.match_reasons.length > 0 && (
                                 <div style={{ 
                                   marginTop: '8px', 
@@ -3889,7 +3895,13 @@ const ResearcherDashboard = ({ user, logout }) => {
                               </div>
                             </CardHeader>
                             <CardContent>
-                              <p className="item-description">{trial.summary || trial.description}</p>
+                              {trial.ai_summary && (
+                                <div className="ai-summary-badge">
+                                  <Sparkles className="icon-xs" />
+                                  <span>AI Summarized</span>
+                                </div>
+                              )}
+                              <p className="item-description">{trial.ai_summary || trial.summary || trial.description}</p>
                               {trial.match_reasons && trial.match_reasons.length > 0 && (
                                 <div className="match-reasons" style={{ marginTop: '12px', marginBottom: '12px' }}>
                                   <p className="match-reasons-title">Relevant because:</p>
