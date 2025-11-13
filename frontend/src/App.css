@@ -607,7 +607,7 @@ strong {
 
 .signin-divider span {
   font-size: 14px;
-  color: var(--taupe);
+  color: #000000;
   opacity: 0.6;
   font-weight: 500;
   text-transform: uppercase;
