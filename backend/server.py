@@ -1244,6 +1244,10 @@ async def update_researcher_profile(
         update_fields["orcid"] = profile_data["orcid"]
     if "researchgate" in profile_data:
         update_fields["researchgate"] = profile_data["researchgate"]
+    if "open_to_collaboration" in profile_data:
+        update_fields["open_to_collaboration"] = profile_data["open_to_collaboration"]
+    if "institution" in profile_data:
+        update_fields["institution"] = profile_data["institution"]
     
     # Update profile
     await db.researcher_profiles.update_one(
