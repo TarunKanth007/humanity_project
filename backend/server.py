@@ -820,14 +820,26 @@ async def get_clinical_trials(
         # Get top 10 most relevant
         top_trials = scored_trials[:10]
         
-        # Generate AI summaries for top trials
-        for trial in top_trials:
-            ai_summary = await summarize_clinical_trial(
+        # Generate AI summaries in parallel for speed
+        import asyncio
+        summary_tasks = [
+            summarize_clinical_trial(
                 title=trial.get("title", ""),
                 description=trial.get("description", ""),
                 disease_areas=trial.get("disease_areas", [])
             )
-            trial["ai_summary"] = ai_summary
+            for trial in top_trials
+        ]
+        
+        summaries = await asyncio.gather(*summary_tasks, return_exceptions=True)
+        
+        # Add summaries to trials
+        for trial, summary in zip(top_trials, summaries):
+            if isinstance(summary, Exception):
+                logger.error(f"Error summarizing trial: {summary}")
+                trial["ai_summary"] = trial.get("description", "")[:150] + "..."
+            else:
+                trial["ai_summary"] = summary
             trial["ai_summarized"] = True
         
         return top_trials
