@@ -4330,6 +4330,8 @@ const ResearcherDashboard = ({ user, logout }) => {
                             toast.success('Forum created successfully!');
                             setShowCreateForum(false);
                             setNewForum({ name: '', description: '', category: '' });
+                            // Reset filter to 'all' to show newly created forum
+                            setForumFilter('all');
                             loadData();
                           } catch (error) {
                             toast.error(error.response?.data?.detail || 'Failed to create forum');
