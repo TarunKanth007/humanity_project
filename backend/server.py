@@ -953,6 +953,7 @@ async def get_health_experts(
 @api_router.get("/patient/publications")
 async def get_publications(
     disease_area: Optional[str] = None,
+    page: int = 1,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
