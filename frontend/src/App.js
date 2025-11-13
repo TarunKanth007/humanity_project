@@ -3238,7 +3238,17 @@ const ResearcherDashboard = ({ user, logout }) => {
   };
 
   const loadForumMemberships = async (forumsList) => {
-
+    try {
+      const memberships = {};
+      for (const forum of forumsList) {
+        const res = await api.get(`/forums/${forum.id}/membership`);
+        memberships[forum.id] = res.data;
+      }
+      setForumMemberships(memberships);
+    } catch (error) {
+      console.error('Failed to load memberships:', error);
+    }
+  };
 
   const handleCreatePublication = async () => {
     try {
@@ -3279,18 +3289,6 @@ const ResearcherDashboard = ({ user, logout }) => {
     } catch (error) {
       console.error('Failed to create publication:', error);
       toast.error(error.response?.data?.detail || 'Failed to add publication');
-    }
-  };
-
-    try {
-      const memberships = {};
-      for (const forum of forumsList) {
-        const res = await api.get(`/forums/${forum.id}/membership`);
-        memberships[forum.id] = res.data;
-      }
-      setForumMemberships(memberships);
-    } catch (error) {
-      console.error('Failed to load memberships:', error);
     }
   };
 
