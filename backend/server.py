@@ -3842,9 +3842,11 @@ async def get_patient_overview(
     if len(trials) == 0:
         # Fetch from ClinicalTrials.gov API
         try:
-            from clinical_trials_api import search_clinical_trials
+            from clinical_trials_api import ClinicalTrialsAPI
+            api_client = ClinicalTrialsAPI()
             search_term = patient_conditions[0] if patient_conditions else "cancer"
-            trials = await search_clinical_trials(search_term, max_results=20)
+            trials = api_client.search_and_normalize(condition=search_term, status="RECRUITING", limit=20)
+            logging.info(f"Fetched {len(trials)} trials from ClinicalTrials.gov API")
         except Exception as e:
             logging.error(f"Failed to fetch trials: {e}")
             trials = []
