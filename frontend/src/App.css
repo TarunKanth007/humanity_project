@@ -286,8 +286,8 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--cream);
-  color: var(--taupe);
+  background: var(--soft-gradient);
+  color: var(--primary-blue);
   margin: 0;
   padding: 0;
   line-height: 1.6;
