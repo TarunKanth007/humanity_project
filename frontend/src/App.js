@@ -4318,6 +4318,115 @@ const ResearcherDashboard = ({ user, logout }) => {
 
             {/* Publications Tab */}
             <TabsContent value="publications">
+              <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>My Publications</h3>
+                <Dialog open={showCreatePublication} onOpenChange={setShowCreatePublication}>
+                  <DialogTrigger asChild>
+                    <Button style={{ background: 'var(--accent-gradient)', color: 'var(--cream)' }}>
+                      <Plus className="icon-sm" />
+                      Add Publication
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Add New Publication</DialogTitle>
+                      <DialogDescription>
+                        Add a publication to your profile. This can be a paper you've published or contributed to.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div style={{ display: 'grid', gap: '16px', marginTop: '16px' }}>
+                      <div>
+                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                          Title <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Input
+                          placeholder="Publication title"
+                          value={newPublication.title}
+                          onChange={(e) => setNewPublication({ ...newPublication, title: e.target.value })}
+                        />
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            Journal <span style={{ color: 'red' }}>*</span>
+                          </label>
+                          <Input
+                            placeholder="e.g., Nature, Science"
+                            value={newPublication.journal}
+                            onChange={(e) => setNewPublication({ ...newPublication, journal: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            Year <span style={{ color: 'red' }}>*</span>
+                          </label>
+                          <Input
+                            type="number"
+                            placeholder="2024"
+                            value={newPublication.year}
+                            onChange={(e) => setNewPublication({ ...newPublication, year: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                          Authors (comma-separated)
+                        </label>
+                        <Input
+                          placeholder="John Doe, Jane Smith, etc."
+                          value={newPublication.authors}
+                          onChange={(e) => setNewPublication({ ...newPublication, authors: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                          Abstract
+                        </label>
+                        <Textarea
+                          placeholder="Brief summary of the publication..."
+                          value={newPublication.abstract}
+                          onChange={(e) => setNewPublication({ ...newPublication, abstract: e.target.value })}
+                          rows={4}
+                        />
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            DOI (Optional)
+                          </label>
+                          <Input
+                            placeholder="10.1000/xyz123"
+                            value={newPublication.doi}
+                            onChange={(e) => setNewPublication({ ...newPublication, doi: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px' }}>
+                            URL (Optional)
+                          </label>
+                          <Input
+                            placeholder="https://..."
+                            value={newPublication.url}
+                            onChange={(e) => setNewPublication({ ...newPublication, url: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowCreatePublication(false)}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={handleCreatePublication}
+                        style={{ background: 'var(--accent-gradient)', color: 'var(--cream)' }}
+                      >
+                        Add Publication
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
               {loading ? (
                 <div className="loading-state">Loading publications...</div>
               ) : publications.length > 0 ? (
