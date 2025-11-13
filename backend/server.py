@@ -1850,6 +1850,263 @@ async def get_user_activity(
     
     return activity
 
+# ============ Collaboration Endpoints ============
+
+@api_router.post("/collaborations/request")
+async def send_collaboration_request(
+    request_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Send collaboration request to another researcher"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if "researcher" not in user.roles:
+        raise HTTPException(status_code=403, detail="Only researchers can send collaboration requests")
+    
+    # Get sender profile for name
+    sender_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    
+    collab_request = CollaborationRequest(
+        sender_id=user.id,
+        sender_name=sender_profile.get("name", user.name) if sender_profile else user.name,
+        receiver_id=request_data["receiver_id"],
+        purpose=request_data["purpose"],
+        sector=request_data["sector"],
+        message=request_data["message"]
+    )
+    
+    # Save request
+    request_dict = collab_request.dict()
+    request_dict["created_at"] = request_dict["created_at"].isoformat()
+    await db.collaboration_requests.insert_one(request_dict)
+    
+    # Create notification for receiver
+    notification = Notification(
+        user_id=request_data["receiver_id"],
+        type="collaboration_request",
+        message=f"{collab_request.sender_name} wants to collaborate with you",
+        data={"request_id": collab_request.id}
+    )
+    notif_dict = notification.dict()
+    notif_dict["created_at"] = notif_dict["created_at"].isoformat()
+    await db.notifications.insert_one(notif_dict)
+    
+    return {"status": "success", "request_id": collab_request.id}
+
+@api_router.get("/collaborations/requests")
+async def get_collaboration_requests(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get collaboration requests for current user"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get received requests
+    requests = await db.collaboration_requests.find(
+        {"receiver_id": user.id, "status": "pending"},
+        {"_id": 0}
+    ).to_list(100)
+    
+    return requests
+
+@api_router.post("/collaborations/requests/{request_id}/accept")
+async def accept_collaboration_request(
+    request_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Accept collaboration request"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get request
+    request = await db.collaboration_requests.find_one({"id": request_id, "receiver_id": user.id})
+    if not request:
+        raise HTTPException(status_code=404, detail="Request not found")
+    
+    if request["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Request already processed")
+    
+    # Update request status
+    await db.collaboration_requests.update_one(
+        {"id": request_id},
+        {"$set": {"status": "accepted"}}
+    )
+    
+    # Create collaboration
+    collaboration = Collaboration(
+        researcher1_id=request["sender_id"],
+        researcher2_id=user.id,
+        request_id=request_id
+    )
+    
+    collab_dict = collaboration.dict()
+    collab_dict["created_at"] = collab_dict["created_at"].isoformat()
+    await db.collaborations.insert_one(collab_dict)
+    
+    # Notify sender
+    notification = Notification(
+        user_id=request["sender_id"],
+        type="collaboration_accepted",
+        message=f"Your collaboration request was accepted!",
+        data={"collaboration_id": collaboration.id}
+    )
+    notif_dict = notification.dict()
+    notif_dict["created_at"] = notif_dict["created_at"].isoformat()
+    await db.notifications.insert_one(notif_dict)
+    
+    return {"status": "success", "collaboration_id": collaboration.id}
+
+@api_router.post("/collaborations/requests/{request_id}/reject")
+async def reject_collaboration_request(
+    request_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Reject collaboration request"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Update request status
+    result = await db.collaboration_requests.update_one(
+        {"id": request_id, "receiver_id": user.id, "status": "pending"},
+        {"$set": {"status": "rejected"}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Request not found or already processed")
+    
+    return {"status": "success"}
+
+@api_router.get("/collaborations")
+async def get_collaborations(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get active collaborations for current user"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get collaborations where user is either researcher1 or researcher2
+    collaborations = await db.collaborations.find(
+        {
+            "$and": [
+                {"status": "active"},
+                {"$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}]}
+            ]
+        },
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Enrich with partner details
+    for collab in collaborations:
+        partner_id = collab["researcher2_id"] if collab["researcher1_id"] == user.id else collab["researcher1_id"]
+        partner_profile = await db.researcher_profiles.find_one({"user_id": partner_id}, {"_id": 0})
+        if partner_profile:
+            collab["partner"] = partner_profile
+            collab["partner"]["user_id"] = partner_id
+    
+    return collaborations
+
+@api_router.post("/collaborations/{collaboration_id}/end")
+async def end_collaboration(
+    collaboration_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """End a collaboration"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Check if user is part of this collaboration
+    collaboration = await db.collaborations.find_one({
+        "id": collaboration_id,
+        "$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}]
+    })
+    
+    if not collaboration:
+        raise HTTPException(status_code=404, detail="Collaboration not found")
+    
+    # Update collaboration status
+    await db.collaborations.update_one(
+        {"id": collaboration_id},
+        {"$set": {"status": "ended", "ended_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"status": "success"}
+
+@api_router.get("/collaborations/{collaboration_id}/messages")
+async def get_collaboration_messages(
+    collaboration_id: str,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get messages for a collaboration"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user is part of collaboration
+    collaboration = await db.collaborations.find_one({
+        "id": collaboration_id,
+        "$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}]
+    })
+    
+    if not collaboration:
+        raise HTTPException(status_code=404, detail="Collaboration not found")
+    
+    # Get messages
+    messages = await db.collaboration_messages.find(
+        {"collaboration_id": collaboration_id},
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(1000)
+    
+    return messages
+
+@api_router.post("/collaborations/{collaboration_id}/messages")
+async def send_collaboration_message(
+    collaboration_id: str,
+    message_data: dict,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Send message in collaboration"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Verify user is part of collaboration
+    collaboration = await db.collaborations.find_one({
+        "id": collaboration_id,
+        "$or": [{"researcher1_id": user.id}, {"researcher2_id": user.id}],
+        "status": "active"
+    })
+    
+    if not collaboration:
+        raise HTTPException(status_code=404, detail="Collaboration not found or ended")
+    
+    # Create message
+    message = CollaborationMessage(
+        collaboration_id=collaboration_id,
+        sender_id=user.id,
+        message=message_data["message"]
+    )
+    
+    msg_dict = message.dict()
+    msg_dict["created_at"] = msg_dict["created_at"].isoformat()
+    await db.collaboration_messages.insert_one(msg_dict)
+    
+    return msg_dict
+
 # ============ Notification Endpoints ============
 
 @api_router.get("/notifications")
