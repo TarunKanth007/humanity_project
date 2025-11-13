@@ -1711,7 +1711,46 @@ async def get_researcher_overview(
 
 
 @api_router.get("/researcher/publications")
-
+async def get_researcher_publications(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get publications for logged-in researcher from both database and PubMed"""
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    all_publications = []
+    
+    # Get manually added publications from database
+    db_publications = await db.researcher_publications.find(
+        {"researcher_id": user.id}, 
+        {"_id": 0}
+    ).to_list(1000)
+    
+    for pub in db_publications:
+        all_publications.append({
+            **pub,
+            "source": "manual"
+        })
+    
+    # Get publications from PubMed
+    try:
+        from backend.pubmed_api import search_pubmed_by_author
+        pubmed_publications = await search_pubmed_by_author(user.name, max_results=50)
+        
+        for pub in pubmed_publications:
+            all_publications.append({
+                **pub,
+                "source": "pubmed"
+            })
+    except Exception as e:
+        logging.error(f"Failed to fetch PubMed publications: {e}")
+    
+    # Sort by year (most recent first)
+    all_publications = sorted(all_publications, key=lambda x: x.get("year", 0), reverse=True)
+    
+    return all_publications
 
 @api_router.post("/researcher/publications/create")
 async def create_researcher_publication(
