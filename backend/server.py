@@ -581,11 +581,21 @@ async def process_session(data: SessionDataRequest, response: Response):
         
         logging.info(f"AUTH: Processing login for email: {session_data['email']}, name: {session_data['name']}")
         
-        # Check if user exists BY EMAIL
-        user_doc = await db.users.find_one({"email": session_data["email"]}, {"_id": 0})
+        # Check if user exists BY EMAIL (with consistent sorting to handle any edge cases)
+        user_doc = await db.users.find_one(
+            {"email": session_data["email"]}, 
+            {"_id": 0},
+            sort=[("created_at", 1)]  # Always get the oldest account if duplicates exist
+        )
         
         if user_doc:
             logging.info(f"AUTH: Found existing user - ID: {user_doc['id']}, Email: {user_doc['email']}")
+            
+            # Safety check: Verify no duplicate accounts exist (should be prevented by unique index)
+            duplicate_count = await db.users.count_documents({"email": session_data["email"]})
+            if duplicate_count > 1:
+                logging.error(f"AUTH: CRITICAL - Found {duplicate_count} accounts for email {session_data['email']}! Using oldest account.")
+            
             user = User(**user_doc)
         else:
             # Create new user
@@ -597,8 +607,25 @@ async def process_session(data: SessionDataRequest, response: Response):
             )
             user_dict = user.model_dump()
             user_dict['created_at'] = user_dict['created_at'].isoformat()
-            await db.users.insert_one(user_dict)
-            logging.info(f"AUTH: New user created - ID: {user.id}, Email: {user.email}")
+            
+            try:
+                await db.users.insert_one(user_dict)
+                logging.info(f"AUTH: New user created - ID: {user.id}, Email: {user.email}")
+            except Exception as insert_error:
+                # Handle race condition where user was just created
+                if "duplicate" in str(insert_error).lower() or "E11000" in str(insert_error):
+                    logging.warning(f"AUTH: User already exists (race condition), fetching existing user")
+                    user_doc = await db.users.find_one(
+                        {"email": session_data["email"]}, 
+                        {"_id": 0},
+                        sort=[("created_at", 1)]
+                    )
+                    if user_doc:
+                        user = User(**user_doc)
+                    else:
+                        raise
+                else:
+                    raise
         
         # Delete any existing sessions for this user to prevent duplicates
         deleted = await db.user_sessions.delete_many({"user_id": user.id})
