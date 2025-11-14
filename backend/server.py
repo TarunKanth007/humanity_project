@@ -4202,20 +4202,39 @@ async def get_patient_overview(
     experts_with_ratings.sort(key=lambda x: x.get("average_rating", 0), reverse=True)
     overview["top_researchers"] = experts_with_ratings[:3]
     
-    # Get relevant trials - fetch from API if database is empty
-    trials = await db.clinical_trials.find({}, {"_id": 0}).sort("created_at", -1).limit(50).to_list(50)
-    
-    if len(trials) == 0:
-        # Fetch from ClinicalTrials.gov API
-        try:
-            from clinical_trials_api import ClinicalTrialsAPI
-            api_client = ClinicalTrialsAPI()
-            search_term = patient_conditions[0] if patient_conditions else "cancer"
-            trials = api_client.search_and_normalize(condition=search_term, status="RECRUITING", limit=20)
-            logging.info(f"Fetched {len(trials)} trials from ClinicalTrials.gov API")
-        except Exception as e:
-            logging.error(f"Failed to fetch trials: {e}")
-            trials = []
+    # ALWAYS fetch fresh trials from ClinicalTrials.gov API for patient overview
+    # This ensures latest, relevant, and RECRUITING trials with valid URLs
+    trials = []
+    try:
+        from clinical_trials_api import ClinicalTrialsAPI
+        api_client = ClinicalTrialsAPI()
+        
+        # Search for multiple conditions to get diverse results
+        all_trials = []
+        for condition in patient_conditions[:3]:  # Use up to 3 conditions
+            condition_trials = api_client.search_and_normalize(
+                condition=condition, 
+                status="RECRUITING",  # Only recruiting trials
+                limit=10
+            )
+            all_trials.extend(condition_trials)
+        
+        # Remove duplicates by NCT ID
+        seen_ids = set()
+        unique_trials = []
+        for trial in all_trials:
+            if trial.get('id') not in seen_ids:
+                seen_ids.add(trial.get('id'))
+                # Ensure URL is set using NCT ID
+                if not trial.get('url') and trial.get('id'):
+                    trial['url'] = f"https://clinicaltrials.gov/study/{trial['id']}"
+                unique_trials.append(trial)
+        
+        trials = unique_trials
+        logging.info(f"Fetched {len(trials)} RECRUITING trials from ClinicalTrials.gov API")
+    except Exception as e:
+        logging.error(f"Failed to fetch trials from API: {e}")
+        trials = []
     
     # Score trials by relevance - always start at 50%
     scored_trials = []
