@@ -772,6 +772,43 @@ async def clear_all_sessions():
     logging.info(f"AUTH: Cleared ALL sessions - Deleted {result.deleted_count} session(s)")
     return {"status": "success", "deleted_count": result.deleted_count}
 
+@api_router.get("/auth/debug")
+async def debug_auth(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Debug endpoint to see what cookies/tokens are being received"""
+    debug_info = {
+        "cookie_token": session_token[:30] + "..." if session_token else None,
+        "auth_header": authorization[:30] + "..." if authorization else None,
+        "has_cookie": session_token is not None,
+        "has_header": authorization is not None
+    }
+    
+    if session_token or authorization:
+        user = await get_current_user(session_token, authorization)
+        if user:
+            debug_info["user_email"] = user.email
+            debug_info["user_id"] = user.id
+            debug_info["user_name"] = user.name
+        else:
+            debug_info["user"] = "No user found for this token"
+    
+    # Check all sessions in database
+    all_sessions = await db.user_sessions.find({}, {"_id": 0, "user_id": 1, "session_token": 1}).to_list(100)
+    debug_info["total_sessions_in_db"] = len(all_sessions)
+    debug_info["sessions"] = []
+    
+    for sess in all_sessions:
+        user_doc = await db.users.find_one({"id": sess["user_id"]}, {"_id": 0, "email": 1, "name": 1})
+        debug_info["sessions"].append({
+            "token": sess["session_token"][:30] + "...",
+            "user_email": user_doc["email"] if user_doc else "NOT FOUND",
+            "matches_your_token": sess["session_token"] == (session_token or (authorization.replace("Bearer ", "") if authorization else None))
+        })
+    
+    return debug_info
+
 @api_router.post("/auth/role")
 async def set_role(
     role_data: Dict[str, Any],
