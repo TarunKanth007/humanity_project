@@ -804,6 +804,19 @@ const truncateToWords = (text, maxWords = 40) => {
   return words.slice(0, maxWords).join(' ') + '...';
 };
 
+// Helper function to generate ClinicalTrials.gov URL from NCT ID
+const getClinicalTrialUrl = (trial) => {
+  // If trial already has a URL, use it
+  if (trial.url) return trial.url;
+  
+  // Generate URL from NCT ID (trial.id contains the NCT ID)
+  if (trial.id) {
+    return `https://clinicaltrials.gov/study/${trial.id}`;
+  }
+  
+  return null;
+};
+
 const PatientDashboard = ({ user, logout }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
