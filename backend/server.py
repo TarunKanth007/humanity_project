@@ -4236,25 +4236,40 @@ async def get_patient_overview(
         logging.error(f"Failed to fetch trials from API: {e}")
         trials = []
     
-    # Score trials by relevance - always start at 50%
+    # Score trials by relevance
     scored_trials = []
     for trial in trials:
-        score = 50  # Base 50% relevancy
-        reasons = ["General medical trial"]
+        score = 60  # Base 60% relevancy for recruiting trials
+        reasons = []
         
+        # All trials should be recruiting (filtered by API)
         if trial.get("status", "").lower() == "recruiting":
-            score += 20
-            reasons = ["Currently recruiting"]
+            reasons.append("Currently recruiting patients")
         
         # Boost if matches patient conditions
         disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
-        matched = False
+        trial_title = trial.get("title", "").lower()
+        trial_desc = trial.get("description", "").lower()
+        
         for condition in patient_conditions:
-            if any(condition.lower() in area for area in disease_areas):
+            condition_lower = condition.lower()
+            # Check in disease areas
+            if any(condition_lower in area for area in disease_areas):
                 score += 30
-                reasons = [f"Matches: {condition}"]
-                matched = True
+                reasons.insert(0, f"Researching {condition}")
                 break
+            # Check in title or description
+            elif condition_lower in trial_title or condition_lower in trial_desc:
+                score += 20
+                reasons.insert(0, f"Related to {condition}")
+                break
+        
+        # Add location info
+        if trial.get("location"):
+            reasons.append(f"Location: {trial['location']}")
+        
+        if not reasons:
+            reasons = ["Active clinical trial"]
         
         scored_trials.append({
             **trial,
@@ -4263,7 +4278,7 @@ async def get_patient_overview(
         })
     
     scored_trials.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
-    overview["featured_trials"] = scored_trials[:3]
+    overview["featured_trials"] = scored_trials[:5]  # Show top 5 instead of 3
     
     # ALWAYS fetch fresh publications from PubMed API for patient overview
     # This ensures latest, relevant publications with valid URLs
