@@ -597,7 +597,9 @@ async def process_session(data: SessionDataRequest, response: Response):
         
         session_data = auth_response.json()
         
+        logging.info(f"AUTH: Session ID received: {data.session_id[:30]}...")
         logging.info(f"AUTH: Processing login for email: {session_data['email']}, name: {session_data['name']}")
+        logging.info(f"AUTH: Session token from Emergent: {session_data.get('session_token', 'NOT_FOUND')[:30]}...")
         
         # Check if user exists BY EMAIL (with consistent sorting to handle any edge cases)
         user_doc = await db.users.find_one(
