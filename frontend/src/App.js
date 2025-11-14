@@ -2043,6 +2043,36 @@ const PatientDashboard = ({ user, logout }) => {
                             <Badge key={idx} variant="secondary">{area}</Badge>
                           ))}
                         </div>
+                        {getClinicalTrialUrl(trial) && (
+                          <a 
+                            href={getClinicalTrialUrl(trial)} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              marginTop: '12px',
+                              padding: '8px 16px',
+                              background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                              color: 'white',
+                              borderRadius: '6px',
+                              textDecoration: 'none',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              transition: 'transform 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                          >
+                            View Clinical Trial
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                              <polyline points="15 3 21 3 21 9"></polyline>
+                              <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                          </a>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
