@@ -41,38 +41,11 @@ const AuthContext = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for session_id in URL fragment
-    const hash = window.location.hash;
-    if (hash.includes('session_id=')) {
-      const sessionId = hash.split('session_id=')[1].split('&')[0];
-      processSession(sessionId);
-      return;
-    }
-
-    // Check existing session
+    // NEW: Google OAuth redirects directly to /dashboard with cookie set
+    // No need to process session_id from URL anymore
+    // Just check if user is authenticated
     checkAuth();
   }, []);
-
-  const processSession = async (sessionId) => {
-    try {
-      const response = await api.post('/auth/session', { session_id: sessionId });
-      setUser(response.data.user);
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      // Redirect based on role status
-      if (response.data.user.roles && response.data.user.roles.length > 0) {
-        navigate('/dashboard');
-      } else {
-        navigate('/onboarding');
-      }
-    } catch (error) {
-      console.error('Session processing failed:', error);
-      toast.error('Authentication failed');
-      navigate('/');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const checkAuth = async () => {
     try {
