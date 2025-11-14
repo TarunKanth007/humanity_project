@@ -653,12 +653,31 @@ async def process_session(data: SessionDataRequest, response: Response):
             logging.error(f"AUTH: SECURITY VIOLATION - Session email {session_data['email']} != User email {user.email}")
             raise HTTPException(status_code=500, detail="Session/User email mismatch")
         
+        # Get the session_token from Emergent Auth
+        session_token = session_data["session_token"]
+        
+        # FIX 2: Check if this session_token is already in use by ANOTHER user
+        # This detects when Emergent Auth returns the same token for different accounts
+        existing_session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
+        if existing_session:
+            existing_user_id = existing_session["user_id"]
+            if existing_user_id != user.id:
+                # This token was already used by a different user!
+                existing_user = await db.users.find_one({"id": existing_user_id}, {"_id": 0})
+                logging.error(f"AUTH: CRITICAL - Duplicate session_token detected!")
+                logging.error(f"AUTH: Token {session_token[:30]}... is being reused")
+                logging.error(f"AUTH: Previous user: {existing_user['email'] if existing_user else 'UNKNOWN'}")
+                logging.error(f"AUTH: Current user: {user.email}")
+                
+                # Delete the old session to prevent contamination
+                await db.user_sessions.delete_one({"session_token": session_token})
+                logging.info(f"AUTH: Deleted duplicate session token from previous user")
+        
         # Delete any existing sessions for this user to prevent duplicates
         deleted = await db.user_sessions.delete_many({"user_id": user.id})
         logging.info(f"AUTH: Deleted {deleted.deleted_count} old sessions for user {user.id} ({user.email})")
         
-        # Create session
-        session_token = session_data["session_token"]
+        # Create new session
         expires_at = datetime.now(timezone.utc) + timedelta(days=7)
         
         logging.info(f"AUTH: Creating session - User: {user.email}, Token: {session_token[:30]}...")
