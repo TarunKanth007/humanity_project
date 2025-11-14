@@ -708,9 +708,15 @@ async def get_me(
     authorization: Optional[str] = Header(None)
 ):
     """Get current user"""
+    # Debug logging
+    logging.info(f"AUTH: /auth/me called - Cookie token: {session_token[:20] if session_token else 'NONE'}..., Auth header: {authorization[:20] if authorization else 'NONE'}")
+    
     user = await get_current_user(session_token, authorization)
     if not user:
+        logging.warning(f"AUTH: /auth/me - No user found for token")
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    logging.info(f"AUTH: /auth/me - Returning user: {user.email}")
     return user
 
 @api_router.post("/auth/logout")
