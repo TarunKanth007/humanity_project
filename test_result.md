@@ -105,6 +105,18 @@
 user_problem_statement: "Implement missing Researcher Dashboard features: 1) Search functionality for researchers/trials/publications with matching system, 2) Publications tab linked to PubMed, 3) Personalized 'For You' overview tab, 4) Open to collaboration toggle in profile, 5) Institution field in profile, 6) Forum filtering by researcher's field."
 
 backend:
+  - task: "Authentication Fix - Duplicate Users"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "USER REPORTED CRITICAL BUG: When logging in with one email, it shows data from another email account. INVESTIGATION: Found duplicate user accounts in database for both user emails (tarunganes1@gmail.com and tarunkanthmovva007@gmail.com had 2 accounts each). MongoDB's find_one() was returning different duplicates at different times. FIX APPLIED: 1) Cleaned database - kept oldest account for each email, deleted duplicates, 2) Created unique index on email field to prevent future duplicates, 3) Cleared all sessions, 4) Enhanced /auth/session endpoint to use sort=[('created_at', 1)] for consistent user retrieval, 5) Added duplicate detection logging, 6) Added race condition handling for concurrent user creation. Backend restarted. All users need to log in again."
+  
   - task: "Search Endpoint with Matching Scores"
     implemented: true
     working: true
