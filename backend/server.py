@@ -692,8 +692,22 @@ async def process_session(data: SessionDataRequest, response: Response):
         session_dict['expires_at'] = session_dict['expires_at'].isoformat()
         session_dict['created_at'] = session_dict['created_at'].isoformat()
         
+        # Final verification: ensure no session with this token exists
+        final_check = await db.user_sessions.find_one({"session_token": session_token})
+        if final_check:
+            logging.error(f"AUTH: RACE CONDITION - Session token already exists at insert time!")
+            await db.user_sessions.delete_one({"session_token": session_token})
+        
         await db.user_sessions.insert_one(session_dict)
-        logging.info(f"AUTH: Created new session for user {user.id}, email: {user.email}")
+        logging.info(f"AUTH: Successfully created new session for user {user.id}, email: {user.email}")
+        
+        # Verify the session was created correctly
+        verify_session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
+        if verify_session:
+            verify_user = await db.users.find_one({"id": verify_session["user_id"]}, {"_id": 0})
+            logging.info(f"AUTH: Session verification - Token maps to user: {verify_user['email'] if verify_user else 'ERROR'}")
+        else:
+            logging.error(f"AUTH: Session verification FAILED - Could not find session after insert!")
         
         # Set httpOnly cookie
         response.set_cookie(
