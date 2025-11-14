@@ -326,9 +326,12 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Authentication Fix - Duplicate Users"
-  stuck_tasks: 
-    - "Authentication Fix - Duplicate Users"
+    - "Researcher Search Functionality"
+    - "Researcher Overview/For You Tab"
+    - "Publications Tab"
+    - "Open to Collaboration & Institution Fields"
+    - "Forum Filtering by Field"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
