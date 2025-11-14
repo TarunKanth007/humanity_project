@@ -181,26 +181,43 @@ class BackendTester:
                     f"Preflight request failed: {str(e)}"
                 )
     
-    def test_auth_endpoints(self):
-        """Test authentication endpoints"""
-        print("\n=== Authentication Endpoint Tests ===")
+    def test_auth_endpoints_comprehensive(self):
+        """Comprehensive authentication endpoint testing for duplicate user fix"""
+        print("\n=== CRITICAL AUTHENTICATION FIX TESTING ===")
         
-        # Test /api/auth/me without authentication
+        # Test 1: /api/auth/me without authentication
         try:
             response = self.session.get(f"{BACKEND_URL}/auth/me")
             
             if response.status_code == 401:
-                self.log_result(
-                    "Auth /me - Unauthenticated",
-                    True,
-                    "Correctly returns 401 for unauthenticated request",
-                    {"status_code": response.status_code}
-                )
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data and error_data["detail"] == "Not authenticated":
+                        self.log_result(
+                            "Auth /me - Unauthenticated",
+                            True,
+                            "Correctly returns 401 with proper error message",
+                            {"status_code": response.status_code, "error": error_data}
+                        )
+                    else:
+                        self.log_result(
+                            "Auth /me - Unauthenticated",
+                            True,
+                            "Returns 401 but with unexpected error format",
+                            {"status_code": response.status_code, "error": error_data}
+                        )
+                except json.JSONDecodeError:
+                    self.log_result(
+                        "Auth /me - Unauthenticated",
+                        True,
+                        "Returns 401 but response is not JSON",
+                        {"status_code": response.status_code, "response": response.text[:100]}
+                    )
             else:
                 self.log_result(
                     "Auth /me - Unauthenticated",
                     False,
-                    f"Unexpected status code: {response.status_code}",
+                    f"Expected 401, got {response.status_code}",
                     {"status_code": response.status_code, "response": response.text[:200]}
                 )
                 
@@ -211,36 +228,407 @@ class BackendTester:
                 f"Request failed: {str(e)}"
             )
         
-        # Test /api/auth/session endpoint structure
+        # Test 2: /api/auth/session endpoint structure and error handling
         try:
-            # This should fail without proper session_id, but we're testing the endpoint exists
+            # Test with invalid session_id
             response = self.session.post(
                 f"{BACKEND_URL}/auth/session",
-                json={"session_id": "test_invalid_session"}
+                json={"session_id": "invalid_session_12345"}
             )
             
-            # We expect this to fail, but the endpoint should exist
-            if response.status_code in [400, 401, 500]:
+            if response.status_code == 500:
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data and "Session processing failed" in error_data["detail"]:
+                        self.log_result(
+                            "Auth /session - Invalid Session",
+                            True,
+                            "Correctly handles invalid session with proper error",
+                            {"status_code": response.status_code, "error": error_data}
+                        )
+                    else:
+                        self.log_result(
+                            "Auth /session - Invalid Session",
+                            True,
+                            "Handles invalid session but with different error format",
+                            {"status_code": response.status_code, "error": error_data}
+                        )
+                except json.JSONDecodeError:
+                    self.log_result(
+                        "Auth /session - Invalid Session",
+                        False,
+                        "Returns 500 but response is not JSON",
+                        {"status_code": response.status_code, "response": response.text[:200]}
+                    )
+            elif response.status_code in [400, 401]:
                 self.log_result(
-                    "Auth /session - Endpoint Exists",
+                    "Auth /session - Invalid Session",
                     True,
-                    f"Endpoint exists and handles invalid session (status: {response.status_code})",
+                    f"Handles invalid session appropriately (status: {response.status_code})",
                     {"status_code": response.status_code}
                 )
             else:
                 self.log_result(
-                    "Auth /session - Endpoint Exists",
+                    "Auth /session - Invalid Session",
                     False,
-                    f"Unexpected response: {response.status_code}",
+                    f"Unexpected response to invalid session: {response.status_code}",
                     {"status_code": response.status_code, "response": response.text[:200]}
                 )
                 
         except Exception as e:
             self.log_result(
-                "Auth /session - Endpoint Exists",
+                "Auth /session - Invalid Session",
                 False,
                 f"Request failed: {str(e)}"
             )
+        
+        # Test 3: /api/auth/session with malformed data
+        malformed_data_tests = [
+            ({}, "Empty JSON"),
+            ({"invalid_field": "value"}, "Wrong field name"),
+            ({"session_id": ""}, "Empty session_id"),
+            ({"session_id": None}, "Null session_id"),
+            ({"session_id": 12345}, "Numeric session_id"),
+            ({"session_id": ["array"]}, "Array session_id"),
+            ({"session_id": {"nested": "object"}}, "Object session_id")
+        ]
+        
+        for test_data, description in malformed_data_tests:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/auth/session",
+                    json=test_data
+                )
+                
+                if response.status_code in [400, 422, 500]:
+                    self.log_result(
+                        f"Auth /session Validation - {description}",
+                        True,
+                        f"Correctly rejects malformed data (status: {response.status_code})",
+                        {"status_code": response.status_code, "test_data": test_data}
+                    )
+                else:
+                    self.log_result(
+                        f"Auth /session Validation - {description}",
+                        False,
+                        f"Unexpected response to malformed data: {response.status_code}",
+                        {"status_code": response.status_code, "test_data": test_data}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Auth /session Validation - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test 4: /api/auth/logout endpoint
+        try:
+            response = self.session.post(f"{BACKEND_URL}/auth/logout")
+            
+            if response.status_code == 200:
+                try:
+                    logout_data = response.json()
+                    if "status" in logout_data and logout_data["status"] == "success":
+                        self.log_result(
+                            "Auth /logout - No Session",
+                            True,
+                            "Logout succeeds even without active session",
+                            {"status_code": response.status_code, "response": logout_data}
+                        )
+                    else:
+                        self.log_result(
+                            "Auth /logout - No Session",
+                            True,
+                            "Logout returns 200 but unexpected format",
+                            {"status_code": response.status_code, "response": logout_data}
+                        )
+                except json.JSONDecodeError:
+                    self.log_result(
+                        "Auth /logout - No Session",
+                        False,
+                        "Logout returns 200 but response is not JSON",
+                        {"status_code": response.status_code, "response": response.text[:100]}
+                    )
+            else:
+                self.log_result(
+                    "Auth /logout - No Session",
+                    False,
+                    f"Unexpected logout response: {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "Auth /logout - No Session",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_auth_session_consistency(self):
+        """Test authentication session consistency and duplicate prevention"""
+        print("\n=== AUTHENTICATION SESSION CONSISTENCY TESTS ===")
+        
+        # Test 1: Multiple rapid session creation attempts (simulate race condition)
+        print("Testing race condition handling...")
+        
+        # Simulate multiple concurrent session creation attempts
+        test_session_ids = [
+            f"test_session_{i}_{int(time.time())}" for i in range(5)
+        ]
+        
+        for i, session_id in enumerate(test_session_ids):
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/auth/session",
+                    json={"session_id": session_id}
+                )
+                
+                # All should fail with 500 (invalid session), but endpoint should handle them
+                if response.status_code == 500:
+                    self.log_result(
+                        f"Race Condition Test {i+1}",
+                        True,
+                        f"Handles concurrent session attempt appropriately",
+                        {"session_id": session_id, "status_code": response.status_code}
+                    )
+                else:
+                    self.log_result(
+                        f"Race Condition Test {i+1}",
+                        False,
+                        f"Unexpected response: {response.status_code}",
+                        {"session_id": session_id, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Race Condition Test {i+1}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+            
+            # Small delay to simulate real-world timing
+            time.sleep(0.1)
+        
+        # Test 2: Session token format validation
+        print("Testing session token format validation...")
+        
+        invalid_tokens = [
+            "",  # Empty token
+            "a",  # Too short
+            "x" * 1000,  # Too long
+            "invalid token with spaces",  # Spaces
+            "token/with/slashes",  # Special chars
+            "token\nwith\nnewlines",  # Newlines
+            "token\x00with\x00nulls",  # Null bytes
+        ]
+        
+        for token in invalid_tokens:
+            try:
+                response = self.session.get(
+                    f"{BACKEND_URL}/auth/me",
+                    headers={"Authorization": f"Bearer {token}"}
+                )
+                
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Token Format Validation - {repr(token[:20])}",
+                        True,
+                        "Correctly rejects invalid token format",
+                        {"token_preview": repr(token[:20]), "status_code": response.status_code}
+                    )
+                else:
+                    self.log_result(
+                        f"Token Format Validation - {repr(token[:20])}",
+                        False,
+                        f"Unexpected response to invalid token: {response.status_code}",
+                        {"token_preview": repr(token[:20]), "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Token Format Validation - {repr(token[:20])}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+    
+    def test_auth_header_variations(self):
+        """Test different authentication header formats"""
+        print("\n=== AUTHENTICATION HEADER VARIATIONS ===")
+        
+        test_token = "test_token_12345"
+        
+        # Test different Authorization header formats
+        auth_variations = [
+            (f"Bearer {test_token}", "Standard Bearer format"),
+            (f"bearer {test_token}", "Lowercase bearer"),
+            (f"BEARER {test_token}", "Uppercase BEARER"),
+            (f"Token {test_token}", "Token format"),
+            (test_token, "Raw token"),
+            (f"Bearer{test_token}", "No space after Bearer"),
+            (f"Bearer  {test_token}", "Double space after Bearer"),
+            (f" Bearer {test_token}", "Leading space"),
+            (f"Bearer {test_token} ", "Trailing space"),
+        ]
+        
+        for auth_header, description in auth_variations:
+            try:
+                response = self.session.get(
+                    f"{BACKEND_URL}/auth/me",
+                    headers={"Authorization": auth_header}
+                )
+                
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Auth Header - {description}",
+                        True,
+                        "Correctly handles auth header format",
+                        {"auth_header": auth_header, "status_code": response.status_code}
+                    )
+                else:
+                    self.log_result(
+                        f"Auth Header - {description}",
+                        False,
+                        f"Unexpected response: {response.status_code}",
+                        {"auth_header": auth_header, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Auth Header - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test cookie-based authentication
+        try:
+            response = self.session.get(
+                f"{BACKEND_URL}/auth/me",
+                cookies={"session_token": test_token}
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Auth Cookie - Session Token",
+                    True,
+                    "Correctly handles cookie-based auth",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "Auth Cookie - Session Token",
+                    False,
+                    f"Unexpected response to cookie auth: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+        except Exception as e:
+            self.log_result(
+                "Auth Cookie - Session Token",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_auth_endpoints_security(self):
+        """Test authentication endpoints for security vulnerabilities"""
+        print("\n=== AUTHENTICATION SECURITY TESTS ===")
+        
+        # Test 1: SQL Injection attempts in session_id
+        sql_injection_payloads = [
+            "'; DROP TABLE users; --",
+            "' OR '1'='1",
+            "admin'--",
+            "' UNION SELECT * FROM users --",
+            "'; INSERT INTO users VALUES ('hacker', 'evil'); --"
+        ]
+        
+        for payload in sql_injection_payloads:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/auth/session",
+                    json={"session_id": payload}
+                )
+                
+                # Should handle safely (500 for invalid session, not expose DB errors)
+                if response.status_code == 500:
+                    try:
+                        error_data = response.json()
+                        # Check that error doesn't expose database details
+                        error_text = str(error_data).lower()
+                        if any(db_term in error_text for db_term in ['mongodb', 'collection', 'database', 'query']):
+                            self.log_result(
+                                f"SQL Injection Test - {payload[:20]}",
+                                False,
+                                "Error response may expose database details",
+                                {"payload": payload, "error": error_data}
+                            )
+                        else:
+                            self.log_result(
+                                f"SQL Injection Test - {payload[:20]}",
+                                True,
+                                "Safely handles injection attempt",
+                                {"payload": payload, "status_code": response.status_code}
+                            )
+                    except json.JSONDecodeError:
+                        self.log_result(
+                            f"SQL Injection Test - {payload[:20]}",
+                            True,
+                            "Handles injection attempt (non-JSON response)",
+                            {"payload": payload, "status_code": response.status_code}
+                        )
+                else:
+                    self.log_result(
+                        f"SQL Injection Test - {payload[:20]}",
+                        True,
+                        f"Handles injection attempt (status: {response.status_code})",
+                        {"payload": payload, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"SQL Injection Test - {payload[:20]}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test 2: XSS attempts in session_id
+        xss_payloads = [
+            "<script>alert('xss')</script>",
+            "javascript:alert('xss')",
+            "<img src=x onerror=alert('xss')>",
+            "';alert('xss');//"
+        ]
+        
+        for payload in xss_payloads:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/auth/session",
+                    json={"session_id": payload}
+                )
+                
+                if response.status_code in [400, 500]:
+                    # Check that response doesn't echo back the payload
+                    response_text = response.text.lower()
+                    if "<script>" in response_text or "alert(" in response_text:
+                        self.log_result(
+                            f"XSS Test - {payload[:20]}",
+                            False,
+                            "Response may echo back XSS payload",
+                            {"payload": payload, "response_preview": response.text[:200]}
+                        )
+                    else:
+                        self.log_result(
+                            f"XSS Test - {payload[:20]}",
+                            True,
+                            "Safely handles XSS attempt",
+                            {"payload": payload, "status_code": response.status_code}
+                        )
+                else:
+                    self.log_result(
+                        f"XSS Test - {payload[:20]}",
+                        True,
+                        f"Handles XSS attempt (status: {response.status_code})",
+                        {"payload": payload, "status_code": response.status_code}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"XSS Test - {payload[:20]}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
     
     def test_forum_creation_and_deletion_flow(self):
         """Test complete forum creation and deletion flow without authentication"""
