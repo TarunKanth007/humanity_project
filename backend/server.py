@@ -647,13 +647,21 @@ async def process_session(data: SessionDataRequest, response: Response):
                 else:
                     raise
         
+        # CRITICAL CHECK: Verify the session_token belongs to this user's email
+        # This prevents session hijacking or cross-user contamination
+        if session_data.get("email") != user.email:
+            logging.error(f"AUTH: SECURITY VIOLATION - Session email {session_data['email']} != User email {user.email}")
+            raise HTTPException(status_code=500, detail="Session/User email mismatch")
+        
         # Delete any existing sessions for this user to prevent duplicates
         deleted = await db.user_sessions.delete_many({"user_id": user.id})
-        logging.info(f"AUTH: Deleted {deleted.deleted_count} old sessions for user {user.id}")
+        logging.info(f"AUTH: Deleted {deleted.deleted_count} old sessions for user {user.id} ({user.email})")
         
         # Create session
         session_token = session_data["session_token"]
         expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+        
+        logging.info(f"AUTH: Creating session - User: {user.email}, Token: {session_token[:30]}...")
         
         session = UserSession(
             user_id=user.id,
