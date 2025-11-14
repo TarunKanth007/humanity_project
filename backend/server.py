@@ -680,8 +680,16 @@ async def process_session(data: SessionDataRequest, response: Response):
         logging.info(f"AUTH: Login complete - Returning user: {user.email}, ID: {user.id}, Roles: {user.roles}")
         return {"status": "success", "user": user.model_dump()}
     
+    except HTTPException:
+        # Re-raise HTTPExceptions (auth errors, etc.)
+        raise
+    except KeyError as key_err:
+        # Handle missing keys in session_data (malformed response from Emergent Auth)
+        logging.error(f"AUTH: Missing required field in session data: {key_err}")
+        raise HTTPException(status_code=500, detail="Invalid session data format")
     except Exception as e:
-        logging.error(f"Session processing failed: {e}")
+        # Catch-all for unexpected errors
+        logging.error(f"AUTH: Unexpected error during session processing: {e}")
         raise HTTPException(status_code=500, detail="Session processing failed")
 
 @api_router.get("/auth/me")
