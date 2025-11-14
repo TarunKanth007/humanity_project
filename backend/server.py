@@ -571,12 +571,30 @@ async def process_session(data: SessionDataRequest, response: Response):
     try:
         # Call Emergent Auth to get session data
         auth_backend_url = os.environ.get('EMERGENT_AUTH_BACKEND_URL', 'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data')
-        auth_response = requests.get(
-            auth_backend_url,
-            headers={"X-Session-ID": data.session_id},
-            timeout=10
-        )
-        auth_response.raise_for_status()
+        
+        try:
+            auth_response = requests.get(
+                auth_backend_url,
+                headers={"X-Session-ID": data.session_id},
+                timeout=10
+            )
+            auth_response.raise_for_status()
+        except requests.exceptions.HTTPError as http_err:
+            # Handle authentication failures from Emergent Auth
+            status_code = http_err.response.status_code
+            if status_code == 404:
+                logging.warning(f"AUTH: Invalid session_id provided: {data.session_id[:20]}...")
+                raise HTTPException(status_code=401, detail="Invalid or expired session")
+            elif status_code == 401:
+                logging.warning(f"AUTH: Unauthorized session_id: {data.session_id[:20]}...")
+                raise HTTPException(status_code=401, detail="Unauthorized session")
+            else:
+                logging.error(f"AUTH: Emergent Auth HTTP error {status_code}: {http_err}")
+                raise HTTPException(status_code=500, detail="Authentication service error")
+        except requests.exceptions.RequestException as req_err:
+            logging.error(f"AUTH: Request to Emergent Auth failed: {req_err}")
+            raise HTTPException(status_code=500, detail="Authentication service unavailable")
+        
         session_data = auth_response.json()
         
         logging.info(f"AUTH: Processing login for email: {session_data['email']}, name: {session_data['name']}")
