@@ -74,9 +74,18 @@ const AuthContext = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await api.get('/auth/me');
+      // Force no-cache on auth check to prevent stale data
+      const response = await api.get('/auth/me', {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       setUser(response.data);
+      console.log('Auth check: User logged in as', response.data.email);
     } catch (error) {
+      console.log('Auth check: No user logged in');
       setUser(null);
     } finally {
       setLoading(false);
