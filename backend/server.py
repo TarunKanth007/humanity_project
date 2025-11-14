@@ -725,18 +725,45 @@ async def logout(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Logout user"""
+    """Logout user - Clear session and cookies"""
     token = session_token or (authorization.replace("Bearer ", "") if authorization else None)
+    
     if token:
         deleted = await db.user_sessions.delete_one({"session_token": token})
         logging.info(f"AUTH: Logout - Deleted {deleted.deleted_count} session(s) for token {token[:20]}...")
+    else:
+        logging.warning(f"AUTH: Logout called with no token")
     
-    # Delete cookie with all possible configurations to ensure it's removed
+    # CRITICAL: Delete cookie with EVERY possible configuration
+    # This ensures the cookie is removed regardless of how it was set
+    
+    # Try with samesite=none, secure=True (production)
+    response.set_cookie(
+        key="session_token",
+        value="",
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=0,
+        expires=0,
+        path="/"
+    )
+    
+    # Try with default settings
+    response.set_cookie(
+        key="session_token",
+        value="",
+        max_age=0,
+        expires=0,
+        path="/"
+    )
+    
+    # Legacy delete methods
     response.delete_cookie(key="session_token", path="/", domain=None, secure=True, httponly=True, samesite="none")
     response.delete_cookie(key="session_token", path="/")
     
-    logging.info(f"AUTH: Logout complete")
-    return {"status": "success"}
+    logging.info(f"AUTH: Logout complete - Cookies cleared")
+    return {"status": "success", "message": "Logged out successfully"}
 
 @api_router.post("/auth/clear-all-sessions")
 async def clear_all_sessions():
