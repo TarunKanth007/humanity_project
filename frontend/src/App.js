@@ -23,7 +23,9 @@ import { ForumDiscussion } from "@/components/ForumDiscussion";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 const AUTH_BASE_URL = process.env.REACT_APP_AUTH_URL || 'https://auth.emergentagent.com';
-const AUTH_URL = `${AUTH_BASE_URL}/?redirect=${encodeURIComponent(window.location.origin + '/dashboard')}`;
+// FIX: Add prompt=select_account to FORCE account selection every time
+// This prevents Google/Emergent from silently reusing the previous Gmail account
+const AUTH_URL = `${AUTH_BASE_URL}/?redirect=${encodeURIComponent(window.location.origin + '/dashboard')}&prompt=select_account`;
 
 // Axios instance with credentials
 const api = axios.create({
