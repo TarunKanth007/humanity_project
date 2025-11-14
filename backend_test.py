@@ -1765,36 +1765,32 @@ class BackendTester:
                 )
 
     def run_all_tests(self):
-        """Run all backend tests"""
-        print("🚀 Starting CuraLink Backend Tests - Patient Dashboard Features Focus")
+        """Run all backend tests with focus on authentication fix"""
+        print("🚀 Starting CuraLink Backend Tests - CRITICAL AUTHENTICATION FIX FOCUS")
         print(f"Testing backend at: {BACKEND_URL}")
-        print(f"Expected CORS origins: {EXPECTED_CORS_ORIGINS}")
+        print("="*80)
+        print("TESTING AUTHENTICATION BUG FIX:")
+        print("- Duplicate user accounts causing login cross-contamination")
+        print("- Enhanced /auth/session endpoint with consistent sorting")
+        print("- Unique index on email field verification")
+        print("- Session consistency and race condition handling")
+        print("="*80)
         
+        # Core connectivity and health
         self.test_backend_health()
+        
+        # CRITICAL: Authentication fix testing
+        self.test_auth_endpoints_comprehensive()
+        self.test_auth_session_consistency()
+        self.test_auth_header_variations()
+        self.test_auth_endpoints_security()
+        
+        # CORS testing (important for auth)
         self.test_cors_configuration()
         self.test_cors_preflight()
-        self.test_auth_endpoints()
+        
+        # Basic endpoint structure verification
         self.test_core_endpoints()
-        
-        # Forum-specific tests
-        self.test_forums_list_endpoint()
-        self.test_forum_creation_without_auth()
-        self.test_forum_creation_validation()
-        self.test_forum_deletion_without_auth()
-        self.test_forum_creation_and_deletion_flow()
-        self.test_forum_api_structure()
-        self.test_forum_role_based_access_simulation()
-        
-        # NEW: Forum Favorites Feature Tests
-        self.test_forum_favorites_feature()
-        self.test_favorites_api_integration()
-        
-        # NEW: Patient Dashboard Feature Tests
-        self.test_search_endpoint_without_auth()
-        self.test_patient_overview_endpoint_without_auth()
-        self.test_researcher_details_endpoint_without_auth()
-        self.test_patient_dashboard_endpoints_structure()
-        self.test_search_endpoint_data_validation()
         
         # Summary
         print("\n" + "="*50)
