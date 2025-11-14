@@ -4265,20 +4265,39 @@ async def get_patient_overview(
     scored_trials.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
     overview["featured_trials"] = scored_trials[:3]
     
-    # Get latest publications - fetch from PubMed if database empty
-    publications = await db.publications.find({}, {"_id": 0}).sort("year", -1).limit(50).to_list(50)
-    
-    if len(publications) == 0:
-        # Fetch from PubMed API
-        try:
-            from pubmed_api import PubMedAPI
-            api_client = PubMedAPI()
-            search_term = patient_conditions[0] if patient_conditions else "medicine"
-            publications = api_client.search_and_fetch(query=search_term, max_results=15)
-            logging.info(f"Fetched {len(publications)} publications from PubMed API")
-        except Exception as e:
-            logging.error(f"Failed to fetch publications: {e}")
-            publications = []
+    # ALWAYS fetch fresh publications from PubMed API for patient overview
+    # This ensures latest, relevant publications with valid URLs
+    publications = []
+    try:
+        from pubmed_api import PubMedAPI
+        api_client = PubMedAPI()
+        
+        # Search for multiple conditions to get diverse results
+        all_pubs = []
+        for condition in patient_conditions[:3]:  # Use up to 3 conditions
+            condition_pubs = api_client.search_and_fetch(
+                query=f"{condition} latest research",
+                max_results=10
+            )
+            all_pubs.extend(condition_pubs)
+        
+        # Remove duplicates by PMID
+        seen_ids = set()
+        unique_pubs = []
+        for pub in all_pubs:
+            pub_id = pub.get('id') or pub.get('pmid')
+            if pub_id and pub_id not in seen_ids:
+                seen_ids.add(pub_id)
+                # Ensure URL is set using PMID
+                if not pub.get('url') and pub_id:
+                    pub['url'] = f"https://pubmed.ncbi.nlm.nih.gov/{pub_id}/"
+                unique_pubs.append(pub)
+        
+        publications = unique_pubs
+        logging.info(f"Fetched {len(publications)} latest publications from PubMed API")
+    except Exception as e:
+        logging.error(f"Failed to fetch publications from API: {e}")
+        publications = []
     
     # Score publications by relevance - always start at 50%
     scored_pubs = []
