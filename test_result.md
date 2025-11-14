@@ -107,15 +107,18 @@ user_problem_statement: "Implement missing Researcher Dashboard features: 1) Sea
 backend:
   - task: "Authentication Fix - Duplicate Users"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "critical"
     needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "USER REPORTED CRITICAL BUG: When logging in with one email, it shows data from another email account. INVESTIGATION: Found duplicate user accounts in database for both user emails (tarunganes1@gmail.com and tarunkanthmovva007@gmail.com had 2 accounts each). MongoDB's find_one() was returning different duplicates at different times. FIX APPLIED: 1) Cleaned database - kept oldest account for each email, deleted duplicates, 2) Created unique index on email field to prevent future duplicates, 3) Cleared all sessions, 4) Enhanced /auth/session endpoint to use sort=[('created_at', 1)] for consistent user retrieval, 5) Added duplicate detection logging, 6) Added race condition handling for concurrent user creation. Backend restarted. All users need to log in again."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL SECURITY VULNERABILITY DISCOVERED: Authentication system is completely broken! FINDINGS: 1) ANY invalid session_id (including empty strings, SQL injection attempts, random text) returns 200 status and creates valid sessions for user tarunkanthmovva007@gmail.com, 2) Invalid tokens in Authorization headers also return 200 and user data instead of 401 errors, 3) System sets valid session cookies for completely invalid session IDs, 4) Emergent Auth backend correctly returns 404/401 for invalid sessions, but our backend ignores these errors, 5) Exception handling in /auth/session endpoint is not working - HTTPErrors from Emergent Auth are being swallowed somehow. IMPACT: Anyone can authenticate as any user by sending any random session_id. This is a complete authentication bypass. TESTS: 52 total, 29 passed, 23 failed. All authentication-related tests failed due to this vulnerability. URGENT: Main agent must investigate why HTTPException from Emergent Auth 404/401 responses is not being raised properly in the /auth/session endpoint."
   
   - task: "Search Endpoint with Matching Scores"
     implemented: true
