@@ -1548,9 +1548,9 @@ const PatientDashboard = ({ user, logout }) => {
                                   <Badge key={idx} variant="secondary">{area}</Badge>
                                 ))}
                               </div>
-                              {trial.url && (
+                              {getClinicalTrialUrl(trial) && (
                                 <a 
-                                  href={trial.url} 
+                                  href={getClinicalTrialUrl(trial)} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
                                   style={{
