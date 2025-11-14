@@ -322,8 +322,10 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus: 
+    - "Authentication Fix - Duplicate Users"
+  stuck_tasks: 
+    - "Authentication Fix - Duplicate Users"
   test_all: false
   test_priority: "high_first"
 
