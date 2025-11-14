@@ -564,7 +564,153 @@ async def generate_ai_summary(text: str, context: str = "medical") -> str:
         return "Summary not available"
 
 # ============ Auth Endpoints ============
+# NEW: Direct Google OAuth Implementation
 
+from auth_google import get_google_oauth_url, exchange_code_for_tokens, verify_google_token
+from fastapi import Query
+from fastapi.responses import RedirectResponse
+
+@api_router.get("/auth/google/login")
+async def google_login(redirect_to: str = Query(default="/dashboard")):
+    """
+    Step A: Initiate Google OAuth login
+    Redirects user to Google account selection page
+    """
+    # Determine callback URL based on environment
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://trialbridge.preview.emergentagent.com')
+    callback_url = f"{backend_url}/api/auth/google/callback"
+    
+    # Store intended redirect in state (for after auth)
+    state = redirect_to
+    
+    # Generate Google OAuth URL with prompt=select_account
+    oauth_url = get_google_oauth_url(callback_url, state)
+    
+    logging.info(f"AUTH: Redirecting to Google OAuth with callback: {callback_url}")
+    return RedirectResponse(url=oauth_url)
+
+
+@api_router.get("/auth/google/callback")
+async def google_callback(
+    code: str = Query(...),
+    state: str = Query(default="/dashboard"),
+    response: Response = None
+):
+    """
+    Step B-H: Handle Google OAuth callback
+    - Exchange code for tokens
+    - Verify ID token
+    - Create/find user
+    - Generate session
+    - Set cookie
+    - Redirect to frontend
+    """
+    try:
+        logging.info(f"AUTH: Google callback received with code")
+        
+        # Step C: Exchange authorization code for tokens
+        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://trialbridge.preview.emergentagent.com')
+        callback_url = f"{backend_url}/api/auth/google/callback"
+        
+        tokens = exchange_code_for_tokens(code, callback_url)
+        id_token_str = tokens.get("id_token")
+        
+        if not id_token_str:
+            raise HTTPException(status_code=400, detail="No ID token received from Google")
+        
+        # Step D: Verify ID token and extract user info
+        user_info = verify_google_token(id_token_str)
+        
+        email = user_info["email"]
+        name = user_info["name"]
+        picture = user_info.get("picture")
+        
+        logging.info(f"AUTH: Google authentication successful for email: {email}")
+        
+        # Step E: Find or create user in database
+        user_doc = await db.users.find_one({"email": email}, {"_id": 0})
+        
+        if user_doc:
+            logging.info(f"AUTH: Found existing user - ID: {user_doc['id']}, Email: {email}")
+            user = User(**user_doc)
+        else:
+            # Create new user
+            logging.info(f"AUTH: Creating new user for email: {email}")
+            user = User(
+                email=email,
+                name=name,
+                picture=picture
+            )
+            user_dict = user.model_dump()
+            user_dict['created_at'] = user_dict['created_at'].isoformat()
+            
+            try:
+                await db.users.insert_one(user_dict)
+                logging.info(f"AUTH: New user created - ID: {user.id}, Email: {email}")
+            except Exception as insert_error:
+                # Handle race condition
+                if "duplicate" in str(insert_error).lower() or "E11000" in str(insert_error):
+                    logging.warning(f"AUTH: User already exists, fetching existing user")
+                    user_doc = await db.users.find_one({"email": email}, {"_id": 0})
+                    if user_doc:
+                        user = User(**user_doc)
+                    else:
+                        raise
+                else:
+                    raise
+        
+        # Step F: Create NEW session with UUID (not Google's token)
+        # This ensures each login gets a unique session token
+        session_token = str(uuid.uuid4())  # Generate our own UUID
+        expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+        
+        logging.info(f"AUTH: Generated NEW session token (UUID): {session_token[:30]}...")
+        
+        # Delete any old sessions for this user
+        deleted = await db.user_sessions.delete_many({"user_id": user.id})
+        logging.info(f"AUTH: Deleted {deleted.deleted_count} old sessions for user {user.id}")
+        
+        # Create new session
+        session = UserSession(
+            user_id=user.id,
+            session_token=session_token,
+            expires_at=expires_at
+        )
+        
+        session_dict = session.model_dump()
+        session_dict['expires_at'] = session_dict['expires_at'].isoformat()
+        session_dict['created_at'] = session_dict['created_at'].isoformat()
+        
+        await db.user_sessions.insert_one(session_dict)
+        logging.info(f"AUTH: Session created successfully for user {email}")
+        
+        # Step G: Set HttpOnly cookie
+        frontend_url = backend_url.replace('/api', '')  # Remove /api if present
+        
+        response = RedirectResponse(url=f"{frontend_url}{state}")
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,
+            secure=True,
+            samesite="none",
+            max_age=7*24*60*60,
+            path="/"
+        )
+        
+        logging.info(f"AUTH: Login complete - Redirecting to: {state}")
+        logging.info(f"AUTH: User: {email}, Session: {session_token[:30]}...")
+        
+        return response
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"AUTH: Callback error: {e}")
+        raise HTTPException(status_code=500, detail=f"Authentication failed: {str(e)}")
+
+
+# DEPRECATED: Old Emergent Auth endpoint (keeping for backward compatibility during transition)
 @api_router.post("/auth/session")
 async def process_session(data: SessionDataRequest, response: Response):
     """Process session_id from Emergent Auth"""
