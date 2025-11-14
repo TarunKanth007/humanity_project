@@ -287,6 +287,30 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "USER REPORTED: Heart icons still not showing. INVESTIGATION REVEALED: favoritedItems state was not being updated when favorites were loaded. ROOT CAUSE: When loading favorites (line ~966 and ~3103), only setFavorites() was called but favoritedItems state remained empty, causing Heart icons to render as unfilled/invisible. ADDITIONAL FIX APPLIED: Added code to update favoritedItems state when favorites are loaded. After api.get('/favorites'), now iterating through res.data and building favoritedIds object mapping each fav.item.id to true, then updating setFavoritedItems. Applied to both Patient Dashboard (line ~966) and Researcher Dashboard (line ~3110). Frontend restarted. Ready for user testing."
+  
+  - task: "UI Consistency - View Details Buttons on All Clinical Trials"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "USER REQUESTED: Ensure 'View Details' button appears on ALL clinical trial cards across the app. VERIFICATION COMPLETE: Checked all clinical trial card locations in both Patient and Researcher dashboards. Confirmed 'View Details' buttons exist in: 1) Patient Overview/For You tab, 2) Patient Search Results, 3) Patient Browse Trials tab, 4) Researcher Overview/For You tab, 5) Researcher Search Results, 6) Researcher Browse Trials tab. All buttons use consistent gradient styling (linear-gradient(135deg, #3F51B5, #536DFE)), proper hover effects, and external link icons. No missing buttons found."
+  
+  - task: "UI Consistency - Styled Publication Buttons"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "USER REQUESTED: Convert all plain-text 'View Publication' links to styled buttons matching the app theme. IMPLEMENTATION COMPLETE: Found and replaced ALL publication links (11 locations) with styled buttons. New button styling matches 'View Details' buttons: gradient background (linear-gradient(135deg, #3F51B5, #536DFE)), white text, rounded corners, padding, hover effects (translateY), and external link icon. Applied across: Patient Dashboard (For You, Search Results, Publications tab) and Researcher Dashboard (For You, Search Results, Publications tab). All publication links now have consistent, professional button styling."
 
 metadata:
   created_by: "main_agent"
