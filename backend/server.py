@@ -714,10 +714,22 @@ async def logout(
     """Logout user"""
     token = session_token or (authorization.replace("Bearer ", "") if authorization else None)
     if token:
-        await db.user_sessions.delete_one({"session_token": token})
+        deleted = await db.user_sessions.delete_one({"session_token": token})
+        logging.info(f"AUTH: Logout - Deleted {deleted.deleted_count} session(s) for token {token[:20]}...")
     
+    # Delete cookie with all possible configurations to ensure it's removed
+    response.delete_cookie(key="session_token", path="/", domain=None, secure=True, httponly=True, samesite="none")
     response.delete_cookie(key="session_token", path="/")
+    
+    logging.info(f"AUTH: Logout complete")
     return {"status": "success"}
+
+@api_router.post("/auth/clear-all-sessions")
+async def clear_all_sessions():
+    """Admin endpoint to clear all sessions (for debugging)"""
+    result = await db.user_sessions.delete_many({})
+    logging.info(f"AUTH: Cleared ALL sessions - Deleted {result.deleted_count} session(s)")
+    return {"status": "success", "deleted_count": result.deleted_count}
 
 @api_router.post("/auth/role")
 async def set_role(
