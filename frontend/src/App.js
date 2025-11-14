@@ -94,15 +94,32 @@ const AuthContext = ({ children }) => {
 
   const logout = async () => {
     try {
+      console.log('Logging out...');
       await api.post('/auth/logout');
       setUser(null);
+      
+      // Force clear any client-side storage
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Force reload to clear any cached state
+      console.log('Logout successful, redirecting...');
       navigate('/', { replace: true });
+      
+      // Optional: Force reload after a brief delay to ensure cookies are cleared
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+      
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout failed:', error);
       // Force logout even if API fails
       setUser(null);
+      localStorage.clear();
+      sessionStorage.clear();
       navigate('/', { replace: true });
+      window.location.href = '/';
     }
   };
 
