@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
 CuraLink Backend Testing Suite
-Focus: Patient Dashboard Features Testing
-- Search functionality with matching scores
-- Patient overview endpoint
-- Enhanced researcher details endpoint
+Focus: Critical Authentication Fix Testing
+- POST /api/auth/session - Session creation and user retrieval
+- GET /api/auth/me - Current user retrieval from session
+- Verify no duplicate users can be created
+- Database unique constraint verification
 """
 
 import requests
 import json
 import sys
 import uuid
+import time
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
