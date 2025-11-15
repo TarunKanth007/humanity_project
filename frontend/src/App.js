@@ -4942,13 +4942,8 @@ const ResearcherDashboard = ({ user, logout }) => {
               ) : browsePublications.length > 0 ? (
                 <>
                   <div className="items-grid">
-                    {browsePublications.map((pub, idx) => {
-                      // Ensure publication has an id field for favorites
-                      const pubWithId = { ...pub, id: pub.pmid || pub.id || `pub_${idx}` };
-                      const pubId = pubWithId.id;
-                      
-                      return (
-                        <Card key={pubId} className="item-card card-glow-publication">
+                    {browsePublications.map((pub, idx) => (
+                      <Card key={pub.pmid || pub.id || `pub_${idx}`} className="item-card card-glow-publication">
                           <CardHeader>
                             <div className="card-header-row">
                               <CardTitle className="item-title">{pub.title}</CardTitle>
