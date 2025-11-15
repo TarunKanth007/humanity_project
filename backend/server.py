@@ -1865,17 +1865,35 @@ async def researcher_search(
 
 # ============ Common Endpoints ============
 
+# Cache for forums (5 minutes)
+forums_cache = None
+forums_cache_time = 0
+FORUMS_CACHE_TTL = 300  # 5 minutes
+
 @api_router.get("/forums")
 async def get_forums(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get all forums"""
+    """Get all forums - OPTIMIZED with caching"""
+    global forums_cache, forums_cache_time
+    
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    forums = await db.forums.find({}, {"_id": 0}).to_list(1000)
+    # Check cache
+    if forums_cache and (time.time() - forums_cache_time < FORUMS_CACHE_TTL):
+        logging.info("Returning cached forums")
+        return forums_cache
+    
+    # Fetch forums (limit to 100 most recent)
+    forums = await db.forums.find({}, {"_id": 0}).sort("created_at", -1).limit(100).to_list(100)
+    
+    # Cache result
+    forums_cache = forums
+    forums_cache_time = time.time()
+    
     return forums
 
 @api_router.get("/researcher/overview")
