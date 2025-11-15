@@ -4326,41 +4326,30 @@ async def get_patient_overview(
     scored_trials.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
     overview["featured_trials"] = scored_trials[:5]  # Show top 5 instead of 3
     
-    # ALWAYS fetch fresh publications from PubMed API for patient overview
-    # This ensures latest, relevant publications with valid URLs
-    publications = []
-    try:
-        from pubmed_api import PubMedAPI
-        api_client = PubMedAPI()
+    # Score trials quickly
+    scored_trials = []
+    for trial in trials[:15]:  # Process max 15 for speed
+        score = 70 if trial.get("status", "").lower() == "recruiting" else 50
+        reasons = ["Currently recruiting"]
         
-        # Search for multiple conditions to get diverse results
-        all_pubs = []
-        for condition in patient_conditions[:3]:  # Use up to 3 conditions
-            condition_pubs = api_client.search_and_fetch(
-                query=f"{condition} latest research",
-                max_results=10
-            )
-            all_pubs.extend(condition_pubs)
+        # Quick relevance check
+        disease_areas = [area.lower() for area in trial.get("disease_areas", [])]
+        for condition in patient_conditions[:2]:
+            if any(condition.lower() in area for area in disease_areas):
+                score = 95
+                reasons.insert(0, f"Matches {condition}")
+                break
         
-        # Remove duplicates by PMID
-        seen_ids = set()
-        unique_pubs = []
-        for pub in all_pubs:
-            pub_id = pub.get('id') or pub.get('pmid')
-            if pub_id and pub_id not in seen_ids:
-                seen_ids.add(pub_id)
-                # Ensure URL is set using PMID
-                if not pub.get('url') and pub_id:
-                    pub['url'] = f"https://pubmed.ncbi.nlm.nih.gov/{pub_id}/"
-                unique_pubs.append(pub)
-        
-        publications = unique_pubs
-        logging.info(f"Fetched {len(publications)} latest publications from PubMed API")
-    except Exception as e:
-        logging.error(f"Failed to fetch publications from API: {e}")
-        publications = []
+        scored_trials.append({
+            **trial,
+            "relevance_score": score,
+            "match_reasons": reasons[:2]  # Max 2 reasons
+        })
     
-    # Score publications by relevance - always start at 50%
+    scored_trials.sort(key=lambda x: x["relevance_score"], reverse=True)
+    overview["featured_trials"] = scored_trials[:5]
+    
+    # Score publications quickly
     scored_pubs = []
     for pub in publications:
         score = 50  # Base 50% relevancy
