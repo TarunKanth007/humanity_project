@@ -396,15 +396,18 @@ test_plan:
 
   - task: "Forum Patient Posting and Disease Tagging"
     implemented: false
-    working: "NA"
+    working: false
     file: "/app/backend/server.py, /app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "USER REQUEST: Patients should be able to add posts to a specific disease category in forums so researchers can quickly see what questions are in their field to answer. Need disease tagging system for forum posts."
+      - working: false
+        agent: "testing"
+        comment: "❌ BLOCKED BY BACKEND ISSUE: Forum patient posting cannot be tested because GET /api/forums endpoint requires authentication (401 status) when it should be publicly accessible. This prevents patients from viewing available forums to post in. Additionally, forum creation also requires authentication (401 status), which is correct. The forums list should be publicly readable but posting should require authentication. Current implementation blocks both reading and writing, preventing forum functionality."
 
   - task: "Specific Search Keyword Testing"
     implemented: true
