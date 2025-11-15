@@ -2744,7 +2744,7 @@ const PatientDashboard = ({ user, logout }) => {
                   </Card>
 
                   {/* Activity History Card */}
-                  <Card>
+                  <Card className="card-glow-green">
                     <CardHeader>
                       <CardTitle>Activity History</CardTitle>
                       <CardDescription>Your recent activity on CuraLink</CardDescription>
