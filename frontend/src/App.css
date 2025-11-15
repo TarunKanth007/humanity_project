@@ -2996,9 +2996,15 @@ strong {
     font-size: 12px;
   }
 
+  .dashboard-tabs {
+    margin-left: -12px;
+    margin-right: -12px;
+    width: calc(100% + 24px);
+  }
+
   .dashboard-tabs [role="tablist"] {
     gap: 6px;
-    padding: 8px 12px 12px 0;
+    padding: 8px 12px 12px 12px;
     margin: 0;
   }
 
