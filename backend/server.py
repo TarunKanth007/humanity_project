@@ -4216,39 +4216,71 @@ async def get_patient_overview(
     experts_with_ratings.sort(key=lambda x: x.get("average_rating", 0), reverse=True)
     overview["top_researchers"] = experts_with_ratings[:3]
     
-    # ALWAYS fetch fresh trials from ClinicalTrials.gov API for patient overview
-    # This ensures latest, relevant, and RECRUITING trials with valid URLs
-    trials = []
-    try:
-        from clinical_trials_api import ClinicalTrialsAPI
-        api_client = ClinicalTrialsAPI()
-        
-        # Search for multiple conditions to get diverse results
-        all_trials = []
-        for condition in patient_conditions[:3]:  # Use up to 3 conditions
-            condition_trials = api_client.search_and_normalize(
-                condition=condition, 
-                status="RECRUITING",  # Only recruiting trials
-                limit=10
+    # Fetch data CONCURRENTLY for speed (trials + publications in parallel)
+    import asyncio
+    from concurrent.futures import ThreadPoolExecutor
+    
+    def fetch_trials():
+        """Fetch trials in thread pool"""
+        try:
+            from clinical_trials_api import ClinicalTrialsAPI
+            api_client = ClinicalTrialsAPI()
+            
+            # Use only PRIMARY condition for speed
+            primary_condition = patient_conditions[0] if patient_conditions else "cancer"
+            trials = api_client.search_and_normalize(
+                condition=primary_condition, 
+                status="RECRUITING",
+                limit=10  # Reduced from 20 to 10 for speed
             )
-            all_trials.extend(condition_trials)
-        
-        # Remove duplicates by NCT ID
-        seen_ids = set()
-        unique_trials = []
-        for trial in all_trials:
-            if trial.get('id') not in seen_ids:
-                seen_ids.add(trial.get('id'))
-                # Ensure URL is set using NCT ID
+            
+            # Ensure URLs
+            for trial in trials:
                 if not trial.get('url') and trial.get('id'):
                     trial['url'] = f"https://clinicaltrials.gov/study/{trial['id']}"
-                unique_trials.append(trial)
+            
+            logging.info(f"Fetched {len(trials)} trials in parallel")
+            return trials
+        except Exception as e:
+            logging.error(f"Failed to fetch trials: {e}")
+            return []
+    
+    def fetch_publications():
+        """Fetch publications in thread pool"""
+        try:
+            from pubmed_api import PubMedAPI
+            api_client = PubMedAPI()
+            
+            # Use only PRIMARY condition for speed
+            primary_condition = patient_conditions[0] if patient_conditions else "medicine"
+            pubs = api_client.search_and_fetch(
+                query=f"{primary_condition} latest",
+                max_results=10  # Reduced from 15 to 10
+            )
+            
+            # Ensure URLs
+            for pub in pubs:
+                pub_id = pub.get('id') or pub.get('pmid')
+                if not pub.get('url') and pub_id:
+                    pub['url'] = f"https://pubmed.ncbi.nlm.nih.gov/{pub_id}/"
+            
+            logging.info(f"Fetched {len(pubs)} publications in parallel")
+            return pubs
+        except Exception as e:
+            logging.error(f"Failed to fetch publications: {e}")
+            return []
+    
+    # Execute API calls in PARALLEL using thread pool
+    start_time = time.time()
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        trials_future = executor.submit(fetch_trials)
+        pubs_future = executor.submit(fetch_publications)
         
-        trials = unique_trials
-        logging.info(f"Fetched {len(trials)} RECRUITING trials from ClinicalTrials.gov API")
-    except Exception as e:
-        logging.error(f"Failed to fetch trials from API: {e}")
-        trials = []
+        trials = trials_future.result()
+        publications = pubs_future.result()
+    
+    fetch_time = time.time() - start_time
+    logging.info(f"Parallel API fetch completed in {fetch_time:.2f}s")
     
     # Score trials by relevance
     scored_trials = []
