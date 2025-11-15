@@ -2389,8 +2389,8 @@ const PatientDashboard = ({ user, logout }) => {
                           )}
                         </CardContent>
                       </Card>
-                      );
-                  })}
+                    );
+                    })}
                 </div>
               )}
             </TabsContent>
