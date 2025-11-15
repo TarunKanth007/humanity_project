@@ -4970,12 +4970,12 @@ const ResearcherDashboard = ({ user, logout }) => {
                           </CardHeader>
                           <CardContent>
                             {pub.authors && pub.authors.length > 0 && (
-                            <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-                              <strong>Authors:</strong> {pub.authors.slice(0, 3).join(', ')}{pub.authors.length > 3 ? ' et al.' : ''}
-                            </p>
+                              <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
+                                <strong>Authors:</strong> {pub.authors.slice(0, 3).join(', ')}{pub.authors.length > 3 ? ' et al.' : ''}
+                              </p>
                             )}
                             <p className="item-description">
-                            {truncateToWords(pub.summary || pub.abstract, 35)}
+                              {truncateToWords(pub.summary || pub.abstract, 35)}
                             </p>
                             {pub.url && (
                             <a 
