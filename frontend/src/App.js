@@ -4967,7 +4967,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                             <CardDescription>
                               {pub.journal} • {pub.year}
                             </CardDescription>
-                        </CardHeader>
+                          </CardHeader>
                         <CardContent>
                           {pub.authors && pub.authors.length > 0 && (
                             <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
