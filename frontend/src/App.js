@@ -5297,7 +5297,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                               )}
                             </CardContent>
                           </Card>
-                        ));
+                        );
                       })}
                         </div>
                       );
