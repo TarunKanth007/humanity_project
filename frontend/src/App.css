@@ -3055,8 +3055,8 @@ strong {
   }
 
   .dashboard-tabs [role="tab"] {
-    min-width: 85px;
-    padding: 7px 10px;
+    min-width: fit-content;
+    padding: 7px 12px;
     font-size: 11px;
     gap: 4px;
     white-space: nowrap;
