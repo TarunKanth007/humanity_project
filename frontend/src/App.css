@@ -2991,18 +2991,21 @@ strong {
     gap: 6px;
     padding-left: 12px;
     padding-right: 12px;
+    padding-bottom: 12px;
   }
 
   .dashboard-tabs [role="tab"] {
-    min-width: 85px;
-    padding: 8px 10px;
+    min-width: 95px;
+    padding: 8px 12px;
     font-size: 12px;
-    gap: 3px;
+    gap: 5px;
+    white-space: nowrap;
   }
 
   .dashboard-tabs [role="tab"] .icon-sm {
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
   }
 
   .items-grid {
