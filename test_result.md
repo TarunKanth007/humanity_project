@@ -277,15 +277,18 @@ frontend:
 
   - task: "Forum Filtering by Field"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "IMPLEMENTED: Added forum filtering in Researcher Dashboard. Frontend: Added toggle buttons 'All Forums' and 'My Field' above forum list. 'My Field' filter shows only forums matching researcher's specialties or research interests (checks forum category and description). Uses profileData to determine field matching. Filter state managed with forumFilter ('all' or 'myfield')."
+      - working: false
+        agent: "testing"
+        comment: "❌ BACKEND ISSUE DISCOVERED: Forums endpoint requires authentication (401 status) when it should be publicly accessible for forum listing. This breaks the forum filtering functionality as researchers cannot access the forums list to filter by their field. Backend GET /api/forums endpoint should allow public access for reading forums, but currently returns 401 Unauthorized. This prevents both patient posting and researcher filtering features from working properly."
 
   
   - task: "Favorites Tab Heart Icons"
