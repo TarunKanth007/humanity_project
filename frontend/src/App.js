@@ -4115,7 +4115,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                     {overviewData.latest_publications?.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.latest_publications.map((pub, idx) => (
-                          <Card key={idx} className="item-card">
+                          <Card key={idx} className="item-card card-glow-publication">
                             <CardHeader>
                               <div className="card-header-row">
                                 <div style={{ flex: 1 }}>
