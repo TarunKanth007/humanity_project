@@ -1863,7 +1863,7 @@ const PatientDashboard = ({ user, logout }) => {
                       </h2>
                       <div className="items-grid">
                         {searchResults.publications.map((pub) => (
-                          <Card key={pub.id} className="item-card">
+                          <Card key={pub.id} className="item-card card-glow-publication">
                             <CardHeader>
                               <div className="card-header-row">
                                 <div>
