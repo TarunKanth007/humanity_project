@@ -720,7 +720,9 @@ async def process_session(data: SessionDataRequest, response: Response):
     """Process session_id from Emergent Auth"""
     try:
         # Call Emergent Auth to get session data
-        auth_backend_url = os.environ.get('EMERGENT_AUTH_BACKEND_URL', 'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data')
+        auth_backend_url = os.environ.get('EMERGENT_AUTH_BACKEND_URL')
+        if not auth_backend_url:
+            raise HTTPException(status_code=500, detail="EMERGENT_AUTH_BACKEND_URL environment variable not configured")
         
         try:
             auth_response = requests.get(
