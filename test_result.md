@@ -331,9 +331,14 @@ test_plan:
     - "Publications Tab"
     - "Open to Collaboration & Institution Fields"
     - "Forum Filtering by Field"
+    - "Location Services for Clinical Trials and Experts"
+    - "Specific Search Keyword Testing"
+    - "Researcher Collaboration Requests and Messaging"
+    - "Forum Patient Posting and Disease Tagging"
+    - "Favorites Summary Feature"
   stuck_tasks: []
-  test_all: false
-  test_priority: "high_first"
+  test_all: true
+  test_priority: "critical_first"
 
   - task: "Location Services for Clinical Trials and Experts"
     implemented: true
