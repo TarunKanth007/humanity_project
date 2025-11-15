@@ -3462,6 +3462,10 @@ const ResearcherDashboard = ({ user, logout }) => {
       const res = await api.get(`/patient/clinical-trials?page=${nextPage}`);
       setBrowseClinicalTrials(prev => [...prev, ...res.data]);
       setTrialsPage(nextPage);
+      // Load favorite statuses for new trials
+      if (res.data && res.data.length > 0) {
+        await loadFavoriteStatuses(res.data, 'trial');
+      }
     } catch (error) {
       console.error('Failed to load more trials:', error);
     }
