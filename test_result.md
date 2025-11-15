@@ -293,11 +293,11 @@ frontend:
   
   - task: "Favorites Tab Heart Icons"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -308,6 +308,9 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "USER REPORTED: Heart icons still not showing. INVESTIGATION REVEALED: favoritedItems state was not being updated when favorites were loaded. ROOT CAUSE: When loading favorites (line ~966 and ~3103), only setFavorites() was called but favoritedItems state remained empty, causing Heart icons to render as unfilled/invisible. ADDITIONAL FIX APPLIED: Added code to update favoritedItems state when favorites are loaded. After api.get('/favorites'), now iterating through res.data and building favoritedIds object mapping each fav.item.id to true, then updating setFavoritedItems. Applied to both Patient Dashboard (line ~966) and Researcher Dashboard (line ~3110). Frontend restarted. Ready for user testing."
+      - working: false
+        agent: "testing"
+        comment: "❌ CANNOT TEST DUE TO AUTHENTICATION BARRIER: Heart icons functionality cannot be verified due to Google OAuth redirect_uri_mismatch error preventing dashboard access. CODE ANALYSIS: Implementation appears correct in App.js with proper Heart icon components, event handlers, and state management. However, runtime testing requires authentication which is currently blocked. RECOMMENDATION: Fix OAuth configuration first, then retest Heart icons functionality with authenticated user session."
   
   - task: "UI Consistency - View Details Buttons on All Clinical Trials"
     implemented: true
