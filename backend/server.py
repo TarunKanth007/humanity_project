@@ -1622,6 +1622,12 @@ async def update_researcher_profile(
         {"$set": update_fields}
     )
     
+    # Invalidate cache
+    cache_key = f"researcher_profile_{user.id}"
+    if cache_key in profile_cache:
+        del profile_cache[cache_key]
+        del profile_cache_time[cache_key]
+    
     # Return updated profile
     updated_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
     return updated_profile
