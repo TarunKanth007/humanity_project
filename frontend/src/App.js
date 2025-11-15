@@ -2673,7 +2673,7 @@ const PatientDashboard = ({ user, logout }) => {
                   </Card>
 
                   {/* Progress Tracker Card */}
-                  <Card>
+                  <Card className="card-glow-green">
                     <CardHeader>
                       <CardTitle>Your Journey</CardTitle>
                       <CardDescription>Track your progress on CuraLink</CardDescription>
