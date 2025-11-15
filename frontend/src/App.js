@@ -3477,6 +3477,10 @@ const ResearcherDashboard = ({ user, logout }) => {
       const res = await api.get(`/patient/publications?page=${nextPage}`);
       setBrowsePublications(prev => [...prev, ...res.data]);
       setPubsPage(nextPage);
+      // Load favorite statuses for new publications
+      if (res.data && res.data.length > 0) {
+        await loadFavoriteStatuses(res.data, 'publication');
+      }
     } catch (error) {
       console.error('Failed to load more publications:', error);
     }
