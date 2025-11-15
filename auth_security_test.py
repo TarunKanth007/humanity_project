@@ -23,7 +23,7 @@ import time
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://trialbridge.preview.emergentagent.com/api"
+BACKEND_URL = "https://researchportal-2.preview.emergentagent.com/api"
 
 class AuthSecurityTester:
     def __init__(self):

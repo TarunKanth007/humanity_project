@@ -6,7 +6,7 @@ Check if there are session cookies causing the authentication bypass
 import requests
 import json
 
-BACKEND_URL = "https://trialbridge.preview.emergentagent.com/api"
+BACKEND_URL = "https://researchportal-2.preview.emergentagent.com/api"
 
 def check_session_cookies():
     """Check session cookie behavior"""

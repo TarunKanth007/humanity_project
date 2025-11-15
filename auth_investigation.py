@@ -8,7 +8,7 @@ import requests
 import json
 import sys
 
-BACKEND_URL = "https://trialbridge.preview.emergentagent.com/api"
+BACKEND_URL = "https://researchportal-2.preview.emergentagent.com/api"
 
 def investigate_auth_responses():
     """Investigate what's happening with authentication responses"""

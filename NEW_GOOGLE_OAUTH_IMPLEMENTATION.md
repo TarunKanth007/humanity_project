@@ -158,7 +158,7 @@ if not idinfo.get("email_verified"):
 
 ### Test 1: Fresh Login
 1. **Clear browser cookies completely**
-2. Open: https://trialbridge.preview.emergentagent.com
+2. Open: https://researchportal-2.preview.emergentagent.com
 3. Click "Sign In"
 4. **VERIFY:** Google shows account selection page
 5. Select an account (e.g., tarunmovva1@gmail.com)
@@ -200,7 +200,7 @@ AUTH: Login complete - Redirecting to: /dashboard
 - **Client ID:** `1016763672270-u7h1js8el33mujs82n3ma5aaf9nurkvh.apps.googleusercontent.com`
 - **Client Secret:** `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`
 - **Redirect URIs:**
-  - Preview: `https://trialbridge.preview.emergentagent.com/api/auth/google/callback`
+  - Preview: `https://researchportal-2.preview.emergentagent.com/api/auth/google/callback`
   - Production: `https://medmatch-7.emergent.host/api/auth/google/callback`
 
 ### Environment Variables

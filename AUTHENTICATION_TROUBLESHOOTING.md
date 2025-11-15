@@ -36,7 +36,7 @@ When clicking "Sign In", Google should show an account picker. If it doesn't:
 ### Admin: Clear All Sessions
 If you need to force all users to re-login:
 ```bash
-curl -X POST https://trialbridge.preview.emergentagent.com/api/auth/clear-all-sessions
+curl -X POST https://researchportal-2.preview.emergentagent.com/api/auth/clear-all-sessions
 ```
 
 ### Testing Authentication
@@ -44,7 +44,7 @@ To verify the backend is working correctly:
 
 1. **Check Current User**:
 ```bash
-curl https://trialbridge.preview.emergentagent.com/api/auth/me
+curl https://researchportal-2.preview.emergentagent.com/api/auth/me
 # Should return 401 if not logged in
 ```
 
