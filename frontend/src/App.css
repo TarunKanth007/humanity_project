@@ -2899,6 +2899,8 @@ strong {
   .dashboard-tabs {
     margin-top: 16px;
     position: relative;
+    width: 100%;
+    overflow: visible;
   }
 
   .dashboard-tabs [role="tablist"] {
