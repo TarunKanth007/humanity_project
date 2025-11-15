@@ -1753,7 +1753,7 @@ const PatientDashboard = ({ user, logout }) => {
                       </h2>
                       <div className="items-grid">
                         {searchResults.trials.map((trial) => (
-                          <Card key={trial.id} className="item-card">
+                          <Card key={trial.id} className="item-card card-glow-trial">
                             <CardHeader>
                               <div className="card-header-row">
                                 <div>
@@ -4260,7 +4260,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                       <h4 className="results-category">Clinical Trials ({searchResults.trials.length})</h4>
                       <div className="items-grid">
                         {searchResults.trials.map((trial) => (
-                          <Card key={trial.id} className="item-card">
+                          <Card key={trial.id} className="item-card card-glow-trial">
                             <CardHeader>
                               <div className="card-header-row">
                                 <CardTitle className="item-title">{trial.title}</CardTitle>
