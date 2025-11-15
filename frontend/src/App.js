@@ -2568,7 +2568,7 @@ const PatientDashboard = ({ user, logout }) => {
               ) : (
                 <div className="researcher-profile-content" style={{display: 'grid', gap: '24px'}}>
                   {/* Profile Information Card */}
-                  <Card>
+                  <Card className="card-glow-profile">
                     <CardHeader>
                       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
@@ -5329,7 +5329,7 @@ const ResearcherDashboard = ({ user, logout }) => {
               ) : (
                 <div className="researcher-profile-content" style={{display: 'grid', gap: '24px'}}>
                   {/* Profile Information Card */}
-                  <Card>
+                  <Card className="card-glow-profile">
                     <CardHeader>
                       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
