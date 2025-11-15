@@ -2813,3 +2813,251 @@ strong {
   animation: card-glow-green 3s ease-in-out infinite;
 }
 
+/* ========================================
+   RESPONSIVE DESIGN - MOBILE & TABLET
+   ======================================== */
+
+/* Tablet - 768px to 1024px */
+@media (max-width: 1024px) {
+  .dashboard-tabs [role="tablist"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 8px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-thumb {
+    background: var(--primary-blue);
+    border-radius: 4px;
+  }
+
+  .dashboard-tabs [role="tab"] {
+    flex-shrink: 0;
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Mobile Large - 481px to 767px */
+@media (max-width: 767px) {
+  .dashboard-header {
+    padding: 16px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .dashboard-tabs {
+    margin-top: 16px;
+  }
+
+  .dashboard-tabs [role="tablist"] {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 4px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .dashboard-tabs [role="tab"] {
+    flex-shrink: 0;
+    min-width: 100px;
+    padding: 10px 12px;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .dashboard-tabs [role="tab"] .icon-sm {
+    width: 18px;
+    height: 18px;
+  }
+
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .item-card {
+    max-width: 100%;
+  }
+
+  .item-title {
+    font-size: 16px;
+  }
+
+  .card-header-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Mobile Small - Up to 480px */
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 20px;
+  }
+
+  .role-badge {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+
+  .dashboard-tabs [role="tablist"] {
+    gap: 6px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .dashboard-tabs [role="tab"] {
+    min-width: 85px;
+    padding: 8px 10px;
+    font-size: 12px;
+    gap: 3px;
+  }
+
+  .dashboard-tabs [role="tab"] .icon-sm {
+    width: 16px;
+    height: 16px;
+  }
+
+  .items-grid {
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .item-card {
+    padding: 12px;
+  }
+
+  .item-title {
+    font-size: 15px;
+  }
+
+  .item-meta {
+    font-size: 12px;
+  }
+
+  .tags {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .tags .badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* Make buttons stack vertically on very small screens */
+  .card-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-actions button {
+    width: 100%;
+  }
+}
+
+/* Extra Small - Up to 360px */
+@media (max-width: 360px) {
+  .dashboard-header h1 {
+    font-size: 18px;
+  }
+
+  .dashboard-tabs [role="tab"] {
+    min-width: 75px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .dashboard-tabs [role="tab"] .icon-sm {
+    width: 14px;
+    height: 14px;
+  }
+
+  .item-title {
+    font-size: 14px;
+  }
+
+  .item-meta {
+    font-size: 11px;
+  }
+}
+
+/* Landscape mode optimization for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard-tabs [role="tab"] {
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px 12px;
+  }
+
+  .dashboard-tabs [role="tab"] .icon-sm {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Fix for horizontal scrolling on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .dashboard-tabs [role="tablist"] {
+    scrollbar-width: none;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Show scroll indicator */
+  .dashboard-tabs [role="tablist"]::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to left, white, transparent);
+    pointer-events: none;
+  }
+}
+
+/* Improve touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .dashboard-tabs [role="tab"] {
+    min-height: 44px;
+    min-width: 90px;
+  }
+
+  button, a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
