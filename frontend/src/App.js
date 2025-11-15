@@ -4969,7 +4969,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                             </CardDescription>
                           </CardHeader>
                           <CardContent>
-                          {pub.authors && pub.authors.length > 0 && (
+                            {pub.authors && pub.authors.length > 0 && (
                             <p className="item-meta" style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                               <strong>Authors:</strong> {pub.authors.slice(0, 3).join(', ')}{pub.authors.length > 3 ? ' et al.' : ''}
                             </p>
