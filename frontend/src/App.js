@@ -4951,7 +4951,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                         <Card key={pubId} className="item-card card-glow-publication">
                           <CardHeader>
                             <div className="card-header-row">
-                            <CardTitle className="item-title">{pub.title}</CardTitle>
+                              <CardTitle className="item-title">{pub.title}</CardTitle>
                             <Button
                               variant="ghost"
                               size="sm"
