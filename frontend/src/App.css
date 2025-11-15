@@ -2898,6 +2898,7 @@ strong {
 
   .dashboard-tabs {
     margin-top: 16px;
+    position: relative;
   }
 
   .dashboard-tabs [role="tablist"] {
@@ -2910,23 +2911,45 @@ strong {
     margin: 0 -16px;
     padding-left: 16px;
     padding-right: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(63, 81, 181, 0.3) transparent;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-thumb {
+    background: rgba(63, 81, 181, 0.4);
+    border-radius: 3px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-thumb:hover {
+    background: rgba(63, 81, 181, 0.6);
   }
 
   .dashboard-tabs [role="tab"] {
     flex-shrink: 0;
-    min-width: 100px;
+    min-width: 110px;
     padding: 10px 12px;
     font-size: 13px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     text-align: center;
+    white-space: nowrap;
   }
 
   .dashboard-tabs [role="tab"] .icon-sm {
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
   }
 
   .items-grid {
