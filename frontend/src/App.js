@@ -3428,7 +3428,8 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    if (e) e.preventDefault();
     if (!searchQuery.trim()) {
       toast.error('Please enter a search query');
       return;
