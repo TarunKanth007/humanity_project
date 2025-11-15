@@ -4962,7 +4962,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                                 fill={favoritedItems[pubId] ? '#3F51B5' : 'none'}
                                 color={favoritedItems[pubId] ? '#3F51B5' : 'currentColor'}
                               />
-                            </Button>
+                              </Button>
                             </div>
                             <CardDescription>
                               {pub.journal} • {pub.year}
