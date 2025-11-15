@@ -2277,31 +2277,64 @@ async def delete_forum(
 
 # Old forum creation endpoint removed - replaced with /forums/create
 
+# Cache for forum posts (2 minutes per forum)
+forum_posts_cache = {}
+forum_posts_cache_time = {}
+FORUM_POSTS_CACHE_TTL = 120  # 2 minutes
+
 @api_router.get("/forums/{forum_id}/posts")
 async def get_forum_posts(
     forum_id: str,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get forum posts"""
+    """Get forum posts - OPTIMIZED with single query and caching"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    posts = await db.forum_posts.find(
-        {"forum_id": forum_id, "parent_id": None},
+    # Check cache
+    cache_key = forum_id
+    if cache_key in forum_posts_cache:
+        cache_age = time.time() - forum_posts_cache_time.get(cache_key, 0)
+        if cache_age < FORUM_POSTS_CACHE_TTL:
+            logging.info(f"Returning cached forum posts (age: {cache_age:.1f}s)")
+            return forum_posts_cache[cache_key]
+    
+    # OPTIMIZED: Fetch ALL posts and replies in a SINGLE query
+    all_posts = await db.forum_posts.find(
+        {"forum_id": forum_id},
         {"_id": 0}
-    ).sort("created_at", -1).to_list(100)
+    ).sort("created_at", -1).limit(500).to_list(500)
     
-    # Get replies for each post
-    for post in posts:
-        replies = await db.forum_posts.find(
-            {"forum_id": forum_id, "parent_id": post["id"]},
-            {"_id": 0}
-        ).sort("created_at", 1).to_list(100)
-        post["replies"] = replies
+    # Organize posts and replies efficiently using a dictionary
+    posts_dict = {}
+    top_level_posts = []
     
-    return posts
+    for post in all_posts:
+        post["replies"] = []  # Initialize replies array
+        posts_dict[post["id"]] = post
+        
+        if post.get("parent_id") is None:
+            top_level_posts.append(post)
+    
+    # Attach replies to their parent posts
+    for post in all_posts:
+        parent_id = post.get("parent_id")
+        if parent_id and parent_id in posts_dict:
+            posts_dict[parent_id]["replies"].append(post)
+    
+    # Sort top-level posts by date (newest first)
+    top_level_posts.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    
+    # Limit to 50 most recent top-level posts for performance
+    result = top_level_posts[:50]
+    
+    # Cache result
+    forum_posts_cache[cache_key] = result
+    forum_posts_cache_time[cache_key] = time.time()
+    
+    return result
 
 @api_router.post("/forums/posts")
 async def create_forum_post(
