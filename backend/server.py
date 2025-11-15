@@ -609,9 +609,7 @@ async def google_callback(
         logging.info(f"AUTH: Google callback received with code")
         
         # Step C: Exchange authorization code for tokens
-        backend_url = os.environ.get('REACT_APP_BACKEND_URL')
-        if not backend_url:
-            raise HTTPException(status_code=500, detail="REACT_APP_BACKEND_URL environment variable not configured")
+        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://researchportal-2.preview.emergentagent.com')
         callback_url = f"{backend_url}/api/auth/google/callback"
         
         tokens = exchange_code_for_tokens(code, callback_url)
