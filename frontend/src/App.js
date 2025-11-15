@@ -5570,7 +5570,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                   </Card>
 
                   {/* Activity History Card */}
-                  <Card>
+                  <Card className="card-glow-green">
                     <CardHeader>
                       <CardTitle>Activity History</CardTitle>
                       <CardDescription>Your contributions and engagement on CuraLink</CardDescription>
