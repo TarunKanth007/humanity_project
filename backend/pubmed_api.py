@@ -278,3 +278,42 @@ class PubMedAPI:
         except Exception as e:
             logger.error(f"Error in search_and_fetch: {e}")
             return []
+
+
+# Global PubMed client instance
+_pubmed_client = None
+
+def get_pubmed_client() -> PubMedAPI:
+    """Get or create global PubMed client instance"""
+    global _pubmed_client
+    if _pubmed_client is None:
+        _pubmed_client = PubMedAPI()
+    return _pubmed_client
+
+
+async def search_pubmed(query: str, max_results: int = 20, disease_area: Optional[str] = None) -> List[Dict]:
+    """
+    Async wrapper for PubMed search
+    
+    Args:
+        query: Search query string
+        max_results: Maximum number of results to return
+        disease_area: Optional disease area to filter by
+    
+    Returns:
+        List of publication dictionaries with title, abstract, authors, etc.
+    """
+    import asyncio
+    
+    try:
+        client = get_pubmed_client()
+        # Run the sync function in thread pool to avoid blocking
+        loop = asyncio.get_event_loop()
+        results = await loop.run_in_executor(
+            None,
+            lambda: client.search_and_fetch(query, max_results, disease_area)
+        )
+        return results
+    except Exception as e:
+        logger.error(f"Error in async search_pubmed: {e}")
+        return []
