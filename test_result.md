@@ -390,6 +390,9 @@ test_plan:
       - working: "NA"
         agent: "testing"
         comment: "✅ ENDPOINT EXISTS: GET /api/favorites/summary endpoint is implemented (returns 405 Method Not Allowed, indicating endpoint exists but may need different HTTP method or implementation). This suggests the favorites summary feature has been implemented but may need frontend integration or method adjustment. Further testing with authentication required to verify full functionality."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ CANNOT VERIFY FAVORITES SUMMARY: Testing blocked by OAuth authentication barrier preventing dashboard access. BACKEND STATUS: GET /api/favorites/summary returns 405 Method Not Allowed (endpoint exists but wrong HTTP method). FRONTEND ANALYSIS: Need to verify if summary feature with checkboxes is implemented in Favorites tab UI. RECOMMENDATION: 1) Fix OAuth configuration, 2) Test correct HTTP method for summary endpoint, 3) Verify frontend checkboxes and summary generation functionality."
 
   - task: "Researcher Collaboration Requests and Messaging"
     implemented: false
