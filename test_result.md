@@ -457,6 +457,30 @@ test_plan:
         agent: "testing"
         comment: "🚨 CRITICAL SECURITY VULNERABILITY: GET /api/researcher/../../../etc/passwd/details endpoint returns 200 status instead of proper validation error. This indicates potential path traversal vulnerability where malicious input in researcher ID parameter is not properly sanitized. The endpoint should return 400/404 for invalid IDs containing path traversal attempts like '../../../etc/passwd'. This needs immediate security review and input validation fixes."
 
+  - task: "Comprehensive UI and System Testing"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE UI TESTING COMPLETED: LANDING PAGE: All elements functional - CTA buttons, branding, hero sections, testimonials carousel, feature grids, stats sections. RESPONSIVE DESIGN: Perfect across desktop (1920x1080), tablet (768x1024), and mobile (390x844) viewports. THEME CONSISTENCY: Indigo blue theme (#3F51B5, #536DFE) properly applied with gradient elements and consistent styling. PERFORMANCE: Page load time <3s requirement met. ACCESSIBILITY: Proper heading hierarchy, alt text on images, ARIA elements present. ANIMATIONS: Scroll animations and carousel navigation working correctly. LIMITATION: Dashboard functionality cannot be tested due to OAuth redirect_uri_mismatch error blocking authentication."
+
+  - task: "Google OAuth Configuration Issue"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL AUTHENTICATION BLOCKER: Google OAuth redirect_uri_mismatch error prevents all dashboard testing. ERROR: 'https://researchportal-2.preview.emergentagent.com/api/auth/google/callback' not registered in Google Cloud Console OAuth client. IMPACT: Cannot test any dashboard features, search functionality, profile management, favorites, forums, or researcher collaboration. BACKEND LOGS: Show OAuth URL generation working but callback fails with 422 Unprocessable Entity. URGENT FIX NEEDED: Add exact redirect URI to Google Cloud Console OAuth 2.0 client configuration."
+
 agent_communication:
   - agent: "main"
     message: "🚨 COMPREHENSIVE FEATURE VERIFICATION STARTING: User has provided detailed checklist covering Patient, Researcher, and General System features. I'm updating test_result.md with all verification requirements and will systematically test: 1) Patient features: search with matching scores, researcher profiles with publications/trials, For You section, forum posting, navigation, mobile responsiveness, 2) Researcher features: search, profile editing, publications tab, clinical trials, collaboration requests, messaging, For You section, discussions, 3) General System: account distinction, specific keyword searches, location-based sorting, favorites summary, mobile/tablet/desktop support, UI consistency (indigo blue theme), performance (no lag/errors). Will test backend first, then frontend with automated testing agents."
