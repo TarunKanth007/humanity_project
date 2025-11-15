@@ -2916,17 +2916,19 @@ strong {
   }
 
   .dashboard-tabs [role="tablist"] {
-    display: flex;
+    display: flex !important;
     gap: 8px;
-    overflow-x: auto;
+    overflow-x: auto !important;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    padding: 8px 16px 12px 16px;
-    margin: 0;
+    padding: 8px 16px 12px 16px !important;
+    margin: 0 !important;
     scrollbar-width: thin;
     scrollbar-color: rgba(63, 81, 181, 0.3) transparent;
-    scroll-padding: 0;
+    scroll-padding: 0 !important;
     scroll-behavior: smooth;
+    scroll-snap-type: none !important;
+    justify-content: flex-start !important;
   }
 
   .dashboard-tabs [role="tablist"]::-webkit-scrollbar {
