@@ -2728,6 +2728,52 @@ strong {
   }
 }
 
+/* Card Glow Animations for Different Card Types */
+@keyframes card-glow-blue {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(63, 81, 181, 0.15), 0 0 30px rgba(83, 109, 254, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(63, 81, 181, 0.25), 0 0 50px rgba(83, 109, 254, 0.15);
+  }
+}
+
+@keyframes card-glow-teal {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(44, 191, 174, 0.15), 0 0 30px rgba(130, 207, 253, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(44, 191, 174, 0.25), 0 0 50px rgba(130, 207, 253, 0.15);
+  }
+}
+
+@keyframes card-glow-purple {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(111, 66, 193, 0.15), 0 0 30px rgba(142, 84, 233, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(111, 66, 193, 0.25), 0 0 50px rgba(142, 84, 233, 0.15);
+  }
+}
+
+@keyframes card-glow-orange {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 152, 0, 0.15), 0 0 30px rgba(255, 183, 77, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(255, 152, 0, 0.25), 0 0 50px rgba(255, 183, 77, 0.15);
+  }
+}
+
+@keyframes card-glow-green {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.15), 0 0 30px rgba(129, 199, 132, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(76, 175, 80, 0.25), 0 0 50px rgba(129, 199, 132, 0.15);
+  }
+}
+
 /* Role Badge Styles */
 .role-badge {
   display: flex;
