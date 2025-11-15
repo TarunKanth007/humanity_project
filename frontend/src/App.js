@@ -3976,7 +3976,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                     {overviewData.top_researchers?.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.top_researchers.map((researcher) => (
-                          <Card key={researcher.id} className="item-card">
+                          <Card key={researcher.id} className="item-card card-glow-researcher">
                             <CardHeader>
                               <div className="card-header-row">
                                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
