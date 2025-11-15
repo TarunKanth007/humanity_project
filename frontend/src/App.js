@@ -1597,7 +1597,7 @@ const PatientDashboard = ({ user, logout }) => {
                     {overviewData.latest_publications.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.latest_publications.map((pub) => (
-                          <Card key={pub.id} className="item-card">
+                          <Card key={pub.id} className="item-card card-glow-publication">
                             <CardHeader>
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '12px' }}>
                                 <div style={{ flex: 1 }}>
