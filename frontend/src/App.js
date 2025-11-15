@@ -4709,9 +4709,26 @@ const ResearcherDashboard = ({ user, logout }) => {
                 <div className="loading-state">Loading trials...</div>
               ) : myTrials.length === 0 ? (
                 <div className="empty-state">
-                  <Search className="empty-icon" />
-                  <h3>No trials yet</h3>
-                  <p>Create your first clinical trial</p>
+                  <Search style={{
+                    width: '48px',
+                    height: '48px',
+                    margin: '0 auto 16px',
+                    color: '#3F51B5',
+                    opacity: 0.7
+                  }} />
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '8px'
+                  }}>No trials yet</h3>
+                  <p style={{
+                    color: '#6B7280',
+                    fontSize: '14px'
+                  }}>Create your first clinical trial</p>
                 </div>
               ) : (
                 <div className="items-grid">
