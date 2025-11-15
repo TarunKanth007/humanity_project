@@ -1979,7 +1979,7 @@ const PatientDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {clinicalTrials.map((trial) => (
-                    <Card key={trial.id} className="item-card">
+                    <Card key={trial.id} className="item-card card-glow-trial">
                       <CardHeader>
                         <div className="card-header-row">
                           <CardTitle className="item-title">{trial.title}</CardTitle>
