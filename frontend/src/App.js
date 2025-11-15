@@ -4592,9 +4592,29 @@ const ResearcherDashboard = ({ user, logout }) => {
                 </div>
               ) : (
                 <div style={{textAlign: 'center', padding: '48px'}}>
-                  <Users style={{width: '64px', height: '64px', margin: '0 auto 16px', opacity: 0.3}} />
-                  <h3>No Active Collaborations</h3>
-                  <p style={{color: 'var(--taupe)', marginTop: '8px'}}>
+                  <Users style={{
+                    width: '64px', 
+                    height: '64px', 
+                    margin: '0 auto 16px', 
+                    color: '#3F51B5',
+                    opacity: 0.7
+                  }} />
+                  <h3 style={{
+                    fontSize: '22px',
+                    fontWeight: '600',
+                    background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '8px'
+                  }}>
+                    No Active Collaborations
+                  </h3>
+                  <p style={{
+                    color: '#6B7280',
+                    marginTop: '8px',
+                    fontSize: '14px'
+                  }}>
                     Connect with researchers from the Collaborators tab to start collaborating
                   </p>
                 </div>
