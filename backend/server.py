@@ -2026,80 +2026,60 @@ async def get_researcher_overview(
     
     featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:5]
     
-    # Get latest publications in researcher's areas
-    # ALWAYS fetch from PubMed API for fresh, relevant publications
-    latest_publications = []
-    try:
-        from pubmed_api import PubMedAPI
-        api_client = PubMedAPI()
+    # Quick publication scoring
+    scored_pubs = []
+    for pub in all_publications[:15]:
+        score = 75
+        pub_title = pub.get("title", "").lower()
         
-        # Search for publications matching specialties and interests
-        all_search_terms = specialties + interests
-        search_terms = all_search_terms[:3] if all_search_terms else ["medical research"]
+        for specialty in specialties[:2]:
+            if specialty.lower() in pub_title:
+                score = 90
+                break
         
-        all_pubs = []
-        for search_term in search_terms:
-            pubs_batch = api_client.search_and_fetch(query=search_term, max_results=10)
-            all_pubs.extend(pubs_batch)
-            logging.info(f"Fetched {len(pubs_batch)} publications for '{search_term}' from PubMed")
+        if pub.get("year", 0) >= 2024:
+            score = min(score + 10, 100)
         
-        # Remove duplicates by title
-        seen_titles = set()
-        unique_pubs = []
-        for pub in all_pubs:
-            title = pub.get('title', '').lower()
-            if title and title not in seen_titles:
-                seen_titles.add(title)
-                unique_pubs.append(pub)
-        
-        pubmed_results = unique_pubs
-        logging.info(f"Total unique publications: {len(pubmed_results)}")
-        
-        # Score and add relevance
-        for pub in pubmed_results:
-            score = 50  # Base relevancy score of 50%
-            reasons = ["General medical research"]
-            
-            pub_title = pub.get("title", "").lower()
-            pub_abstract = pub.get("abstract", "").lower()
-            
-            for specialty in specialties:
-                if specialty.lower() in pub_title or specialty.lower() in pub_abstract:
-                    score += 30
-                    reasons = [f"Related to: {specialty}"]
-                    break
-            
-            for interest in interests:
-                if interest.lower() in pub_title or interest.lower() in pub_abstract:
-                    score += 20
-                    if len(reasons) == 1 and reasons[0] == "General medical research":
-                        reasons = [f"Interest area: {interest}"]
-                    else:
-                        reasons.append(f"Interest area: {interest}")
-                    break
-            
-            # Prioritize recent publications
-            year = pub.get("year", 0)
-            if year >= 2024:
-                score += 10
-                if "General medical research" not in reasons:
-                    reasons.append("Recent publication")
-            
-            latest_publications.append({
-                **pub,
-                "relevance_score": min(score, 100),  # Cap at 100%
-                "match_reasons": reasons[:2]
-            })
-        
-        latest_publications = sorted(latest_publications, key=lambda x: x["relevance_score"], reverse=True)[:3]
-    except Exception as e:
-        logging.error(f"Failed to fetch publications: {e}")
+        scored_pubs.append({**pub, "relevance_score": score})
     
-    return {
+    latest_publications = sorted(scored_pubs, key=lambda x: x["relevance_score"], reverse=True)[:5]
+    
+    # Get top researchers (simplified - from database only, quick)
+    top_researchers = []
+    all_researchers = await db.researcher_profiles.find(
+        {}, {"_id": 0}
+    ).limit(20).to_list(20)
+    
+    for researcher in all_researchers[:10]:
+        if researcher.get("user_id") == user.id:
+            continue
+        researcher_specialties = researcher.get("specialties", [])
+        if any(s.lower() in [sp.lower() for sp in specialties[:2]] for s in researcher_specialties):
+            researcher_user = await db.users.find_one({"id": researcher.get("user_id")}, {"_id": 0})
+            if researcher_user:
+                top_researchers.append({
+                    "id": researcher.get("user_id"),
+                    "name": researcher_user.get("name"),
+                    "specialties": researcher_specialties,
+                    "institution": researcher.get("institution")
+                })
+                if len(top_researchers) >= 3:
+                    break
+    
+    result = {
         "top_researchers": top_researchers,
         "featured_trials": featured_trials,
         "latest_publications": latest_publications
     }
+    
+    # Cache result
+    overview_cache[cache_key] = result
+    overview_cache_time[cache_key] = time.time()
+    
+    total_time = time.time() - start_time
+    logging.info(f"Researcher overview generated in {total_time:.2f}s")
+    
+    return result
 
 
 @api_router.get("/researcher/publications")
