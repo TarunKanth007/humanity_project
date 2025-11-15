@@ -4957,11 +4957,11 @@ const ResearcherDashboard = ({ user, logout }) => {
                                 size="sm"
                                 onClick={() => addToFavorites('publication', pubId, pubWithId)}
                               >
-                              <Heart 
-                                className="icon-sm" 
-                                fill={favoritedItems[pubId] ? '#3F51B5' : 'none'}
-                                color={favoritedItems[pubId] ? '#3F51B5' : 'currentColor'}
-                              />
+                                <Heart 
+                                  className="icon-sm" 
+                                  fill={favoritedItems[pubId] ? '#3F51B5' : 'none'}
+                                  color={favoritedItems[pubId] ? '#3F51B5' : 'currentColor'}
+                                />
                               </Button>
                             </div>
                             <CardDescription>
