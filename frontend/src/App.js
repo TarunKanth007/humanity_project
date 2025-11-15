@@ -4948,7 +4948,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                       const pubId = pubWithId.id;
                       
                       return (
-                      <Card key={pubId} className="item-card card-glow-publication">
+                        <Card key={pubId} className="item-card card-glow-publication">
                         <CardHeader>
                           <div className="card-header-row">
                             <CardTitle className="item-title">{pub.title}</CardTitle>
