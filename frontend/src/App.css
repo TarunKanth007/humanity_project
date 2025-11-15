@@ -2907,12 +2907,12 @@ strong {
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    padding: 8px 4px;
-    margin: 0 -16px;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 8px 16px 12px 16px;
+    margin: 0;
     scrollbar-width: thin;
     scrollbar-color: rgba(63, 81, 181, 0.3) transparent;
+    scroll-padding: 0;
+    scroll-behavior: smooth;
   }
 
   .dashboard-tabs [role="tablist"]::-webkit-scrollbar {
