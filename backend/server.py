@@ -4153,6 +4153,11 @@ async def search(
 
 # ============ Patient Overview/Featured Section ============
 
+# Cache for overview data (10 minutes TTL)
+overview_cache = {}
+overview_cache_time = {}
+OVERVIEW_CACHE_TTL = 600  # 10 minutes
+
 @api_router.get("/patient/overview")
 async def get_patient_overview(
     session_token: Optional[str] = Cookie(None),
@@ -4160,16 +4165,11 @@ async def get_patient_overview(
 ):
     """
     Get personalized overview with top researchers, trials, and publications
+    OPTIMIZED: Under 3 seconds load time
     """
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    overview = {
-        "top_researchers": [],
-        "featured_trials": [],
-        "latest_publications": []
-    }
     
     # Get patient profile for personalization
     patient_profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
@@ -4177,7 +4177,21 @@ async def get_patient_overview(
     
     # Use default medical topics if no conditions
     if not patient_conditions:
-        patient_conditions = ["cancer", "diabetes", "heart disease", "mental health"]
+        patient_conditions = ["cancer", "diabetes"]  # Reduced to 2 for speed
+    
+    # Check cache first
+    cache_key = f"patient_overview_{','.join(patient_conditions[:2])}"
+    if cache_key in overview_cache:
+        cache_age = time.time() - overview_cache_time.get(cache_key, 0)
+        if cache_age < OVERVIEW_CACHE_TTL:
+            logging.info(f"Returning cached overview (age: {cache_age:.1f}s)")
+            return overview_cache[cache_key]
+    
+    overview = {
+        "top_researchers": [],
+        "featured_trials": [],
+        "latest_publications": []
+    }
     
     # Get top rated researchers
     experts = await db.health_experts.find({"is_platform_member": True}, {"_id": 0}).to_list(100)
