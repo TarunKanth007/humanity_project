@@ -1761,8 +1761,8 @@ async def researcher_search(
             match_reasons.append(f"Name matches '{query}'")
         
         # Institution matching
-        institution = researcher.get("institution", "").lower()
-        if query_lower in institution:
+        institution = researcher.get("institution") or ""
+        if query_lower in institution.lower():
             match_score += 30
             match_reasons.append(f"Institution matches '{query}'")
         
