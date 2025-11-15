@@ -3416,10 +3416,18 @@ const ResearcherDashboard = ({ user, logout }) => {
         // Load clinical trials from API (similar to patient)
         const res = await api.get(`/patient/clinical-trials?page=${trialsPage}`);
         setBrowseClinicalTrials(res.data);
+        // Load favorite statuses for trials
+        if (res.data && res.data.length > 0) {
+          await loadFavoriteStatuses(res.data, 'trial');
+        }
       } else if (activeTab === 'browse-publications') {
         // Load publications from API (similar to patient)
         const res = await api.get(`/patient/publications?page=${pubsPage}`);
         setBrowsePublications(res.data);
+        // Load favorite statuses for publications
+        if (res.data && res.data.length > 0) {
+          await loadFavoriteStatuses(res.data, 'publication');
+        }
       }
     } catch (error) {
       console.error('Failed to load data:', error);
