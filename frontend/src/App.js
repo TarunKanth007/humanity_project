@@ -2409,7 +2409,7 @@ const PatientDashboard = ({ user, logout }) => {
                   {favorites.map((fav) => (
                     <Popover key={fav.favorite_id}>
                       <PopoverTrigger asChild>
-                        <Card className="item-card" style={{ cursor: 'pointer' }}>
+                        <Card className="item-card card-glow-favorite" style={{ cursor: 'pointer' }}>
                           <CardHeader>
                             <div className="card-header-row">
                               <CardTitle className="item-title">
@@ -5170,7 +5170,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                   {favorites.map((fav) => (
                     <Popover key={fav.favorite_id}>
                       <PopoverTrigger asChild>
-                        <Card className="item-card" style={{ cursor: 'pointer' }}>
+                        <Card className="item-card card-glow-favorite" style={{ cursor: 'pointer' }}>
                           <CardHeader>
                             <div className="card-header-row">
                               <CardTitle className="item-title">
