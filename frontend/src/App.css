@@ -3072,6 +3072,12 @@ strong {
     font-size: 18px;
   }
 
+  .dashboard-tabs {
+    margin-left: -12px !important;
+    margin-right: -12px !important;
+    width: calc(100% + 24px) !important;
+  }
+
   .dashboard-tabs [role="tab"] {
     min-width: fit-content;
     padding: 7px 12px;
