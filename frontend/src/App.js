@@ -5726,7 +5726,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                   </Card>
 
                   {/* Stats Summary Card */}
-                  <Card>
+                  <Card className="card-glow-green">
                     <CardHeader>
                       <CardTitle>Your Impact</CardTitle>
                       <CardDescription>Summary of your contributions</CardDescription>
