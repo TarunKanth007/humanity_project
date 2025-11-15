@@ -2165,20 +2165,20 @@ const PatientDashboard = ({ user, logout }) => {
                 <div className="loading-state">Loading publications...</div>
               ) : (
                 <div className="items-grid">
-                  {publications.map((pub) => (
-                    <Card key={pub.id} className="item-card card-glow-publication">
+                  {publications.map((pub, idx) => (
+                    <Card key={pub.pmid || pub.id || `pub_${idx}`} className="item-card card-glow-publication">
                       <CardHeader>
                         <div className="card-header-row">
                           <CardTitle className="item-title">{pub.title}</CardTitle>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => addToFavorites('publication', pub.id, pub)}
+                            onClick={() => addToFavorites('publication', pub.pmid || pub.id || `pub_${idx}`, { ...pub, id: pub.pmid || pub.id || `pub_${idx}` })}
                           >
                             <Heart 
                               className="icon-sm" 
-                              fill={favoritedItems[pub.id] ? '#3F51B5' : 'none'}
-                              color={favoritedItems[pub.id] ? '#3F51B5' : 'currentColor'}
+                              fill={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'none'}
+                              color={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'currentColor'}
                             />
                           </Button>
                         </div>
