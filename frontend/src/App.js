@@ -4417,7 +4417,7 @@ const ResearcherDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {collaborators.map((collab) => (
-                    <Card key={collab.user_id} className="item-card">
+                    <Card key={collab.user_id} className="item-card card-glow-researcher">
                       <CardHeader>
                         <div className="collab-header">
                           {collab.picture && (
