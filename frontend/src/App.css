@@ -2792,6 +2792,15 @@ strong {
   }
 }
 
+@keyframes card-glow-pink {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(233, 30, 99, 0.15), 0 0 30px rgba(244, 143, 177, 0.1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(233, 30, 99, 0.25), 0 0 50px rgba(244, 143, 177, 0.15);
+  }
+}
+
 /* Role Badge Styles */
 .role-badge {
   display: flex;
