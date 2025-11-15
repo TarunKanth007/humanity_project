@@ -2902,8 +2902,10 @@ strong {
 
   .dashboard-tabs {
     margin-top: 16px;
+    margin-left: -16px;
+    margin-right: -16px;
     position: relative;
-    width: 100%;
+    width: calc(100% + 32px);
     overflow: visible;
   }
 
@@ -2913,7 +2915,7 @@ strong {
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    padding: 8px 16px 12px 0;
+    padding: 8px 16px 12px 16px;
     margin: 0;
     scrollbar-width: thin;
     scrollbar-color: rgba(63, 81, 181, 0.3) transparent;
