@@ -1965,38 +1965,51 @@ async def get_researcher_overview(
     
     top_researchers = sorted(scored_researchers, key=lambda x: x["relevance_score"], reverse=True)[:3]
     
-    # Get featured trials relevant to researcher's expertise
-    # ALWAYS fetch from API for fresh, relevant data based on researcher's fields
-    all_trials = []
+    # Fetch trials and publications CONCURRENTLY
+    from concurrent.futures import ThreadPoolExecutor
     
-    try:
-        from clinical_trials_api import ClinicalTrialsAPI
-        api_client = ClinicalTrialsAPI()
-        
-        # Search with all specialties and interests for maximum relevance
-        search_terms = specialties[:2] if specialties else interests[:2] if interests else ["cancer"]
-        
-        for search_term in search_terms:
-            trials_batch = api_client.search_and_normalize(
-                condition=search_term, 
-                status="RECRUITING", 
-                limit=15
+    def fetch_researcher_trials():
+        try:
+            from clinical_trials_api import ClinicalTrialsAPI
+            api_client = ClinicalTrialsAPI()
+            primary_specialty = specialties[0] if specialties else "oncology"
+            trials = api_client.search_and_normalize(
+                condition=primary_specialty,
+                status="RECRUITING",
+                limit=10
             )
-            all_trials.extend(trials_batch)
-            logging.info(f"Fetched {len(trials_batch)} trials for '{search_term}' from ClinicalTrials.gov")
-        
-        # Remove duplicates by ID
-        seen_ids = set()
-        unique_trials = []
-        for trial in all_trials:
-            if trial.get('id') not in seen_ids:
-                seen_ids.add(trial.get('id'))
-                unique_trials.append(trial)
-        all_trials = unique_trials
-        
-        logging.info(f"Total unique trials: {len(all_trials)}")
-    except Exception as e:
-        logging.error(f"Failed to fetch trials from API: {e}")
+            for trial in trials:
+                if not trial.get('url') and trial.get('id'):
+                    trial['url'] = f"https://clinicaltrials.gov/study/{trial['id']}"
+            return trials
+        except Exception as e:
+            logging.error(f"Trials fetch error: {e}")
+            return []
+    
+    def fetch_researcher_publications():
+        try:
+            from pubmed_api import PubMedAPI
+            api_client = PubMedAPI()
+            primary_specialty = specialties[0] if specialties else "medicine"
+            pubs = api_client.search_and_fetch(
+                query=f"{primary_specialty} research",
+                max_results=10
+            )
+            for pub in pubs:
+                pub_id = pub.get('id') or pub.get('pmid')
+                if not pub.get('url') and pub_id:
+                    pub['url'] = f"https://pubmed.ncbi.nlm.nih.gov/{pub_id}/"
+            return pubs
+        except Exception as e:
+            logging.error(f"Publications fetch error: {e}")
+            return []
+    
+    # Parallel execution
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        trials_future = executor.submit(fetch_researcher_trials)
+        pubs_future = executor.submit(fetch_researcher_publications)
+        all_trials = trials_future.result()
+        all_publications = pubs_future.result()
     
     scored_trials = []
     
