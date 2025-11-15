@@ -3053,14 +3053,17 @@ strong {
   }
 
   .dashboard-tabs [role="tab"] {
-    min-width: 75px;
-    padding: 6px 8px;
+    min-width: 85px;
+    padding: 7px 10px;
     font-size: 11px;
+    gap: 4px;
+    white-space: nowrap;
   }
 
   .dashboard-tabs [role="tab"] .icon-sm {
     width: 14px;
     height: 14px;
+    flex-shrink: 0;
   }
 
   .item-title {
