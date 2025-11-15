@@ -396,7 +396,7 @@ test_plan:
 
   - task: "Researcher Collaboration Requests and Messaging"
     implemented: false
-    working: "NA"
+    working: false
     file: "/app/backend/server.py, /app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
@@ -408,6 +408,9 @@ test_plan:
       - working: "NA"
         agent: "testing"
         comment: "❌ MISSING FEATURE CONFIRMED: Collaboration and messaging endpoints are NOT implemented. Tested endpoints return 404 Not Found: 1) GET /api/collaboration/requests, 2) POST /api/collaboration/requests, 3) POST /api/collaboration/requests/{id}/accept, 4) POST /api/collaboration/requests/{id}/reject, 5) GET /api/messages, 6) POST /api/messages, 7) GET /api/messages/conversations. These features need to be implemented for researcher-to-researcher collaboration and messaging functionality."
+      - working: false
+        agent: "testing"
+        comment: "❌ COLLABORATION FEATURES NOT IMPLEMENTED: Confirmed 7 collaboration/messaging endpoints return 404 Not Found. MISSING FUNCTIONALITY: 1) Collaboration request system, 2) Request acceptance/rejection, 3) Researcher-to-researcher messaging, 4) Chat functionality after collaboration acceptance. FRONTEND IMPACT: Cannot test 'Request Collaboration' buttons, messaging UI, or chat features. PRIORITY: High - this is a core researcher dashboard feature that needs full implementation."
 
   - task: "Forum Patient Posting and Disease Tagging"
     implemented: false
