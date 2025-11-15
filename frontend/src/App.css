@@ -2908,10 +2908,10 @@ strong {
 
   .dashboard-tabs {
     margin-top: 16px;
-    margin-left: -16px;
-    margin-right: -16px;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
     position: relative;
-    width: calc(100% + 32px);
+    width: calc(100% + 32px) !important;
     overflow: visible;
   }
 
