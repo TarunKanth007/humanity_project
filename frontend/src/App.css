@@ -2792,3 +2792,24 @@ strong {
   white-space: nowrap;
 }
 
+/* Card Glow Effect Classes */
+.card-glow-trial {
+  animation: card-glow-blue 3s ease-in-out infinite;
+}
+
+.card-glow-publication {
+  animation: card-glow-teal 3s ease-in-out infinite;
+}
+
+.card-glow-researcher {
+  animation: card-glow-purple 3s ease-in-out infinite;
+}
+
+.card-glow-forum {
+  animation: card-glow-orange 3s ease-in-out infinite;
+}
+
+.card-glow-favorite {
+  animation: card-glow-green 3s ease-in-out infinite;
+}
+
