@@ -4953,10 +4953,10 @@ const ResearcherDashboard = ({ user, logout }) => {
                             <div className="card-header-row">
                               <CardTitle className="item-title">{pub.title}</CardTitle>
                               <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => addToFavorites('publication', pubId, pubWithId)}
-                            >
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => addToFavorites('publication', pubId, pubWithId)}
+                              >
                               <Heart 
                                 className="icon-sm" 
                                 fill={favoritedItems[pubId] ? '#3F51B5' : 'none'}
