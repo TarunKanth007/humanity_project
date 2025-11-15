@@ -1074,19 +1074,33 @@ async def create_patient_profile(
     
     return {"status": "success"}
 
+# Cache for profiles (10 minutes)
+profile_cache = {}
+profile_cache_time = {}
+PROFILE_CACHE_TTL = 600  # 10 minutes
+
 @api_router.get("/patient/profile")
 async def get_patient_profile(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get patient profile"""
+    """Get patient profile - OPTIMIZED with caching"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
+    # Check cache
+    cache_key = f"patient_profile_{user.id}"
+    if cache_key in profile_cache:
+        cache_age = time.time() - profile_cache_time.get(cache_key, 0)
+        if cache_age < PROFILE_CACHE_TTL:
+            return profile_cache[cache_key]
+    
     profile = await db.patient_profiles.find_one({"user_id": user.id}, {"_id": 0})
-    if not profile:
-        return None
+    
+    # Cache result (even if None)
+    profile_cache[cache_key] = profile
+    profile_cache_time[cache_key] = time.time()
     
     return profile
 
