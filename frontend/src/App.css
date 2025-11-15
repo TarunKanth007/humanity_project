@@ -2840,6 +2840,10 @@ strong {
   animation: card-glow-green 3s ease-in-out infinite;
 }
 
+.card-glow-green {
+  animation: card-glow-green 3s ease-in-out infinite;
+}
+
 .card-glow-profile {
   animation: card-glow-pink 3s ease-in-out infinite;
 }
