@@ -1457,7 +1457,7 @@ const PatientDashboard = ({ user, logout }) => {
                     {overviewData.top_researchers.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.top_researchers.map((expert) => (
-                          <Card key={expert.id} className="item-card">
+                          <Card key={expert.id} className="item-card card-glow-researcher">
                             <CardHeader>
                               <div className="card-header-row">
                                 <CardTitle className="item-title">{expert.name}</CardTitle>
