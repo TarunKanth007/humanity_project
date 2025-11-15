@@ -4553,7 +4553,7 @@ const ResearcherDashboard = ({ user, logout }) => {
               ) : collaborations.length > 0 ? (
                 <div className="items-grid">
                   {collaborations.map((collab) => (
-                    <Card key={collab.id} className="item-card" style={{cursor: 'pointer'}}>
+                    <Card key={collab.id} className="item-card card-glow-researcher" style={{cursor: 'pointer'}}>
                       <CardHeader onClick={() => handleOpenCollabChat(collab)}>
                         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
                           <img 
