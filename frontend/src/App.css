@@ -2856,13 +2856,19 @@ strong {
 
 /* Tablet - 768px to 1024px */
 @media (max-width: 1024px) {
+  .dashboard-tabs {
+    margin-left: -24px;
+    margin-right: -24px;
+    width: calc(100% + 48px);
+  }
+
   .dashboard-tabs [role="tablist"] {
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding: 8px 16px 12px 0;
+    padding: 8px 24px 12px 24px;
     margin: 0;
     scroll-behavior: smooth;
   }
