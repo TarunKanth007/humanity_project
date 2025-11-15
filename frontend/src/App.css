@@ -3307,19 +3307,21 @@ select:focus {
   }
 
   .dashboard-tabs [role="tablist"]::-webkit-scrollbar {
-    display: none;
+    height: 6px;
   }
 
-  /* Show scroll indicator */
-  .dashboard-tabs [role="tablist"]::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 40px;
-    background: linear-gradient(to left, white, transparent);
-    pointer-events: none;
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-thumb {
+    background: rgba(63, 81, 181, 0.4);
+    border-radius: 3px;
+  }
+
+  .dashboard-tabs [role="tablist"]::-webkit-scrollbar-thumb:hover {
+    background: rgba(63, 81, 181, 0.6);
   }
 }
 
