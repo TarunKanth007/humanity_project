@@ -1755,7 +1755,7 @@ async def researcher_search(
             continue
         
         # Name matching
-        name = researcher_user.get("name", "").lower()
+        name = (researcher_user.get("name") or "").lower()
         if query_lower in name:
             match_score += 40
             match_reasons.append(f"Name matches '{query}'")
