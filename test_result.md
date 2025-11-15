@@ -335,20 +335,66 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Location Services for Clinical Trials and Experts"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to verify that search results and For You pages show clinical trials and experts closest to the patient's location first before showing other options. This requires location-based sorting algorithm."
+
+  - task: "Favorites Summary Feature"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "USER REQUEST: Under the 'Favourites' section, add an option that summarizes the experts, publications, and clinical trials with checkboxes so the patient can choose which ones. They can then take this summary to their doctor to discuss."
+
+  - task: "Researcher Collaboration Requests and Messaging"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "USER REQUEST: Researchers should be able to connect and message other researchers. Chat function should only be available after collaboration request is accepted. Need backend endpoints for sending/accepting collaboration requests and chat functionality."
+
+  - task: "Forum Patient Posting and Disease Tagging"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "USER REQUEST: Patients should be able to add posts to a specific disease category in forums so researchers can quickly see what questions are in their field to answer. Need disease tagging system for forum posts."
+
+  - task: "Specific Search Keyword Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "USER REQUEST: Test specific search queries from Testing Document. Examples: 'glioblastoma + immunotherapy' for researcher should return research-focused results, 'glioblastoma diet' for patient should return patient-focused results. Need to verify search algorithm differentiates between patient and researcher query intent."
+
 agent_communication:
   - agent: "main"
-    message: "🚨 CRITICAL AUTHENTICATION BUG FIXED + UI/UX IMPROVEMENTS COMPLETE. 1) AUTHENTICATION FIX: Discovered duplicate user accounts in database causing login cross-contamination (user logging in with email A seeing data from email B). Fixed by: cleaning database (kept oldest account per email), creating unique index on email field, clearing all sessions, enhancing /auth/session endpoint with consistent sorting and duplicate detection. All users must log in again. 2) UI CONSISTENCY: Verified 'View Details' buttons exist on ALL clinical trial cards (6 locations). 3) STYLED PUBLICATION BUTTONS: Converted all 11 plain-text 'View Publication' links to gradient-styled buttons matching app theme. 4) VERIFIED: Both Patient and Researcher overview endpoints fetch from external APIs (ClinicalTrials.gov, PubMed) if database is empty, ensuring 'For You' pages are never empty. Ready for user testing."
-  - agent: "main"
-    message: "Implemented THREE MAJOR FEATURES for Patient Dashboard checklist: 1) SEARCH FUNCTIONALITY - Backend POST /api/search endpoint with intelligent matching algorithm calculating 0-100% match scores based on query matching, patient conditions vs researcher specialties/trial disease areas, ratings. Frontend search bar with dedicated results tab showing categorized results with match percentages and reasons. 2) OVERVIEW/FOR YOU TAB - Backend GET /api/patient/overview endpoint returning personalized top researchers (by rating), featured trials (by relevance/recruiting status), latest publications. Frontend 'For You' tab as default landing showing all three sections. 3) ENHANCED RESEARCHER PROFILES - Backend GET /api/researcher/{id}/details endpoint returning complete portfolio (trials created, publications authored, reviews). Frontend enhanced dialog showing all details in organized sections with tabs. All features ready for backend testing."
-  - agent: "testing"
-    message: "✅ BACKEND TESTING COMPLETED SUCCESSFULLY: All three Patient Dashboard backend endpoints are fully functional and ready for production. Comprehensive testing performed on: 1) POST /api/search - Intelligent search with match scoring (0-100%) across researchers/trials/publications, proper authentication, error handling, and personalized matching. 2) GET /api/patient/overview - Personalized overview with top 3 researchers (by rating), featured trials (by relevance), latest publications, all based on patient conditions. 3) GET /api/researcher/{id}/details - Complete researcher portfolio including profile, trials created, publications authored, reviews/ratings. All endpoints properly authenticate, handle errors, validate input, and return expected data structures. Total tests: 111 passed, 0 failed. Backend implementation is production-ready."
-  - agent: "testing"
-    message: "✅ FRONTEND CODE VERIFICATION COMPLETED: All three Patient Dashboard frontend features are properly implemented and ready for production. Code analysis confirmed: 1) SEARCH FUNCTIONALITY - Search bar with proper testids, handleSearch function, dynamic Search Results tab, match score badges with gradient styling, 'Why this matches' boxes, researcher profile integration. 2) OVERVIEW/FOR YOU TAB - 'For You' as first tab, loads from /api/patient/overview, three required sections (Top Rated Researchers, Featured Clinical Trials, Latest Research Publications) with proper styling and data display. 3) ENHANCED RESEARCHER PROFILES - viewResearcherDetails function, large scrollable dialog (max-w-4xl), all required sections (Professional Info, Clinical Trials, Publications, Reviews), Request Appointment integration. **AUTHENTICATION LIMITATION**: Cannot perform runtime testing due to Google OAuth requirement - manual authentication needed to verify data loading, user interactions, and visual elements. Code structure and implementation are production-ready."
-  - agent: "main"
-    message: "BUG FIX: User reported missing Heart icons in Favorites tab preventing removal of favorite items. Fixed by adding Heart icon buttons to favorite items in both Patient and Researcher dashboards. Heart icons now appear next to each favorite item's title with filled blue state (#3F51B5), clicking toggles favorite status via addToFavorites() function. Implementation mirrors heart icon behavior in other tabs (Clinical Trials, Experts, Publications). Changes made to /app/frontend/src/App.js at lines ~2168 and ~4038. Frontend testing needed to verify: 1) Heart icons visible in Favorites tab, 2) Clicking heart successfully removes item from favorites, 3) Visual feedback works correctly (filled/unfilled states), 4) No breaking of existing functionality."
-  - agent: "testing"
-    message: "✅ HEART ICONS BUG FIX VERIFIED: Comprehensive testing completed for Favorites tab Heart icons implementation. CODE VERIFICATION PASSED: Heart icon buttons properly implemented in both Patient and Researcher dashboards with correct event handling, styling (blue #3F51B5 fill), and positioning. Implementation follows consistent pattern with other tabs. AUTHENTICATION LIMITATION: Cannot perform runtime testing due to Google OAuth requirement - manual testing with authenticated user needed to verify visual appearance and interactions. The bug fix is correctly implemented and ready for production use."
-  - agent: "testing"
-    message: "🚨 CRITICAL SECURITY VULNERABILITY: Authentication system COMPLETELY BROKEN! Testing revealed that ANY invalid session_id (empty strings, SQL injection, random text) successfully authenticates users and returns valid session cookies. The /auth/session endpoint is ignoring 404/401 errors from Emergent Auth backend and somehow creating valid sessions for user tarunkanthmovva007@gmail.com regardless of input. This is a complete authentication bypass allowing anyone to impersonate any user. URGENT ACTION REQUIRED: Main agent must investigate why HTTPException handling is failing in the /auth/session endpoint. The authentication fix has FAILED and created a worse security vulnerability than the original duplicate user issue."
-  - agent: "testing"
-    message: "✅ CRITICAL AUTHENTICATION SECURITY FIX VERIFIED AND WORKING: The authentication bypass vulnerability has been completely resolved! COMPREHENSIVE SECURITY TESTING COMPLETED: Created specialized auth_security_test.py and ran 58 comprehensive security tests covering all critical attack vectors. RESULTS: 1) Invalid session_ids now properly return 401 Unauthorized (tested 12 variations including empty, null, random strings, special characters), 2) SQL injection attempts in session_ids correctly rejected with 401 (tested 9 different SQL injection payloads), 3) Invalid Bearer tokens properly return 401 (tested 11 different formats), 4) Malformed requests correctly validated with 422 status, 5) Invalid cookies properly rejected with 401, 6) NO session cookies created for invalid requests, 7) Backend logs show proper security warnings. The HTTPError handling fix in /auth/session endpoint is working perfectly - all 404/401 responses from Emergent Auth are now correctly converted to HTTPException 401 errors. Authentication system is now secure and production-ready. Main agent can proceed with other features - authentication security is fully resolved."
+    message: "🚨 COMPREHENSIVE FEATURE VERIFICATION STARTING: User has provided detailed checklist covering Patient, Researcher, and General System features. I'm updating test_result.md with all verification requirements and will systematically test: 1) Patient features: search with matching scores, researcher profiles with publications/trials, For You section, forum posting, navigation, mobile responsiveness, 2) Researcher features: search, profile editing, publications tab, clinical trials, collaboration requests, messaging, For You section, discussions, 3) General System: account distinction, specific keyword searches, location-based sorting, favorites summary, mobile/tablet/desktop support, UI consistency (indigo blue theme), performance (no lag/errors). Will test backend first, then frontend with automated testing agents."
