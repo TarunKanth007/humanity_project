@@ -4943,21 +4943,21 @@ const ResearcherDashboard = ({ user, logout }) => {
                   <div className="items-grid">
                     {browsePublications.map((pub, idx) => (
                       <Card key={pub.pmid || pub.id || `pub_${idx}`} className="item-card card-glow-publication">
-                          <CardHeader>
-                            <div className="card-header-row">
-                              <CardTitle className="item-title">{pub.title}</CardTitle>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => addToFavorites('publication', pub.pmid || pub.id || `pub_${idx}`, pub)}
-                              >
-                                <Heart 
-                                  className="icon-sm" 
-                                  fill={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'none'}
-                                  color={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'currentColor'}
-                                />
-                              </Button>
-                            </div>
+                        <CardHeader>
+                          <div className="card-header-row">
+                            <CardTitle className="item-title">{pub.title}</CardTitle>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => addToFavorites('publication', pub.pmid || pub.id || `pub_${idx}`, { ...pub, id: pub.pmid || pub.id || `pub_${idx}` })}
+                            >
+                              <Heart 
+                                className="icon-sm" 
+                                fill={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'none'}
+                                color={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'currentColor'}
+                              />
+                            </Button>
+                          </div>
                             <CardDescription>
                               {pub.journal} • {pub.year}
                             </CardDescription>
