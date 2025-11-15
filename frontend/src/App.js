@@ -4687,7 +4687,7 @@ const ResearcherDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {myTrials.map((trial) => (
-                    <Card key={trial.id} className="item-card">
+                    <Card key={trial.id} className="item-card card-glow-trial">
                       <CardHeader>
                         <CardTitle className="item-title">{trial.title}</CardTitle>
                         <CardDescription>
