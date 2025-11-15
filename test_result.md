@@ -385,11 +385,14 @@ test_plan:
     file: "/app/backend/server.py, /app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "USER REQUEST: Researchers should be able to connect and message other researchers. Chat function should only be available after collaboration request is accepted. Need backend endpoints for sending/accepting collaboration requests and chat functionality."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ MISSING FEATURE CONFIRMED: Collaboration and messaging endpoints are NOT implemented. Tested endpoints return 404 Not Found: 1) GET /api/collaboration/requests, 2) POST /api/collaboration/requests, 3) POST /api/collaboration/requests/{id}/accept, 4) POST /api/collaboration/requests/{id}/reject, 5) GET /api/messages, 6) POST /api/messages, 7) GET /api/messages/conversations. These features need to be implemented for researcher-to-researcher collaboration and messaging functionality."
 
   - task: "Forum Patient Posting and Disease Tagging"
     implemented: false
