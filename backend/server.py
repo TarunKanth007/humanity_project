@@ -4351,35 +4351,53 @@ async def get_patient_overview(
     
     # Score publications quickly
     scored_pubs = []
-    for pub in publications:
-        score = 50  # Base 50% relevancy
-        reasons = ["Medical research"]
-        
-        # Recent publications get boost
+    for pub in publications[:15]:  # Process max 15 for speed
+        score = 70
         year = pub.get("year", 0)
         if year >= 2024:
-            score += 20
-            reasons = ["Recent publication"]
-        elif year >= 2020:
-            score += 10
+            score = 90
         
-        # Boost if matches patient conditions
+        # Quick relevance check
         pub_title = pub.get("title", "").lower()
-        pub_abstract = pub.get("abstract", "").lower()
-        for condition in patient_conditions:
-            if condition.lower() in pub_title or condition.lower() in pub_abstract:
-                score += 30
-                reasons = [f"Related to: {condition}"]
+        for condition in patient_conditions[:2]:
+            if condition.lower() in pub_title:
+                score = 95
                 break
         
         scored_pubs.append({
             **pub,
-            "relevance_score": min(score, 100),
-            "match_reasons": reasons
+            "relevance_score": score
         })
     
-    scored_pubs.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
-    overview["latest_publications"] = scored_pubs[:3]
+    scored_pubs.sort(key=lambda x: x["relevance_score"], reverse=True)
+    overview["latest_publications"] = scored_pubs[:5]
+    
+    # Get top researchers (from database - fast)
+    experts = await db.health_experts.find(
+        {"is_platform_member": True}, 
+        {"_id": 0}
+    ).limit(10).to_list(10)
+    
+    # Quick rating calculation
+    for expert in experts[:5]:  # Only process top 5
+        if expert.get("user_id"):
+            reviews = await db.reviews.find(
+                {"researcher_id": expert["user_id"]},
+                {"_id": 0, "rating": 1}
+            ).limit(20).to_list(20)
+            
+            if reviews:
+                expert["average_rating"] = round(sum(r["rating"] for r in reviews) / len(reviews), 1)
+                expert["total_reviews"] = len(reviews)
+    
+    overview["top_researchers"] = [e for e in experts if e.get("average_rating", 0) > 0][:3]
+    
+    # Cache the result
+    overview_cache[cache_key] = overview
+    overview_cache_time[cache_key] = time.time()
+    
+    total_time = time.time() - start_time
+    logging.info(f"Patient overview generated in {total_time:.2f}s")
     
     return overview
 
