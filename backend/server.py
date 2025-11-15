@@ -4480,20 +4480,6 @@ async def get_researcher_details(
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    # SECURITY: Validate researcher_user_id to prevent path traversal
-    if not researcher_user_id or not researcher_user_id.strip():
-        raise HTTPException(status_code=400, detail="Invalid researcher ID: empty")
-    
-    # Check for path traversal attempts and invalid characters
-    invalid_chars = ['/', '\\', '..', '<', '>', '|', ':', '*', '?', '"', '\x00']
-    if any(char in researcher_user_id for char in invalid_chars):
-        logging.warning(f"SECURITY: Path traversal attempt detected in researcher ID: {researcher_user_id}")
-        raise HTTPException(status_code=400, detail="Invalid researcher ID format")
-    
-    # Additional length validation
-    if len(researcher_user_id) > 255:
-        raise HTTPException(status_code=400, detail="Invalid researcher ID: too long")
-    
     # Get researcher profile
     researcher = await db.researcher_profiles.find_one({"user_id": researcher_user_id}, {"_id": 0})
     if not researcher:
