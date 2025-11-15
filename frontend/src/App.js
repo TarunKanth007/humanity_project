@@ -2105,7 +2105,7 @@ const PatientDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {experts.map((expert) => (
-                    <Card key={expert.id} className="item-card">
+                    <Card key={expert.id} className="item-card card-glow-researcher">
                       <CardHeader>
                         <div className="card-header-row">
                           <CardTitle className="item-title">{expert.name}</CardTitle>
