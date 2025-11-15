@@ -4976,8 +4976,8 @@ const ResearcherDashboard = ({ user, logout }) => {
                             )}
                             <p className="item-description">
                             {truncateToWords(pub.summary || pub.abstract, 35)}
-                          </p>
-                          {pub.url && (
+                            </p>
+                            {pub.url && (
                             <a 
                               href={pub.url} 
                               target="_blank" 
