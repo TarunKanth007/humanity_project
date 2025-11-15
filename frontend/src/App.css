@@ -2857,9 +2857,9 @@ strong {
 /* Tablet - 768px to 1024px */
 @media (max-width: 1024px) {
   .dashboard-tabs {
-    margin-left: -24px;
-    margin-right: -24px;
-    width: calc(100% + 48px);
+    margin-left: -24px !important;
+    margin-right: -24px !important;
+    width: calc(100% + 48px) !important;
   }
 
   .dashboard-tabs [role="tablist"] {
