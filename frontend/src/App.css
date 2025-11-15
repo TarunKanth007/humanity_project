@@ -3012,8 +3012,8 @@ strong {
 
   .dashboard-tabs [role="tablist"] {
     gap: 6px;
-    padding: 8px 12px 12px 12px;
-    margin: 0;
+    padding: 8px 12px 12px 12px !important;
+    margin: 0 !important;
   }
 
   .dashboard-tabs [role="tab"] {
