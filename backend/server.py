@@ -1884,14 +1884,13 @@ async def get_researcher_overview(
     authorization: Optional[str] = Header(None)
 ):
     """
-    Get personalized overview for researcher:
-    - Top researchers in their field (by collaboration potential)
-    - Featured trials relevant to their expertise
-    - Latest publications in their research areas
+    Get personalized overview for researcher - OPTIMIZED under 3 seconds
     """
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    start_time = time.time()
     
     # Get researcher profile
     researcher_profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
@@ -1899,11 +1898,19 @@ async def get_researcher_overview(
     specialties = researcher_profile.get("specialties", []) if researcher_profile else []
     interests = researcher_profile.get("research_interests", []) if researcher_profile else []
     
-    # Use default medical topics if no specialties/interests
+    # Use defaults (reduced to 2 for speed)
     if not specialties:
-        specialties = ["oncology", "cardiology", "neurology"]
+        specialties = ["oncology", "cardiology"]
     if not interests:
-        interests = ["clinical trials", "medical research", "patient care"]
+        interests = ["clinical trials"]
+    
+    # Check cache
+    cache_key = f"researcher_overview_{','.join(specialties[:2])}"
+    if cache_key in overview_cache:
+        cache_age = time.time() - overview_cache_time.get(cache_key, 0)
+        if cache_age < OVERVIEW_CACHE_TTL:
+            logging.info(f"Returning cached researcher overview (age: {cache_age:.1f}s)")
+            return overview_cache[cache_key]
     
     # Get top researchers in the same field
     all_researchers = await db.researcher_profiles.find({}, {"_id": 0}).to_list(1000)
