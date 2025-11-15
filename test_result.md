@@ -367,11 +367,14 @@ test_plan:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Need to verify that search results and For You pages show clinical trials and experts closest to the patient's location first before showing other options. This requires location-based sorting algorithm."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ CANNOT TEST LOCATION SERVICES: Testing blocked by OAuth authentication barrier. ENDPOINT ANALYSIS: GET /api/search?location=true returns 405 Method Not Allowed, suggesting location-based search may not be properly implemented as GET endpoint. All search endpoints (POST /api/search, POST /api/researcher/search) require authentication (401 status). RECOMMENDATION: 1) Fix OAuth configuration to enable dashboard testing, 2) Verify location-based sorting algorithm in search results, 3) Test that clinical trials and experts show closest locations first."
 
   - task: "Favorites Summary Feature"
     implemented: true
