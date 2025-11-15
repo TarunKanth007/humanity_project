@@ -3092,7 +3092,8 @@ strong {
 /* Fix for horizontal scrolling on touch devices */
 @media (hover: none) and (pointer: coarse) {
   .dashboard-tabs [role="tablist"] {
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(63, 81, 181, 0.3) transparent;
 
 /* ========================================
    DEPTH SHADOW EFFECTS FOR ALL INPUTS
