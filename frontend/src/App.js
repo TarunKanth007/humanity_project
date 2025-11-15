@@ -4865,9 +4865,22 @@ const ResearcherDashboard = ({ user, logout }) => {
                 <>
                   <div className="items-grid">
                     {browsePublications.map((pub, idx) => (
-                      <Card key={idx} className="item-card card-glow-publication">
+                      <Card key={pub.pmid || idx} className="item-card card-glow-publication">
                         <CardHeader>
-                          <CardTitle className="item-title">{pub.title}</CardTitle>
+                          <div className="card-header-row">
+                            <CardTitle className="item-title">{pub.title}</CardTitle>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => addToFavorites('publication', pub.pmid || `pub_${idx}`, pub)}
+                            >
+                              <Heart 
+                                className="icon-sm" 
+                                fill={favoritedItems[pub.pmid || `pub_${idx}`] ? '#3F51B5' : 'none'}
+                                color={favoritedItems[pub.pmid || `pub_${idx}`] ? '#3F51B5' : 'currentColor'}
+                              />
+                            </Button>
+                          </div>
                           <CardDescription>
                             {pub.journal} • {pub.year}
                           </CardDescription>
