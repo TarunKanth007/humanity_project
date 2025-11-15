@@ -4336,7 +4336,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                       <h4 className="results-category">Publications ({searchResults.publications.length})</h4>
                       <div className="items-grid">
                         {searchResults.publications.map((pub, idx) => (
-                          <Card key={idx} className="item-card">
+                          <Card key={idx} className="item-card card-glow-publication">
                             <CardHeader>
                               <div className="card-header-row">
                                 <CardTitle className="item-title">{pub.title}</CardTitle>
