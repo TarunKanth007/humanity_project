@@ -4765,7 +4765,20 @@ const ResearcherDashboard = ({ user, logout }) => {
                     {browseClinicalTrials.map((trial) => (
                       <Card key={trial.id} className="item-card card-glow-trial">
                         <CardHeader>
-                          <CardTitle className="item-title">{trial.title}</CardTitle>
+                          <div className="card-header-row">
+                            <CardTitle className="item-title">{trial.title}</CardTitle>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => addToFavorites('trial', trial.id, trial)}
+                            >
+                              <Heart 
+                                className="icon-sm" 
+                                fill={favoritedItems[trial.id] ? '#3F51B5' : 'none'}
+                                color={favoritedItems[trial.id] ? '#3F51B5' : 'currentColor'}
+                              />
+                            </Button>
+                          </div>
                           <CardDescription>
                             <Badge variant="outline">{trial.phase}</Badge>
                             <Badge className="ml-2">{trial.status}</Badge>
