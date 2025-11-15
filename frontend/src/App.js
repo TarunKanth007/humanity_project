@@ -3576,6 +3576,68 @@ const ResearcherDashboard = ({ user, logout }) => {
     }
   };
 
+
+  const checkFavoriteStatus = async (itemType, itemId) => {
+    try {
+      const res = await api.get(`/favorites/check/${itemType}/${itemId}`);
+      return res.data.is_favorited;
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+      return false;
+    }
+  };
+
+  const loadFavoriteStatuses = async (items, itemType) => {
+    // Load favorite statuses in parallel for speed
+    const statusPromises = items.map(item => 
+      checkFavoriteStatus(itemType, item.id || item.pmid)
+        .then(isFavorited => ({ id: item.id || item.pmid, isFavorited }))
+        .catch(() => ({ id: item.id || item.pmid, isFavorited: false }))
+    );
+    
+    const statusResults = await Promise.all(statusPromises);
+    
+    const statuses = {};
+    statusResults.forEach(({ id, isFavorited }) => {
+      statuses[id] = isFavorited;
+    });
+    
+    setFavoritedItems(prev => ({ ...prev, ...statuses }));
+  };
+
+  const addToFavorites = async (itemType, itemId, itemData = null) => {
+    try {
+      // Check if already favorited
+      const checkRes = await api.get(`/favorites/check/${itemType}/${itemId}`);
+      
+      if (checkRes.data.is_favorited) {
+        // Remove from favorites
+        await api.delete(`/favorites/${checkRes.data.favorite_id}`);
+        toast.success('Removed from favorites');
+        // Update state immediately for visual feedback
+        setFavoritedItems(prev => ({ ...prev, [itemId]: false }));
+        // Reload data to update UI
+        if (activeTab === 'favorites') {
+          loadData();
+        }
+      } else {
+        // Add to favorites with item data for API-fetched items
+        await api.post('/favorites', { 
+          item_type: itemType, 
+          item_id: itemId,
+          item_data: itemData  // Include full item for API-fetched content
+        });
+        toast.success('Added to favorites');
+        // Update state immediately for visual feedback
+        setFavoritedItems(prev => ({ ...prev, [itemId]: true }));
+      }
+    } catch (error) {
+      console.error('Favorite toggle error:', error);
+      toast.error('Failed to update favorites');
+    }
+  };
+
+
   const handleSaveProfile = async () => {
     try {
       await api.put('/researcher/profile', editedProfile);
