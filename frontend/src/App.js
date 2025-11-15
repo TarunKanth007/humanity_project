@@ -4210,7 +4210,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                       <h4 className="results-category">Researchers ({searchResults.researchers.length})</h4>
                       <div className="items-grid">
                         {searchResults.researchers.map((researcher) => (
-                          <Card key={researcher.id} className="item-card">
+                          <Card key={researcher.id} className="item-card card-glow-researcher">
                             <CardHeader>
                               <div className="card-header-row">
                                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1 }}>
