@@ -2409,12 +2409,23 @@ async def create_forum_post(
     post_dict['created_at'] = post_dict['created_at'].isoformat()
     await db.forum_posts.insert_one(post_dict)
     
+    # Invalidate forum posts cache for this forum
+    cache_key = post_data.forum_id
+    if cache_key in forum_posts_cache:
+        del forum_posts_cache[cache_key]
+        del forum_posts_cache_time[cache_key]
+    
     # Update forum post count
     if not post_data.parent_id:
         await db.forums.update_one(
             {"id": post_data.forum_id},
             {"$inc": {"post_count": 1}}
         )
+        
+        # Also invalidate forums list cache
+        global forums_cache, forums_cache_time
+        forums_cache = None
+        forums_cache_time = 0
     
     return {"status": "success", "post": post.model_dump()}
 
