@@ -1500,7 +1500,7 @@ const PatientDashboard = ({ user, logout }) => {
                     {overviewData.featured_trials.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.featured_trials.map((trial) => (
-                          <Card key={trial.id} className="item-card">
+                          <Card key={trial.id} className="item-card card-glow-trial">
                             <CardHeader>
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '12px' }}>
                                 <div style={{ flex: 1 }}>
@@ -4025,7 +4025,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                     {overviewData.featured_trials?.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.featured_trials.map((trial) => (
-                          <Card key={trial.id} className="item-card">
+                          <Card key={trial.id} className="item-card card-glow-trial">
                             <CardHeader>
                               <div className="card-header-row">
                                 <div style={{ flex: 1 }}>
