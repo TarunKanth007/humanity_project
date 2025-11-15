@@ -4952,7 +4952,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                           <CardHeader>
                             <div className="card-header-row">
                               <CardTitle className="item-title">{pub.title}</CardTitle>
-                            <Button
+                              <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => addToFavorites('publication', pubId, pubWithId)}
