@@ -2217,6 +2217,12 @@ strong {
     padding: 20px 16px;
   }
 
+  .dashboard-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
   .dashboard-content {
     padding: 20px 16px;
     border-radius: 12px;
