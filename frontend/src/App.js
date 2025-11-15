@@ -4633,12 +4633,26 @@ const ResearcherDashboard = ({ user, logout }) => {
                   {collaborations.map((collab) => (
                     <Card key={collab.id} className="item-card card-glow-researcher" style={{cursor: 'pointer'}}>
                       <CardHeader onClick={() => handleOpenCollabChat(collab)}>
-                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                          <img 
-                            src={collab.partner?.picture || '/default-avatar.png'} 
-                            alt={collab.partner?.name} 
-                            style={{width: '48px', height: '48px', borderRadius: '50%'}}
-                          />
+                        <div className="collab-header">
+                          {collab.partner?.picture ? (
+                            <img 
+                              src={collab.partner.picture} 
+                              alt={collab.partner?.name} 
+                              className="collab-avatar"
+                            />
+                          ) : (
+                            <div className="collab-avatar" style={{
+                              background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontSize: '20px',
+                              fontWeight: '600'
+                            }}>
+                              {collab.partner?.name?.charAt(0).toUpperCase() || '?'}
+                            </div>
+                          )}
                           <div>
                             <CardTitle className="item-title">{collab.partner?.name}</CardTitle>
                             <CardDescription>{collab.partner?.sector}</CardDescription>
