@@ -4950,12 +4950,12 @@ const ResearcherDashboard = ({ user, logout }) => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => addToFavorites('publication', pubId, pubWithId)}
+                                onClick={() => addToFavorites('publication', pub.pmid || pub.id || `pub_${idx}`, pub)}
                               >
                                 <Heart 
                                   className="icon-sm" 
-                                  fill={favoritedItems[pubId] ? '#3F51B5' : 'none'}
-                                  color={favoritedItems[pubId] ? '#3F51B5' : 'currentColor'}
+                                  fill={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'none'}
+                                  color={favoritedItems[pub.pmid || pub.id || `pub_${idx}`] ? '#3F51B5' : 'currentColor'}
                                 />
                               </Button>
                             </div>
