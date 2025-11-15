@@ -289,6 +289,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ BACKEND ISSUE DISCOVERED: Forums endpoint requires authentication (401 status) when it should be publicly accessible for forum listing. This breaks the forum filtering functionality as researchers cannot access the forums list to filter by their field. Backend GET /api/forums endpoint should allow public access for reading forums, but currently returns 401 Unauthorized. This prevents both patient posting and researcher filtering features from working properly."
+      - working: false
+        agent: "testing"
+        comment: "❌ CONFIRMED FORUM ACCESS ISSUE: GET /api/forums returns 401 Unauthorized, blocking forum functionality. ADDITIONAL TESTING BLOCKED: Cannot verify forum filtering implementation due to OAuth authentication barrier preventing dashboard access. DOUBLE ISSUE: 1) Forums endpoint incorrectly requires authentication for reading, 2) OAuth redirect_uri_mismatch prevents any dashboard testing. Both issues must be resolved to test forum filtering by researcher field."
 
   
   - task: "Favorites Tab Heart Icons"
