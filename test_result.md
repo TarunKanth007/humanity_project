@@ -426,6 +426,9 @@ test_plan:
       - working: false
         agent: "testing"
         comment: "❌ BLOCKED BY BACKEND ISSUE: Forum patient posting cannot be tested because GET /api/forums endpoint requires authentication (401 status) when it should be publicly accessible. This prevents patients from viewing available forums to post in. Additionally, forum creation also requires authentication (401 status), which is correct. The forums list should be publicly readable but posting should require authentication. Current implementation blocks both reading and writing, preventing forum functionality."
+      - working: false
+        agent: "testing"
+        comment: "❌ FORUM FUNCTIONALITY COMPLETELY BLOCKED: Double barrier preventing testing: 1) GET /api/forums requires authentication (should be public for reading), 2) OAuth redirect_uri_mismatch prevents dashboard access. MISSING FEATURES: Cannot verify disease tagging system, patient posting functionality, or forum categorization. CRITICAL: Forums are core feature but completely inaccessible for testing. Need both OAuth fix and forums endpoint access policy correction."
 
   - task: "Specific Search Keyword Testing"
     implemented: true
