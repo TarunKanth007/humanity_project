@@ -7,15 +7,25 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 import requests
 import logging
+import os
 from typing import Optional, Dict, Any
 
-# Google OAuth Configuration
-GOOGLE_CLIENT_ID = "1016763672270-u7h1js8el33mujs82n3ma5aaf9nurkvh.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+# Google OAuth Configuration - Read from environment variables
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 
 logger = logging.getLogger(__name__)
+
+# Validate that required credentials are set
+if not GOOGLE_CLIENT_ID:
+    logger.error("GOOGLE_CLIENT_ID environment variable is not set!")
+    raise ValueError("GOOGLE_CLIENT_ID must be set in environment variables")
+
+if not GOOGLE_CLIENT_SECRET:
+    logger.error("GOOGLE_CLIENT_SECRET environment variable is not set!")
+    raise ValueError("GOOGLE_CLIENT_SECRET must be set in environment variables")
 
 
 def get_google_oauth_url(redirect_uri: str, state: str = None) -> str:
