@@ -2387,9 +2387,10 @@ const PatientDashboard = ({ user, logout }) => {
                               Join this group to ask questions and share your experiences with images
                             </p>
                           )}
-                          </CardContent>
-                        </Card>
-                    ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>
