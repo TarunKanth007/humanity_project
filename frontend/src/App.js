@@ -4963,10 +4963,10 @@ const ResearcherDashboard = ({ user, logout }) => {
                                 color={favoritedItems[pubId] ? '#3F51B5' : 'currentColor'}
                               />
                             </Button>
-                          </div>
-                          <CardDescription>
-                            {pub.journal} • {pub.year}
-                          </CardDescription>
+                            </div>
+                            <CardDescription>
+                              {pub.journal} • {pub.year}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                           {pub.authors && pub.authors.length > 0 && (
