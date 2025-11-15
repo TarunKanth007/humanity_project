@@ -2166,7 +2166,7 @@ const PatientDashboard = ({ user, logout }) => {
               ) : (
                 <div className="items-grid">
                   {publications.map((pub) => (
-                    <Card key={pub.id} className="item-card">
+                    <Card key={pub.id} className="item-card card-glow-publication">
                       <CardHeader>
                         <div className="card-header-row">
                           <CardTitle className="item-title">{pub.title}</CardTitle>
