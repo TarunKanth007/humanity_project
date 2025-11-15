@@ -1545,22 +1545,24 @@ async def get_researcher_profile(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get researcher profile"""
-    logging.info(f"PROFILE: /researcher/profile called - Token: {session_token[:20] if session_token else 'NONE'}...")
-    
+    """Get researcher profile - OPTIMIZED with caching"""
     user = await get_current_user(session_token, authorization)
     if not user:
-        logging.warning(f"PROFILE: No user found - returning 401")
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    logging.info(f"PROFILE: User authenticated - Email: {user.email}, ID: {user.id}")
+    # Check cache
+    cache_key = f"researcher_profile_{user.id}"
+    if cache_key in profile_cache:
+        cache_age = time.time() - profile_cache_time.get(cache_key, 0)
+        if cache_age < PROFILE_CACHE_TTL:
+            return profile_cache[cache_key]
     
     profile = await db.researcher_profiles.find_one({"user_id": user.id}, {"_id": 0})
-    if not profile:
-        logging.warning(f"PROFILE: No researcher profile found for user {user.email}")
-        return None
     
-    logging.info(f"PROFILE: Returning profile - Name: {profile.get('name')}, Specialties: {profile.get('specialties', [])}")
+    # Cache result (even if None)
+    profile_cache[cache_key] = profile
+    profile_cache_time[cache_key] = time.time()
+    
     return profile
 
 @api_router.put("/researcher/profile")
