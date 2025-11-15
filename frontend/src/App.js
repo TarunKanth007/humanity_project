@@ -2297,7 +2297,7 @@ const PatientDashboard = ({ user, logout }) => {
                     const isMember = membership?.is_member;
                     
                     return (
-                      <Card key={forum.id} className="item-card" style={{ cursor: 'pointer' }}>
+                      <Card key={forum.id} className="item-card card-glow-forum" style={{ cursor: 'pointer' }}>
                         <CardHeader onClick={() => setSelectedForum(forum)}>
                           <CardTitle className="item-title">{forum.name}</CardTitle>
                           <CardDescription>{forum.description}</CardDescription>
@@ -5032,7 +5032,7 @@ const ResearcherDashboard = ({ user, logout }) => {
                         const isOwner = forum.created_by === user.id;
                         
                         return (
-                          <Card key={forum.id} className="item-card" style={{ cursor: 'pointer' }}>
+                          <Card key={forum.id} className="item-card card-glow-forum" style={{ cursor: 'pointer' }}>
                             <CardHeader onClick={() => setSelectedForum(forum)}>
                               <CardTitle className="item-title">
                                 {forum.name}
