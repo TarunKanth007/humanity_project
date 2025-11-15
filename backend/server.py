@@ -2011,46 +2011,20 @@ async def get_researcher_overview(
         all_trials = trials_future.result()
         all_publications = pubs_future.result()
     
+    # Quick trial scoring
     scored_trials = []
+    for trial in all_trials[:15]:
+        score = 75
+        disease_areas = [a.lower() for a in trial.get("disease_areas", [])]
+        
+        for specialty in specialties[:2]:
+            if any(specialty.lower() in area for area in disease_areas):
+                score = 95
+                break
+        
+        scored_trials.append({**trial, "relevance_score": score})
     
-    for trial in all_trials:
-        score = 50  # Base relevancy score of 50%
-        reasons = ["General medical trial"]
-        
-        disease_areas = trial.get("disease_areas", [])
-        
-        # Match with specialties - boost score
-        for specialty in specialties:
-            for area in disease_areas:
-                if specialty.lower() in area.lower() or area.lower() in specialty.lower():
-                    score += 30
-                    reasons = [f"Matches specialty: {specialty}"]
-                    break
-        
-        # Match with research interests - boost score
-        for interest in interests:
-            for area in disease_areas:
-                if interest.lower() in area.lower() or area.lower() in interest.lower():
-                    score += 20
-                    if len(reasons) == 1 and reasons[0] == "General medical trial":
-                        reasons = [f"Matches interest: {interest}"]
-                    else:
-                        reasons.append(f"Matches interest: {interest}")
-                    break
-        
-        # Boost recruiting trials
-        if trial.get("status", "").lower() == "recruiting":
-            score += 10
-            if "General medical trial" not in reasons:
-                reasons.append("Currently recruiting")
-        
-        scored_trials.append({
-            **trial,
-            "relevance_score": min(score, 100),  # Cap at 100%
-            "match_reasons": reasons[:2]
-        })
-    
-    featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:3]
+    featured_trials = sorted(scored_trials, key=lambda x: x["relevance_score"], reverse=True)[:5]
     
     # Get latest publications in researcher's areas
     # ALWAYS fetch from PubMed API for fresh, relevant publications
