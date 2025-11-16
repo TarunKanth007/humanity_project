@@ -434,21 +434,26 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 14px 16px;
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .askcura-treatment-option:hover {
   border-color: #3F51B5;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, rgba(63, 81, 181, 0.05), rgba(83, 109, 254, 0.05));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(63, 81, 181, 0.15);
 }
 
 .askcura-treatment-option.selected {
   border-color: #3F51B5;
-  background: linear-gradient(135deg, rgba(63, 81, 181, 0.1), rgba(83, 109, 254, 0.1));
+  background: linear-gradient(135deg, rgba(63, 81, 181, 0.15), rgba(83, 109, 254, 0.15));
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.25);
 }
 
 .askcura-treatment-option input[type="checkbox"] {
