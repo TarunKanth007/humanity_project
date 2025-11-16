@@ -170,10 +170,10 @@ export function AskCuraResearcher() {
   };
 
   const suggestedPrompts = [
-    "breast cancer stage 2",
-    "type 2 diabetes",
-    "glioblastoma",
-    "stage 3 colon cancer"
+    "immunotherapy protocols for melanoma",
+    "clinical trial design for Alzheimer's",
+    "CAR-T cell therapy effectiveness",
+    "latest research on CRISPR gene editing"
   ];
 
   return (
