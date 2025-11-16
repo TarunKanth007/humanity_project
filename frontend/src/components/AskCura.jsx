@@ -84,11 +84,30 @@ const FormattedResponse = ({ content }) => {
           listItems = [];
         }
 
-        // Add section header
+        // Add section header with contextual icons
         const cleanHeader = trimmedLine.replace(/^\d+\.\s*|^\*\*|\*\*$/g, '');
+        let icon = '•';
+        
+        // Add contextual icons based on content
+        if (/efficacy|effectiveness|response|survival/i.test(cleanHeader)) {
+          icon = '✓';
+        } else if (/toxicity|adverse|side effect|risk/i.test(cleanHeader)) {
+          icon = '⚠';
+        } else if (/cost|price|expense/i.test(cleanHeader)) {
+          icon = '💰';
+        } else if (/biomarker|molecular|mechanism|pathway/i.test(cleanHeader)) {
+          icon = '🧬';
+        } else if (/trial|study|protocol/i.test(cleanHeader)) {
+          icon = '📊';
+        } else if (/duration|time|timeline/i.test(cleanHeader)) {
+          icon = '⏱';
+        } else if (/lifestyle|daily|impact/i.test(cleanHeader)) {
+          icon = '🏃';
+        }
+        
         formatted.push(
           <div key={`header-${index}`} className="askcura-section-header">
-            <span className="askcura-header-icon">•</span>
+            <span className="askcura-header-icon">{icon}</span>
             {cleanHeader}
           </div>
         );
