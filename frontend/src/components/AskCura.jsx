@@ -1,6 +1,102 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './AskCura.css';
 
+// Component to format AI responses with better visual presentation
+const FormattedResponse = ({ content }) => {
+  // Parse the content and add formatting
+  const formatContent = (text) => {
+    const lines = text.split('\n');
+    const formatted = [];
+    let currentSection = null;
+    let listItems = [];
+
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      
+      // Skip empty lines
+      if (!trimmedLine) {
+        if (listItems.length > 0) {
+          formatted.push(
+            <ul key={`list-${index}`} className="askcura-list">
+              {listItems.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          );
+          listItems = [];
+        }
+        return;
+      }
+
+      // Detect section headers (numbers followed by period or colon, or all caps)
+      if (
+        /^\d+\.\s/.test(trimmedLine) || 
+        /^[A-Z\s]+:/.test(trimmedLine) ||
+        /^\*\*[^*]+\*\*/.test(trimmedLine)
+      ) {
+        // Flush any pending list items
+        if (listItems.length > 0) {
+          formatted.push(
+            <ul key={`list-${index}`} className="askcura-list">
+              {listItems.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          );
+          listItems = [];
+        }
+
+        // Add section header
+        const cleanHeader = trimmedLine.replace(/^\d+\.\s*|^\*\*|\*\*$/g, '');
+        formatted.push(
+          <div key={`header-${index}`} className="askcura-section-header">
+            <span className="askcura-header-icon">•</span>
+            {cleanHeader}
+          </div>
+        );
+      }
+      // Detect bullet points or list items
+      else if (/^[-•*]\s/.test(trimmedLine) || /^[a-z]\)\s/.test(trimmedLine)) {
+        const cleanItem = trimmedLine.replace(/^[-•*]\s*|^[a-z]\)\s*/, '');
+        listItems.push(cleanItem);
+      }
+      // Regular paragraph
+      else {
+        if (listItems.length > 0) {
+          formatted.push(
+            <ul key={`list-${index}`} className="askcura-list">
+              {listItems.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          );
+          listItems = [];
+        }
+        formatted.push(
+          <p key={`para-${index}`} className="askcura-paragraph">
+            {trimmedLine}
+          </p>
+        );
+      }
+    });
+
+    // Flush any remaining list items
+    if (listItems.length > 0) {
+      formatted.push(
+        <ul key="list-final" className="askcura-list">
+          {listItems.map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    return formatted;
+  };
+
+  return <div className="askcura-formatted-content">{formatContent(content)}</div>;
+};
+
 const AskCura = ({ userRole, backendUrl }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
