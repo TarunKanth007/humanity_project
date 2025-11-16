@@ -323,7 +323,7 @@ export function AskCuraResearcher() {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your condition or question..."
+                placeholder="Ask about research protocols or methodologies..."
                 className="askcura-input"
                 disabled={isLoading}
               />
