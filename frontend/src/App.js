@@ -20,6 +20,7 @@ import { Notifications } from "@/components/Notifications";
 import { ChatRoom } from "@/components/ChatRoom";
 import { ForumDiscussion } from "@/components/ForumDiscussion";
 import { AskCura } from "@/components/AskCura";
+import { AskCuraResearcher } from "@/components/AskCuraResearcher";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
