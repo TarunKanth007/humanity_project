@@ -3320,6 +3320,25 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [reviewForm, setReviewForm] = useState({ rating: 5, text: '' });
   const collabMessagesEndRef = useRef(null);
 
+  // Add animated particles background
+  useEffect(() => {
+    for (let i = 0; i < 50; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = `${Math.random() * window.innerWidth}px`;
+      p.style.top = `${Math.random() * window.innerHeight}px`;
+      p.style.animationDuration = `${5 + Math.random() * 10}s`;
+      p.style.animationDelay = `${Math.random() * 5}s`;
+      document.body.appendChild(p);
+    }
+
+    // Cleanup particles when component unmounts
+    return () => {
+      const particles = document.querySelectorAll('.particle');
+      particles.forEach(p => p.remove());
+    };
+  }, []);
+
   useEffect(() => {
     loadData();
     loadUnreadCount();
