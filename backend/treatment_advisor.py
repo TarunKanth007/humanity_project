@@ -268,7 +268,7 @@ Include medical disclaimer and references (PubMed IDs, trial IDs)."""
         """Fetch relevant clinical trials"""
         try:
             trials_api = ClinicalTrialsAPI()
-            trials = trials_api.search_and_normalize(query=query, max_results=max_results)
+            trials = trials_api.search_and_normalize(condition=query, limit=max_results)
             return trials
         except Exception as e:
             logger.warning(f"Error fetching clinical trials: {e}")
