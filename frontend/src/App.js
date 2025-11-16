@@ -4108,7 +4108,16 @@ const ResearcherDashboard = ({ user, logout }) => {
 
                   {/* Featured Trials */}
                   <div className="overview-section">
-                    <h3 className="section-title">Featured Clinical Trials</h3>
+                    <h2 style={{ 
+                      fontSize: '24px', 
+                      fontWeight: '700', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      display: 'inline-block'
+                    }}>Featured Clinical Trials</h2>
                     {overviewData.featured_trials?.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.featured_trials.map((trial) => (
