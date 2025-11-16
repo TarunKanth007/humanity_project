@@ -5990,6 +5990,9 @@ const ResearcherDashboard = ({ user, logout }) => {
           </Tabs>
         </div>
       </div>
+
+      {/* AskCura AI Protocol Advisor */}
+      <AskCura userRole="researcher" backendUrl={BACKEND_URL} />
     </div>
   );
 };
