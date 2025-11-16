@@ -609,7 +609,7 @@ async def google_callback(
         logging.info(f"AUTH: Google callback received with code")
         
         # Step C: Exchange authorization code for tokens
-        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://health-matchmaker-1.preview.emergentagent.com')
+        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://medmatch-7.emergent.host')
         callback_url = f"{backend_url}/api/auth/google/callback"
         
         tokens = exchange_code_for_tokens(code, callback_url)
