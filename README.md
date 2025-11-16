@@ -184,11 +184,14 @@ DELETE /api/askcura/history                         - Clear history
 
 ### Backend
 - **FastAPI** - Modern Python web framework
-- **Motor** - Async MongoDB driver
-- **Pydantic** - Data validation
+- **Motor** - Async MongoDB driver for async operations
+- **Pydantic** - Data validation and serialization
 - **Python-dotenv** - Environment variable management
-- **Requests** - HTTP library
-- **Emergent Integrations** - LLM integration (OpenAI GPT-4)
+- **Requests** - HTTP library for external API calls
+- **Emergent Integrations** - LLM integration library
+- **OpenAI GPT-4o** - AI-powered features (via Emergent LLM Key)
+- **Biopython** - PubMed API integration
+- **Requests-Cache** - API response caching
 
 ### Database
 - **MongoDB** - NoSQL database for flexible data storage
