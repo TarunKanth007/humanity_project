@@ -2,16 +2,17 @@
 
 <div align="center">
 
-![CuraLink Logo](https://img.shields.io/badge/CuraLink-Healthcare_Research-556B2F?style=for-the-badge)
+![CuraLink Logo](https://img.shields.io/badge/CuraLink-Healthcare_Research-3F51B5?style=for-the-badge)
 
 **Connecting Patients and Researchers to Clinical Trials, Medical Publications, and Health Experts**
 
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991?logo=openai&logoColor=white)](https://openai.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [API Documentation](#api-documentation) • [Deployment](#deployment)
+[Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [API Documentation](#api-documentation) • [AskCura AI](#askcura-ai-treatment-advisor)
 
 </div>
 
