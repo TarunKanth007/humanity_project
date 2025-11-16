@@ -193,8 +193,8 @@ export function AskCuraResearcher() {
           {/* Header */}
           <div className="askcura-header">
             <div>
-              <h3 className="askcura-title">AskCura — Treatment Advisor</h3>
-              <p className="askcura-subtitle">AI-powered treatment explanations. Not medical advice.</p>
+              <h3 className="askcura-title">AskCura — Research Assistant</h3>
+              <p className="askcura-subtitle">AI-powered research insights. For research purposes only.</p>
             </div>
             <button
               className="askcura-close-btn"
