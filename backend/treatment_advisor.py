@@ -170,18 +170,16 @@ Format your response clearly with each treatment as a separate section."""
             return {"error": "This method is only available for researcher advisors"}
         
         protocols_str = ", ".join(protocols)
-        prompt = f"""Provide a comprehensive scientific comparison of these treatment protocols for {condition}:
+        prompt = f"""Compare these treatment protocols for {condition} concisely:
 {protocols_str}
 
-Include for each protocol:
-1. Efficacy Metrics: Hazard ratios, response rates, overall survival, progression-free survival
-2. Toxicity Profile: Grade 3/4 adverse events, treatment discontinuation rates
-3. Biomarker Analysis: Molecular targets, predictive biomarkers, patient selection criteria
-4. Trial Design: Phase, sample size, primary/secondary endpoints
-5. Mechanistic Insights: Mechanism of action, pathway targeting
-6. Key Publications: Reference major trials and recent publications
+For each protocol, provide:
+1. Efficacy: Response rates, survival metrics
+2. Toxicity: Key adverse events
+3. Biomarkers: Molecular targets
+4. Trial Data: Key trials and endpoints
 
-Provide evidence-based, data-driven comparison with specific metrics."""
+Keep response under 500 words. Be specific and evidence-based."""
 
         response = await self.send_message(prompt)
         
