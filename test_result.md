@@ -347,8 +347,6 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "AskCura AI Treatment Advisor - Backend"
-    - "AskCura AI Treatment Advisor - Frontend"
     - "Researcher Search Functionality"
     - "Researcher Overview/For You Tab"
     - "Publications Tab"
