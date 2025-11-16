@@ -66,7 +66,7 @@ const FormattedResponse = ({ content }) => {
           formatted.push(
             <ul key={`list-${index}`} className="askcura-list">
               {listItems.map((item, i) => (
-                <li key={i}>{item}</li>
+                <li key={i}>{highlightKeyTerms(item)}</li>
               ))}
             </ul>
           );
@@ -74,7 +74,7 @@ const FormattedResponse = ({ content }) => {
         }
         formatted.push(
           <p key={`para-${index}`} className="askcura-paragraph">
-            {trimmedLine}
+            {highlightKeyTerms(trimmedLine)}
           </p>
         );
       }
