@@ -46,33 +46,56 @@ CuraLink is a comprehensive healthcare research platform that bridges the gap be
 
 ## ✨ Features
 
+### 🤖 AskCura AI Treatment Advisor (NEW!)
+
+- **Patient Version** - AI-powered treatment advisor with simple, patient-friendly language
+  - Compare treatment options with detailed analysis
+  - Get information about effectiveness, side effects, costs, and lifestyle impact
+  - Interactive chat interface with conversation history
+  - Visual comparison mode with treatment selection
+  
+- **Researcher Version** - Scientific protocol advisor for researchers
+  - Technical protocol comparison with scientific metrics
+  - Efficacy data, toxicity profiles, biomarker analysis
+  - Trial design insights and mechanistic information
+  - Evidence-based recommendations with citations
+
 ### For Patients & Caregivers
 
-- 🔍 **Clinical Trial Discovery** - Search and filter thousands of clinical trials by condition, location, and phase
-- 👨‍⚕️ **Expert Consultation** - Connect with health experts and researchers for one-on-one consultations
-- 📚 **Research Access** - Stay updated with the latest medical publications and research findings
-- 💬 **Q&A Community** - Ask questions and get answers from verified medical researchers
+- 🔍 **Smart Search with Matching** - AI-powered search with match scores and relevance reasons
+- 👨‍⚕️ **Expert Discovery** - Find researchers with publications, trials, and patient reviews
+- 📚 **Personalized "For You" Feed** - Curated recommendations based on your conditions
+- 💬 **Q&A Community** - Ask anonymous questions and get expert answers
 - ⭐ **Reviews & Ratings** - Rate and review healthcare professionals after consultations
 - 📅 **Appointment Management** - Request and manage appointments with researchers
-- 💾 **Favorites** - Save trials, publications, and experts for easy access
+- 💾 **Favorites** - Save and organize trials, publications, and experts
+- 🔔 **Real-time Notifications** - Instant updates on appointments and messages
+- 🎯 **Enhanced Researcher Profiles** - View complete portfolios with trials and publications
 
 ### For Researchers
 
-- 🧪 **Trial Management** - Create, update, and manage clinical trials with AI-powered summaries
-- 🤝 **Collaboration** - Find and connect with other researchers in your field
-- 📊 **Patient Engagement** - Respond to patient questions and manage consultation requests
-- 🎥 **Video Consultations** - Conduct secure one-on-one consultations via integrated Jitsi Meet
-- 💡 **AI Assistance** - Automatic trial and publication summarization using GPT-4
-- 🏆 **Profile Building** - Showcase expertise, publications, and receive patient reviews
+- 🧪 **Trial Management** - Create and manage clinical trials with AI-powered summaries
+- 🤝 **Collaboration Tools** - Connect with researchers, send requests, and collaborate
+- 📊 **Smart Search** - Find researchers, trials, and publications with intelligent matching
+- 📚 **Publications Tab** - Automatic PubMed integration showing your authored publications
+- 💡 **Personalized Overview** - "For You" feed with relevant trials, researchers, and publications
+- 🏆 **Profile Builder** - Showcase specialties, institution, collaboration status
+- 🎨 **Forum Filtering** - Filter discussions by your field of expertise
+- 📝 **Patient Engagement** - Respond to patient questions and manage consultations
+- 💬 **Live Messaging** - Real-time chat with collaboration partners
 
 ### Platform Features
 
-- 🔐 **Secure Authentication** - OAuth-based authentication with Emergent Auth
-- 📱 **Responsive Design** - Fully responsive interface for desktop, tablet, and mobile
-- 🎨 **Modern UI/UX** - Clean, accessible interface with Shadcn UI components
-- 🔔 **Real-time Notifications** - Get instant updates on appointments and messages
-- 💬 **Live Chat** - Real-time messaging with image sharing capabilities
+- 🔐 **Custom Google OAuth** - Secure authentication with session management
+- 📱 **Fully Responsive** - Optimized for desktop, tablet, and mobile devices
+- 🎨 **Modern Indigo Theme** - Beautiful UI with consistent color scheme (#3F51B5, #536DFE)
+- ✨ **Animated Particles Background** - Elegant floating particles on all pages
+- 🔔 **Real-time Updates** - Live notifications and chat messages
+- 💬 **Advanced Chat** - Image sharing, message history, and real-time delivery
 - 🌐 **CORS-Protected APIs** - Secure backend with explicit origin whitelisting
+- 🚀 **High Performance** - Fast API responses (<3s) with caching and optimization
+- 📊 **Activity Tracking** - Comprehensive user activity monitoring
+- 🎯 **Smart Recommendations** - AI-powered content matching and personalization
 
 ---
 
