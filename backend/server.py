@@ -4522,6 +4522,247 @@ async def get_researcher_details(
         "reviews": reviews
     }
 
+# ============ AskCura AI Treatment Advisor ============
+
+from treatment_advisor import AskCuraAdvisor, create_patient_advisor, create_researcher_advisor
+
+# Pydantic models for AskCura
+class ChatMessage(BaseModel):
+    message: str
+    
+class TreatmentComparisonRequest(BaseModel):
+    disease: str
+    treatments: List[str]
+    
+class ProtocolComparisonRequest(BaseModel):
+    condition: str
+    protocols: List[str]
+
+class ConversationMessage(BaseModel):
+    role: str  # 'user' or 'assistant'
+    content: str
+    timestamp: str
+
+# In-memory advisor instances (session-based)
+active_advisors: Dict[str, AskCuraAdvisor] = {}
+
+def get_or_create_advisor(user_id: str, user_role: str, provider: str = "openai") -> AskCuraAdvisor:
+    """Get existing advisor or create new one"""
+    key = f"{user_id}_{user_role}_{provider}"
+    if key not in active_advisors:
+        role = "patient" if user_role == "patient" else "researcher"
+        active_advisors[key] = AskCuraAdvisor(role=role, provider=provider)
+    return active_advisors[key]
+
+@api_router.post("/askcura/patient/chat")
+async def askcura_patient_chat(
+    chat_msg: ChatMessage,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Chat with AskCura Treatment Advisor (Patient version)
+    Uses simple language to explain treatment options
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Create or get patient advisor
+    advisor = get_or_create_advisor(user.id, "patient", provider="openai")
+    
+    # Get AI response
+    response = await advisor.send_message(chat_msg.message)
+    
+    # Store conversation in database
+    conversation = {
+        "user_id": user.id,
+        "role": "patient",
+        "messages": [
+            {
+                "role": "user",
+                "content": chat_msg.message,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "role": "assistant",
+                "content": response,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+        ],
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Update or insert conversation
+    await db.askcura_conversations.update_one(
+        {"user_id": user.id, "role": "patient"},
+        {"$push": {"messages": {"$each": conversation["messages"]}}, "$set": {"updated_at": conversation["updated_at"]}},
+        upsert=True
+    )
+    
+    return {
+        "response": response,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+@api_router.post("/askcura/researcher/chat")
+async def askcura_researcher_chat(
+    chat_msg: ChatMessage,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Chat with AskCura Protocol Advisor (Researcher version)
+    Uses technical language for scientific protocol comparison
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Create or get researcher advisor
+    advisor = get_or_create_advisor(user.id, "researcher", provider="openai")
+    
+    # Get AI response
+    response = await advisor.send_message(chat_msg.message)
+    
+    # Store conversation in database
+    conversation = {
+        "user_id": user.id,
+        "role": "researcher",
+        "messages": [
+            {
+                "role": "user",
+                "content": chat_msg.message,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "role": "assistant",
+                "content": response,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+        ],
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Update or insert conversation
+    await db.askcura_conversations.update_one(
+        {"user_id": user.id, "role": "researcher"},
+        {"$push": {"messages": {"$each": conversation["messages"]}}, "$set": {"updated_at": conversation["updated_at"]}},
+        upsert=True
+    )
+    
+    return {
+        "response": response,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+@api_router.post("/askcura/patient/compare-treatments")
+async def compare_treatments(
+    request: TreatmentComparisonRequest,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Get detailed comparison of treatments for a disease (Patient version)
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Create patient advisor
+    advisor = get_or_create_advisor(user.id, "patient", provider="openai")
+    
+    # Get comparison
+    comparison = await advisor.get_treatment_comparison(request.disease, request.treatments)
+    
+    # Store in database
+    await db.treatment_comparisons.insert_one({
+        "user_id": user.id,
+        "disease": request.disease,
+        "treatments": request.treatments,
+        "comparison": comparison,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return comparison
+
+@api_router.post("/askcura/researcher/compare-protocols")
+async def compare_protocols(
+    request: ProtocolComparisonRequest,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Get detailed protocol comparison with scientific metrics (Researcher version)
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Create researcher advisor
+    advisor = get_or_create_advisor(user.id, "researcher", provider="openai")
+    
+    # Get comparison
+    comparison = await advisor.get_protocol_comparison(request.condition, request.protocols)
+    
+    # Store in database
+    await db.protocol_comparisons.insert_one({
+        "user_id": user.id,
+        "condition": request.condition,
+        "protocols": request.protocols,
+        "comparison": comparison,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return comparison
+
+@api_router.get("/askcura/history")
+async def get_askcura_history(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Get conversation history for current user
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get conversation from database
+    conversation = await db.askcura_conversations.find_one(
+        {"user_id": user.id},
+        {"_id": 0}
+    )
+    
+    if not conversation:
+        return {"messages": []}
+    
+    return {"messages": conversation.get("messages", [])}
+
+@api_router.delete("/askcura/history")
+async def clear_askcura_history(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """
+    Clear conversation history for current user
+    """
+    user = await get_current_user(session_token, authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Delete conversation from database
+    await db.askcura_conversations.delete_many({"user_id": user.id})
+    
+    # Clear active advisor
+    for key in list(active_advisors.keys()):
+        if key.startswith(user.id):
+            del active_advisors[key]
+    
+    return {"message": "History cleared successfully"}
+
+
+
 # Include router
 app.include_router(api_router)
 
