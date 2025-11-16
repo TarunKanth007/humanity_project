@@ -3,6 +3,44 @@ import './AskCura.css';
 
 // Component to format AI responses with better visual presentation
 const FormattedResponse = ({ content }) => {
+  // Highlight important medical/scientific terms
+  const highlightKeyTerms = (text) => {
+    // Key terms to highlight with colors
+    const keyTermPatterns = [
+      { pattern: /\b(effective|effectiveness|efficacy|response rate|survival|remission)\b/gi, className: 'highlight-success' },
+      { pattern: /\b(side effect|adverse|toxicity|risk|complication|contraindication)\b/gi, className: 'highlight-warning' },
+      { pattern: /\b(cost|expensive|affordable|price|insurance)\b/gi, className: 'highlight-info' },
+      { pattern: /\b(protocol|treatment|therapy|medication|drug|procedure)\b/gi, className: 'highlight-primary' }
+    ];
+
+    let parts = [text];
+    
+    keyTermPatterns.forEach(({ pattern, className }) => {
+      const newParts = [];
+      parts.forEach((part) => {
+        if (typeof part === 'string') {
+          const matches = part.split(pattern);
+          matches.forEach((match, i) => {
+            if (i > 0 && i % 2 === 1) {
+              newParts.push(
+                <span key={`${className}-${i}`} className={className}>
+                  {match}
+                </span>
+              );
+            } else {
+              newParts.push(match);
+            }
+          });
+        } else {
+          newParts.push(part);
+        }
+      });
+      parts = newParts;
+    });
+
+    return parts;
+  };
+
   // Parse the content and add formatting
   const formatContent = (text) => {
     const lines = text.split('\n');
