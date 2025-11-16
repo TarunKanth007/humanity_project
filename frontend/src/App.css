@@ -6,6 +6,36 @@
   box-sizing: border-box;
 }
 
+/* Animated Particles Background */
+.particle {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background-color: #f2faf9;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  animation: float linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(20px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 :root {
   /* New Color Scheme */
   --primary-blue: #3F51B5;
