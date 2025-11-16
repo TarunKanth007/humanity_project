@@ -120,10 +120,24 @@ const LandingPage = () => {
     for (let i = 0; i < 50; i++) {
       const p = document.createElement('div');
       p.classList.add('particle');
+      
+      // Random horizontal position across screen width
       p.style.left = `${Math.random() * window.innerWidth}px`;
-      p.style.top = `${Math.random() * window.innerHeight}px`;
-      p.style.animationDuration = `${5 + Math.random() * 10}s`;
-      p.style.animationDelay = `${Math.random() * 5}s`;
+      
+      // Random size between 8px and 16px
+      const size = 8 + Math.random() * 8;
+      p.style.width = `${size}px`;
+      p.style.height = `${size}px`;
+      
+      // Random opacity between 0.3 and 0.8
+      p.style.opacity = `${0.3 + Math.random() * 0.5}`;
+      
+      // Random duration between 8s and 20s (slower particles)
+      p.style.animationDuration = `${8 + Math.random() * 12}s`;
+      
+      // Random delay to stagger particle appearance
+      p.style.animationDelay = `${Math.random() * 8}s`;
+      
       document.body.appendChild(p);
     }
 
