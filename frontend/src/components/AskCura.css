@@ -517,15 +517,21 @@
 }
 
 .askcura-comparison-content {
-  max-height: 400px;
+  max-height: 450px;
   overflow-y: auto;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  border-radius: 12px;
   margin-bottom: 16px;
-  line-height: 1.6;
+  line-height: 1.7;
   font-size: 14px;
   color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.askcura-comparison-content .askcura-section-header {
+  background: linear-gradient(135deg, rgba(63, 81, 181, 0.12), rgba(83, 109, 254, 0.12));
+  border-left: 4px solid #536DFE;
 }
 
 .askcura-comparison-content::-webkit-scrollbar {
