@@ -6097,7 +6097,7 @@ function App() {
           )}
         </AuthContext>
         </AnimatedRouteWrapper>
-        <AskCura />
+        {user && user.role === 'patient' && <AskCura />}
       </BrowserRouter>
     </div>
   );
