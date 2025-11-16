@@ -6096,8 +6096,6 @@ function App() {
           )}
         </AuthContext>
         </AnimatedRouteWrapper>
-        {user && user.role === 'patient' && <AskCura />}
-        {user && user.role === 'researcher' && <AskCuraResearcher />}
       </BrowserRouter>
     </div>
   );
