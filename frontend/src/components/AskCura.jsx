@@ -227,31 +227,39 @@ export function AskCura() {
 
                 {message.type === 'treatments' && (
                   <div className="askcura-treatments">
-                    {message.treatments.map((treatment, idx) => (
-                      <div key={idx} className="askcura-treatment-card">
-                        <label className="askcura-treatment-label">
-                          <input
-                            type="checkbox"
-                            checked={selectedTreatments.includes(treatment.name || treatment.raw_response)}
-                            onChange={() => handleTreatmentSelection(treatment.name || treatment.raw_response)}
-                          />
-                          <div className="askcura-treatment-info">
-                            <h4>{treatment.name || `Treatment ${idx + 1}`}</h4>
-                            {treatment.description && <p>{treatment.description}</p>}
-                            {treatment.timeline && (
-                              <span className="askcura-treatment-badge">
-                                Timeline: {treatment.timeline}
-                              </span>
-                            )}
-                            {treatment.side_effects && (
-                              <span className="askcura-treatment-badge">
-                                Side effects: {treatment.side_effects}
-                              </span>
-                            )}
-                          </div>
-                        </label>
-                      </div>
-                    ))}
+                    {message.treatments.map((treatment, idx) => {
+                      const treatmentId = `treatment-${idx}-${treatment.name || treatment.raw_response}`;
+                      const treatmentName = treatment.name || `Treatment ${idx + 1}`;
+                      
+                      return (
+                        <div key={treatmentId} className="askcura-treatment-card">
+                          <label className="askcura-treatment-label">
+                            <input
+                              type="checkbox"
+                              checked={selectedTreatments.includes(treatmentName)}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleTreatmentSelection(treatmentName);
+                              }}
+                            />
+                            <div className="askcura-treatment-info">
+                              <h4>{treatmentName}</h4>
+                              {treatment.description && <p>{treatment.description}</p>}
+                              {treatment.timeline && (
+                                <span className="askcura-treatment-badge">
+                                  Timeline: {treatment.timeline}
+                                </span>
+                              )}
+                              {treatment.side_effects && (
+                                <span className="askcura-treatment-badge">
+                                  Side effects: {treatment.side_effects}
+                                </span>
+                              )}
+                            </div>
+                          </label>
+                        </div>
+                      );
+                    })}
                     
                     {selectedTreatments.length >= 2 && (
                       <Button
