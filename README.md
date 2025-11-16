@@ -332,58 +332,273 @@ curalink/
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/session` | Process OAuth session |
-| GET | `/api/auth/me` | Get current user |
-| POST | `/api/auth/logout` | Logout user |
-| POST | `/api/auth/role` | Set user role (patient/researcher) |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/auth/google/login` | Initiate Google OAuth login | No |
+| GET | `/api/auth/google/callback` | Handle OAuth callback | No |
+| GET | `/api/auth/me` | Get current user | Yes |
+| POST | `/api/auth/logout` | Logout user | Yes |
+| POST | `/api/auth/role` | Set user role (patient/researcher) | Yes |
+
+### AskCura AI Endpoints (NEW!)
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/askcura/patient/chat` | Chat with patient advisor | Yes |
+| POST | `/api/askcura/researcher/chat` | Chat with researcher advisor | Yes |
+| POST | `/api/askcura/patient/compare-treatments` | Compare treatments | Yes |
+| POST | `/api/askcura/researcher/compare-protocols` | Compare protocols | Yes |
+| GET | `/api/askcura/history` | Get conversation history | Yes |
+| DELETE | `/api/askcura/history` | Clear conversation history | Yes |
+
+### Search Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/search` | Patient search with matching | Yes |
+| POST | `/api/researcher/search` | Researcher search with matching | Yes |
 
 ### Patient Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/patient/profile` | Create/update patient profile |
-| GET | `/api/patient/clinical-trials` | Search clinical trials |
-| GET | `/api/patient/experts` | Get health experts with ratings |
-| GET | `/api/patient/publications` | Get medical publications |
-| POST | `/api/appointments/request` | Request appointment with expert |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/patient/profile` | Create/update patient profile | Yes |
+| GET | `/api/patient/profile` | Get patient profile | Yes |
+| GET | `/api/patient/overview` | Get personalized "For You" feed | Yes |
+| GET | `/api/patient/clinical-trials` | Search clinical trials | Yes |
+| GET | `/api/patient/experts` | Get health experts with ratings | Yes |
+| GET | `/api/patient/publications` | Get medical publications | Yes |
+| POST | `/api/appointments/request` | Request appointment with expert | Yes |
+| GET | `/api/appointments` | Get user appointments | Yes |
 
 ### Researcher Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/researcher/profile` | Create/update researcher profile |
-| POST | `/api/researcher/trial` | Create clinical trial |
-| GET | `/api/researcher/collaborators` | Find collaborators |
-| GET | `/api/researcher/trials` | Get researcher's trials |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/researcher/profile` | Create/update researcher profile | Yes |
+| PUT | `/api/researcher/profile` | Update researcher profile | Yes |
+| GET | `/api/researcher/profile` | Get researcher profile | Yes |
+| GET | `/api/researcher/overview` | Get personalized "For You" feed | Yes |
+| GET | `/api/researcher/publications` | Get PubMed publications | Yes |
+| POST | `/api/researcher/trial` | Create clinical trial | Yes |
+| GET | `/api/researcher/trials` | Get researcher's trials | Yes |
+| GET | `/api/researcher/collaborators` | Find collaborators | Yes |
+| GET | `/api/researcher/{id}/details` | Get detailed researcher info | Yes |
 
 ### Q&A Community Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/qa/questions` | Create question (patients) |
-| GET | `/api/qa/questions` | Get all questions |
-| GET | `/api/qa/questions/{id}` | Get question with answers |
-| POST | `/api/qa/answers` | Answer question (researchers) |
-| POST | `/api/qa/vote` | Vote on answer (like/dislike) |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/qa/questions` | Create question (patients) | Yes |
+| GET | `/api/qa/questions` | Get all questions | Yes |
+| GET | `/api/qa/questions/{id}` | Get question with answers | Yes |
+| POST | `/api/qa/answers` | Answer question (researchers) | Yes |
+| POST | `/api/qa/vote` | Vote on answer (like/dislike) | Yes |
 
-### Chat & Notifications
+### Forum Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/chat-rooms` | Get user's chat rooms |
-| GET | `/api/chat-rooms/{id}/messages` | Get chat messages |
-| POST | `/api/chat-rooms/{id}/messages` | Send message |
-| POST | `/api/chat-rooms/{id}/close` | Close chat session |
-| GET | `/api/notifications` | Get user notifications |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/forums` | Get all forums | No |
+| POST | `/api/forums` | Create forum | Yes |
+| GET | `/api/forums/{id}` | Get forum details | No |
+| POST | `/api/forums/{id}/join` | Join forum | Yes |
+| POST | `/api/forums/{id}/leave` | Leave forum | Yes |
+| POST | `/api/forums/{id}/posts` | Create forum post | Yes |
+| GET | `/api/forums/{id}/posts` | Get forum posts | No |
 
-### Reviews
+### Chat & Collaboration
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/reviews` | Submit review |
-| GET | `/api/reviews/researcher/{id}` | Get researcher reviews |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/chat-rooms` | Get user's chat rooms | Yes |
+| GET | `/api/chat-rooms/{id}/messages` | Get chat messages | Yes |
+| POST | `/api/chat-rooms/{id}/messages` | Send message | Yes |
+| POST | `/api/chat-rooms/{id}/close` | Close chat session | Yes |
+| POST | `/api/collaborations/request` | Request collaboration | Yes |
+| GET | `/api/collaborations/requests` | Get collaboration requests | Yes |
+| POST | `/api/collaborations/{id}/accept` | Accept request | Yes |
+| POST | `/api/collaborations/{id}/reject` | Reject request | Yes |
+| GET | `/api/collaborations/{id}/messages` | Get collab messages | Yes |
+| POST | `/api/collaborations/{id}/messages` | Send collab message | Yes |
+
+### Notifications & Reviews
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/notifications` | Get user notifications | Yes |
+| GET | `/api/notifications/unread-count` | Get unread count | Yes |
+| PUT | `/api/notifications/{id}/read` | Mark as read | Yes |
+| POST | `/api/reviews` | Submit review | Yes |
+| GET | `/api/reviews/researcher/{id}` | Get researcher reviews | Yes |
+
+### Favorites
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/favorites` | Add to favorites | Yes |
+| GET | `/api/favorites` | Get user favorites | Yes |
+| DELETE | `/api/favorites` | Remove from favorites | Yes |
+
+### Activity & Analytics
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/activity` | Get user activity | Yes |
+| GET | `/api/analytics/stats` | Get platform statistics | No |
+
+---
+
+## 🗄 Database Schema
+
+### Collections
+
+#### users
+```javascript
+{
+  id: UUID,
+  email: String,
+  name: String,
+  roles: [String],  // ["patient", "researcher"]
+  created_at: DateTime
+}
+```
+
+#### patient_profiles
+```javascript
+{
+  user_id: UUID,
+  conditions: [String],
+  location: String,
+  age: Number,
+  medical_history: String
+}
+```
+
+#### researcher_profiles
+```javascript
+{
+  user_id: UUID,
+  name: String,
+  specialty: [String],
+  research_interests: [String],
+  institution: String,
+  bio: String,
+  experience: Number,
+  sector: String,
+  hours_per_week: Number,
+  open_to_collaboration: Boolean
+}
+```
+
+#### clinical_trials
+```javascript
+{
+  id: String (NCT ID),
+  title: String,
+  description: String,
+  phase: String,
+  status: String,
+  location: String,
+  disease_areas: [String],
+  eligibility: String,
+  created_by: UUID,
+  ai_summary: String
+}
+```
+
+#### askcura_conversations (NEW!)
+```javascript
+{
+  user_id: UUID,
+  role: String,  // "patient" or "researcher"
+  messages: [{
+    role: String,  // "user" or "assistant"
+    content: String,
+    timestamp: DateTime
+  }],
+  updated_at: DateTime
+}
+```
+
+#### treatment_comparisons (NEW!)
+```javascript
+{
+  user_id: UUID,
+  disease: String,
+  treatments: [String],
+  comparison: Object,
+  created_at: DateTime
+}
+```
+
+#### protocol_comparisons (NEW!)
+```javascript
+{
+  user_id: UUID,
+  condition: String,
+  protocols: [String],
+  comparison: Object,
+  created_at: DateTime
+}
+```
+
+---
+
+## 🔐 Authentication
+
+### Google OAuth 2.0 Flow
+
+1. **User clicks "Sign In"**
+   - Frontend redirects to `/api/auth/google/login`
+   - Backend generates Google OAuth URL with `prompt=select_account`
+
+2. **User authenticates with Google**
+   - Google redirects to `/api/auth/google/callback`
+   - Backend exchanges code for tokens
+
+3. **Session Creation**
+   - Backend verifies Google token
+   - Creates/updates user in MongoDB
+   - Generates session token
+   - Sets HttpOnly cookie
+
+4. **Session Management**
+   - Session expires after 7 days
+   - Automatic cleanup on logout
+   - Session validation on each API request
+
+### Security Features
+- HttpOnly cookies (prevents XSS)
+- CORS whitelist
+- Session expiration
+- Google OAuth token verification
+- No password storage
+
+---
+
+## 🎨 Visual Design
+
+### Color Theme
+- **Primary**: #3F51B5 (Indigo)
+- **Secondary**: #536DFE (Lighter Indigo)
+- **Background**: Linear gradients with indigo tones
+- **Text**: Dark grays with good contrast
+
+### Animated Particles Background
+- **Landing Page**: 50 particles (opacity 0.3-0.8)
+- **Dashboards**: 20 particles (opacity 0.15-0.35)
+- **QA Community**: 20 particles (opacity 0.15-0.35)
+- **Notifications**: 20 particles (opacity 0.15-0.35)
+- **Animation**: Bottom-to-top float with rotation
+- **Color**: Soft indigo/lavender gradient
+
+### UI Components
+- **Shadcn UI**: High-quality accessible components
+- **Tailwind CSS**: Utility-first styling
+- **Lucide Icons**: Modern icon library
+- **Responsive Grid**: Mobile-first design
+- **Smooth Animations**: CSS transitions and keyframes
 
 ---
 
