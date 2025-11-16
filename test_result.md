@@ -347,6 +347,8 @@ metadata:
 
 test_plan:
   current_focus: 
+    - "AskCura AI Treatment Advisor - Backend"
+    - "AskCura AI Treatment Advisor - Frontend"
     - "Researcher Search Functionality"
     - "Researcher Overview/For You Tab"
     - "Publications Tab"
@@ -358,8 +360,8 @@ test_plan:
     - "Forum Patient Posting and Disease Tagging"
     - "Favorites Summary Feature"
   stuck_tasks: []
-  test_all: true
-  test_priority: "critical_first"
+  test_all: false
+  test_priority: "high_first"
 
   - task: "Location Services for Clinical Trials and Experts"
     implemented: true
