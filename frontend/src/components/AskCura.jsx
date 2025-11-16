@@ -142,7 +142,7 @@ const FormattedResponse = ({ content }) => {
       formatted.push(
         <ul key="list-final" className="askcura-list">
           {listItems.map((item, i) => (
-            <li key={i}>{item}</li>
+            <li key={i}>{highlightKeyTerms(item)}</li>
           ))}
         </ul>
       );
