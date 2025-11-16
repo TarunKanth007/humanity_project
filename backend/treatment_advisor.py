@@ -110,7 +110,14 @@ class AskCuraAdvisor:
             response = await self.chat.send_message(user_message)
             return str(response).strip()
         except Exception as e:
-            return f"I apologize, but I encountered an error: {str(e)}. Please try again."
+            error_msg = str(e)
+            # Provide more helpful error messages
+            if "502" in error_msg or "timeout" in error_msg.lower():
+                return "I apologize, but the AI service is currently experiencing high demand. Please try again in a moment with a shorter query, or try the chat feature instead of comparison mode."
+            elif "rate limit" in error_msg.lower():
+                return "I apologize, but we've reached our rate limit. Please wait a moment and try again."
+            else:
+                return f"I apologize, but I encountered an error: {error_msg}. Please try again with a simpler query."
     
     async def get_treatment_comparison(self, disease: str, treatments: List[str]) -> Dict[str, Any]:
         """
