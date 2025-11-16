@@ -6097,6 +6097,7 @@ function App() {
           )}
         </AuthContext>
         </AnimatedRouteWrapper>
+        <AskCura />
       </BrowserRouter>
     </div>
   );
