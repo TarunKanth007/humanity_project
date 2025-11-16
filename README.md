@@ -99,6 +99,78 @@ CuraLink is a comprehensive healthcare research platform that bridges the gap be
 
 ---
 
+## 🤖 AskCura AI Treatment Advisor
+
+### Overview
+AskCura is an intelligent AI-powered treatment advisor integrated into CuraLink, providing personalized medical information to both patients and researchers.
+
+### Patient Version: Treatment Advisor 💊
+
+**Features:**
+- Simple, easy-to-understand explanations of treatment options
+- Compare multiple treatments side-by-side
+- Get information about:
+  - Effectiveness and success rates
+  - Common side effects and risks
+  - Cost considerations
+  - Lifestyle impact
+  - Treatment duration
+- Conversational chat interface
+- Treatment selection and comparison mode
+- Chat history persistence
+
+**How it Works:**
+1. Click the floating AskCura button in the bottom-right corner
+2. Ask questions about your condition or treatments
+3. Use comparison mode to select and compare multiple treatments
+4. Get AI-generated insights in simple language
+5. Always consult with healthcare providers before making decisions
+
+### Researcher Version: Protocol Advisor 🔬
+
+**Features:**
+- Technical scientific language for protocol analysis
+- Evidence-based comparisons with citations
+- Detailed metrics including:
+  - Efficacy metrics (hazard ratios, response rates, survival data)
+  - Toxicity profiles (Grade 3/4 adverse events)
+  - Biomarker analysis (molecular targets, predictive markers)
+  - Trial design details (phase, endpoints, patient selection)
+  - Mechanistic insights (MOA, pathway analysis)
+  - Key publications and trial references
+- Protocol comparison mode
+- Scientific chat interface
+
+**Technology:**
+- **AI Model**: OpenAI GPT-4o
+- **Response Time**: 5-15 seconds
+- **Conversation Storage**: MongoDB
+- **API Authentication**: Session-based with automatic cleanup
+
+### API Endpoints
+
+```
+POST   /api/askcura/patient/chat                    - Patient chat
+POST   /api/askcura/researcher/chat                 - Researcher chat
+POST   /api/askcura/patient/compare-treatments      - Compare treatments
+POST   /api/askcura/researcher/compare-protocols    - Compare protocols
+GET    /api/askcura/history                         - Get chat history
+DELETE /api/askcura/history                         - Clear history
+```
+
+### Visual Features
+- **Formatted Responses**: Auto-formatted sections with headers
+- **Contextual Icons**: ✓ efficacy, ⚠ side effects, 💰 cost, 🧬 biomarkers, 📊 trials
+- **Color-Coded Terms**: 
+  - 🟢 Green: Effectiveness, efficacy, survival
+  - 🟠 Orange: Side effects, toxicity, risks
+  - 🔵 Blue: Cost, price, insurance
+  - 🟣 Purple: Protocol, treatment, therapy
+- **Smooth Animations**: Slide-up panel, floating button
+- **Responsive Design**: Works on all devices
+
+---
+
 ## 🛠 Tech Stack
 
 ### Frontend
