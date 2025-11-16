@@ -18,7 +18,7 @@ const api = axios.create({
   }
 });
 
-export function AskCura() {
+export function AskCuraResearcher() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
