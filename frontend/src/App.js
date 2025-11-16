@@ -4207,7 +4207,16 @@ const ResearcherDashboard = ({ user, logout }) => {
 
                   {/* Latest Publications */}
                   <div className="overview-section">
-                    <h3 className="section-title">Latest Research Publications</h3>
+                    <h2 style={{ 
+                      fontSize: '24px', 
+                      fontWeight: '700', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      display: 'inline-block'
+                    }}>Latest Research Publications</h2>
                     {overviewData.latest_publications?.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.latest_publications.map((pub, idx) => (
