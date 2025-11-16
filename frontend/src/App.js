@@ -4050,7 +4050,16 @@ const ResearcherDashboard = ({ user, logout }) => {
                 <div className="overview-sections">
                   {/* Top Researchers in Field */}
                   <div className="overview-section">
-                    <h3 className="section-title">Top Researchers in Your Field</h3>
+                    <h2 style={{ 
+                      fontSize: '24px', 
+                      fontWeight: '700', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      display: 'inline-block'
+                    }}>Top Researchers in Your Field</h2>
                     {overviewData.top_researchers?.length > 0 ? (
                       <div className="items-grid">
                         {overviewData.top_researchers.map((researcher) => (
