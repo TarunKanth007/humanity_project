@@ -1528,6 +1528,315 @@ class BackendTester:
                 f"Request failed: {str(e)}"
             )
 
+    def test_askcura_endpoints_comprehensive(self):
+        """Test AskCura AI Treatment Advisor endpoints comprehensively"""
+        print("\n=== AskCura AI Treatment Advisor Tests ===")
+        
+        # Test 1: POST /api/askcura/patient/chat without authentication
+        try:
+            chat_data = {"message": "What are the treatment options for Type 2 Diabetes?"}
+            response = self.session.post(
+                f"{BACKEND_URL}/askcura/patient/chat",
+                json=chat_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "AskCura Patient Chat - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "AskCura Patient Chat - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "AskCura Patient Chat - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 2: POST /api/askcura/researcher/chat without authentication
+        try:
+            chat_data = {"message": "Compare immunotherapy protocols for glioblastoma"}
+            response = self.session.post(
+                f"{BACKEND_URL}/askcura/researcher/chat",
+                json=chat_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "AskCura Researcher Chat - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "AskCura Researcher Chat - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "AskCura Researcher Chat - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 3: POST /api/askcura/patient/compare-treatments without authentication
+        try:
+            compare_data = {
+                "disease": "Type 2 Diabetes",
+                "treatments": ["Metformin", "Insulin", "Diet modification"]
+            }
+            response = self.session.post(
+                f"{BACKEND_URL}/askcura/patient/compare-treatments",
+                json=compare_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "AskCura Patient Compare - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "AskCura Patient Compare - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "AskCura Patient Compare - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 4: POST /api/askcura/researcher/compare-protocols without authentication
+        try:
+            compare_data = {
+                "condition": "Glioblastoma",
+                "protocols": ["Temozolomide + Radiation", "Immunotherapy (PD-1 inhibitors)"]
+            }
+            response = self.session.post(
+                f"{BACKEND_URL}/askcura/researcher/compare-protocols",
+                json=compare_data
+            )
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "AskCura Researcher Compare - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "AskCura Researcher Compare - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "AskCura Researcher Compare - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 5: GET /api/askcura/history without authentication
+        try:
+            response = self.session.get(f"{BACKEND_URL}/askcura/history")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "AskCura History Get - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "AskCura History Get - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "AskCura History Get - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 6: DELETE /api/askcura/history without authentication
+        try:
+            response = self.session.delete(f"{BACKEND_URL}/askcura/history")
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "AskCura History Delete - No Auth",
+                    True,
+                    "Correctly requires authentication",
+                    {"status_code": response.status_code}
+                )
+            else:
+                self.log_result(
+                    "AskCura History Delete - No Auth",
+                    False,
+                    f"Expected 401, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text[:200]}
+                )
+        except Exception as e:
+            self.log_result(
+                "AskCura History Delete - No Auth",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_askcura_endpoints_validation(self):
+        """Test AskCura endpoints with invalid data"""
+        print("\n=== AskCura Validation Tests ===")
+        
+        # Test invalid data for patient chat
+        invalid_chat_data = [
+            ({}, "Empty data"),
+            ({"message": ""}, "Empty message"),
+            ({"message": None}, "Null message"),
+            ({"invalid_field": "test"}, "Wrong field name"),
+            ({"message": "x" * 10000}, "Very long message")
+        ]
+        
+        for invalid_data, description in invalid_chat_data:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/askcura/patient/chat",
+                    json=invalid_data
+                )
+                
+                if response.status_code in [400, 401, 422]:
+                    self.log_result(
+                        f"AskCura Patient Chat Validation - {description}",
+                        True,
+                        f"Correctly rejects invalid data (status: {response.status_code})",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+                else:
+                    self.log_result(
+                        f"AskCura Patient Chat Validation - {description}",
+                        False,
+                        f"Unexpected status code: {response.status_code}",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"AskCura Patient Chat Validation - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test invalid data for treatment comparison
+        invalid_compare_data = [
+            ({}, "Empty data"),
+            ({"disease": "diabetes"}, "Missing treatments"),
+            ({"treatments": ["metformin"]}, "Missing disease"),
+            ({"disease": "", "treatments": ["metformin"]}, "Empty disease"),
+            ({"disease": "diabetes", "treatments": []}, "Empty treatments array"),
+            ({"disease": "diabetes", "treatments": [""]}, "Empty treatment name")
+        ]
+        
+        for invalid_data, description in invalid_compare_data:
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/askcura/patient/compare-treatments",
+                    json=invalid_data
+                )
+                
+                if response.status_code in [400, 401, 422]:
+                    self.log_result(
+                        f"AskCura Compare Validation - {description}",
+                        True,
+                        f"Correctly rejects invalid data (status: {response.status_code})",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+                else:
+                    self.log_result(
+                        f"AskCura Compare Validation - {description}",
+                        False,
+                        f"Unexpected status code: {response.status_code}",
+                        {"status_code": response.status_code, "data": invalid_data}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"AskCura Compare Validation - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+
+    def test_askcura_endpoints_with_invalid_auth(self):
+        """Test AskCura endpoints with invalid authentication tokens"""
+        print("\n=== AskCura Invalid Auth Tests ===")
+        
+        invalid_tokens = [
+            "invalid_token_123",
+            "Bearer invalid_token",
+            "expired_session_token",
+            "malformed_token_with_special_chars!@#",
+            ""
+        ]
+        
+        endpoints_to_test = [
+            ("/askcura/patient/chat", "POST", {"message": "test"}),
+            ("/askcura/researcher/chat", "POST", {"message": "test"}),
+            ("/askcura/patient/compare-treatments", "POST", {"disease": "test", "treatments": ["test"]}),
+            ("/askcura/researcher/compare-protocols", "POST", {"condition": "test", "protocols": ["test"]}),
+            ("/askcura/history", "GET", None),
+            ("/askcura/history", "DELETE", None)
+        ]
+        
+        for token in invalid_tokens:
+            for endpoint, method, data in endpoints_to_test:
+                try:
+                    headers = {"Authorization": f"Bearer {token}"} if token else {}
+                    
+                    if method == "GET":
+                        response = self.session.get(f"{BACKEND_URL}{endpoint}", headers=headers)
+                    elif method == "DELETE":
+                        response = self.session.delete(f"{BACKEND_URL}{endpoint}", headers=headers)
+                    else:  # POST
+                        response = self.session.post(f"{BACKEND_URL}{endpoint}", json=data, headers=headers)
+                    
+                    if response.status_code == 401:
+                        self.log_result(
+                            f"AskCura Invalid Auth - {endpoint} - {token[:20] if token else 'empty'}",
+                            True,
+                            "Correctly rejects invalid token",
+                            {"status_code": response.status_code, "token_preview": token[:20] if token else "empty"}
+                        )
+                    else:
+                        self.log_result(
+                            f"AskCura Invalid Auth - {endpoint} - {token[:20] if token else 'empty'}",
+                            False,
+                            f"Expected 401, got {response.status_code}",
+                            {"status_code": response.status_code, "token_preview": token[:20] if token else "empty"}
+                        )
+                except Exception as e:
+                    self.log_result(
+                        f"AskCura Invalid Auth - {endpoint} - {token[:20] if token else 'empty'}",
+                        False,
+                        f"Request failed: {str(e)}"
+                    )
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("🚀 Starting CuraLink Backend Tests - Forum Favorites Feature Focus")
