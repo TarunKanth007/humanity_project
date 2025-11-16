@@ -4641,7 +4641,7 @@ async def treatment_advisor_compare(
         
         # Save to database
         await db.treatment_comparisons.insert_one({
-            "user_id": user["id"],
+            "user_id": user.get("id"),
             "session_id": request.session_id,
             "disease": request.disease,
             "treatments": request.treatment_names,
