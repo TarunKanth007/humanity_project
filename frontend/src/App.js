@@ -1494,7 +1494,16 @@ const PatientDashboard = ({ user, logout }) => {
 
                   {/* Featured Trials Section */}
                   <div>
-                    <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px', color: 'var(--olive)' }}>
+                    <h2 style={{ 
+                      fontSize: '24px', 
+                      fontWeight: '700', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      display: 'inline-block'
+                    }}>
                       Featured Clinical Trials
                     </h2>
                     {overviewData.featured_trials.length > 0 ? (
