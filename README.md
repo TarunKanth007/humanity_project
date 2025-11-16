@@ -723,12 +723,38 @@ For support, email support@curalink.com or join our Slack channel.
 
 ## 🗺 Roadmap
 
+### Completed ✅
+- [x] Patient and Researcher dashboards
+- [x] Clinical trials integration (ClinicalTrials.gov)
+- [x] PubMed publications integration
+- [x] Google OAuth authentication
+- [x] Real-time chat and notifications
+- [x] Q&A community platform
+- [x] AI-powered search and matching
+- [x] AskCura AI Treatment Advisor
+- [x] Animated particles background
+- [x] Responsive mobile design
+- [x] Reviews and ratings system
+- [x] Collaboration tools for researchers
+- [x] Forum discussions
+- [x] Profile customization
+
+### In Progress 🚧
+- [ ] Video consultations (Jitsi integration)
+- [ ] Advanced analytics dashboard
+- [ ] Email notifications
+- [ ] Export favorites summary (PDF/Print)
+
+### Future Plans 🔮
 - [ ] Mobile app (iOS & Android)
-- [ ] Advanced AI matching for trials
+- [ ] Multi-language support (Spanish, French, Chinese)
 - [ ] Integration with EHR systems
-- [ ] Multi-language support
 - [ ] Blockchain-based medical records
 - [ ] Telemedicine expansion
+- [ ] AI-powered trial matching
+- [ ] Wearable device integration
+- [ ] Insurance integration
+- [ ] Clinical trial enrollment tracking
 
 ---
 
