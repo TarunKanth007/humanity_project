@@ -4567,7 +4567,7 @@ async def treatment_advisor_chat(
         
         # Save chat message to database
         await db.treatment_advisor_chats.insert_one({
-            "user_id": user.get("id"),
+            "user_id": user.id,
             "session_id": request.session_id,
             "message": request.message,
             "response": response,
