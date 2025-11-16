@@ -577,7 +577,7 @@ async def google_login(redirect_to: str = Query(default="/dashboard")):
     Redirects user to Google account selection page
     """
     # Determine callback URL based on environment
-    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://health-matchmaker-1.preview.emergentagent.com')
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://medmatch-7.emergent.host')
     callback_url = f"{backend_url}/api/auth/google/callback"
     
     # Store intended redirect in state (for after auth)
