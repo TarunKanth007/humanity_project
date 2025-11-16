@@ -88,12 +88,12 @@ class AskCuraAdvisor:
         
         # Configure model based on provider
         if provider == "openai":
-            self.chat.with_model("openai", "gpt-5")
+            self.chat.with_model("openai", "gpt-4o")
         elif provider == "gemini":
             self.chat.with_model("gemini", "gemini-2.5-pro")
         else:
-            # Default to OpenAI GPT-5
-            self.chat.with_model("openai", "gpt-5")
+            # Default to OpenAI GPT-4o (more stable than gpt-5)
+            self.chat.with_model("openai", "gpt-4o")
     
     async def send_message(self, message: str) -> str:
         """
