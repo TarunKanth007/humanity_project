@@ -3348,9 +3348,9 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [reviewForm, setReviewForm] = useState({ rating: 5, text: '' });
   const collabMessagesEndRef = useRef(null);
 
-  // Add animated particles background
+  // Add animated particles background (reduced count for dashboard)
   useEffect(() => {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 20; i++) {
       const p = document.createElement('div');
       p.classList.add('particle');
       
