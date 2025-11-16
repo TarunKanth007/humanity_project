@@ -268,20 +268,55 @@ DELETE /api/askcura/history                         - Clear history
 
 ### Frontend (.env)
 ```env
+# Backend API URL
 REACT_APP_BACKEND_URL=http://localhost:8001
+
+# Authentication
 REACT_APP_AUTH_URL=https://auth.emergentagent.com
+
+# Video Conferencing (Jitsi)
 REACT_APP_JITSI_DOMAIN=meet.jit.si
+
+# Development
 WDS_SOCKET_PORT=443
 ```
 
 ### Backend (.env)
 ```env
+# Database
 MONGO_URL=mongodb://localhost:27017
 DB_NAME=curalink_db
-CORS_ORIGINS=http://localhost:3000,https://yourdomain.com
-EMERGENT_LLM_KEY=your_emergent_llm_key
+
+# Authentication
 EMERGENT_AUTH_BACKEND_URL=https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:8001/api/auth/google/callback
+
+# AI Features (AskCura)
+EMERGENT_LLM_KEY=your_emergent_llm_key
+
+# CORS Security
+CORS_ORIGINS=http://localhost:3000,https://yourdomain.com
+
+# Optional: API Rate Limiting
+RATE_LIMIT_REQUESTS=100
+RATE_LIMIT_WINDOW=60
 ```
+
+### Important Notes
+
+⚠️ **Never commit `.env` files to version control**
+
+🔑 **Emergent LLM Key**: Get your key from [Emergent Platform](https://emergentagent.com) - supports OpenAI GPT-4o, Gemini, and Claude models
+
+🔒 **Google OAuth Setup**:
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create OAuth 2.0 credentials
+3. Add authorized redirect URIs
+4. Copy Client ID and Secret to `.env`
 
 ---
 
