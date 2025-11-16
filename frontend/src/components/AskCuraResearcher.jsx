@@ -50,7 +50,7 @@ export function AskCuraResearcher() {
     if (messages.length === 0) {
       setMessages([{
         type: 'bot',
-        content: "Hi! I'm AskCura 🧬\n\nEnter your condition or disease and I'll show the treatment options.\n\n⚠️ Always cross-check with your doctor.",
+        content: "Hi! I'm AskCura Research Assistant 🔬\n\nAsk about treatment protocols, clinical trial designs, or research methodologies for any condition.\n\n⚠️ For research purposes only.",
         timestamp: new Date()
       }]);
     }
