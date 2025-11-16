@@ -290,27 +290,40 @@ EMERGENT_AUTH_BACKEND_URL=https://demobackend.emergentagent.com/auth/v1/env/oaut
 ```
 curalink/
 ├── backend/
-│   ├── server.py              # Main FastAPI application
-│   ├── requirements.txt       # Python dependencies
-│   └── .env                   # Backend environment variables
+│   ├── server.py                    # Main FastAPI application (4500+ lines)
+│   ├── treatment_advisor.py         # AskCura AI module
+│   ├── auth_google.py               # Google OAuth implementation
+│   ├── clinical_trials_api.py       # ClinicalTrials.gov integration
+│   ├── pubmed_api.py                # PubMed API integration
+│   ├── requirements.txt             # Python dependencies
+│   └── .env                         # Backend environment variables
 ├── frontend/
 │   ├── public/
-│   │   └── index.html        # HTML template
+│   │   └── index.html              # HTML template
 │   ├── src/
-│   │   ├── App.js            # Main React component
-│   │   ├── App.css           # Global styles
-│   │   ├── index.js          # React entry point
-│   │   ├── index.css         # Tailwind imports
-│   │   └── components/
-│   │       ├── ui/           # Shadcn UI components
-│   │       ├── QACommunity.js    # Q&A feature
-│   │       ├── Notifications.js  # Notification center
-│   │       └── ChatRoom.js       # Chat functionality
-│   ├── package.json          # Node dependencies
-│   └── .env                  # Frontend environment variables
-├── tests/                    # Test files
-├── scripts/                  # Utility scripts
-└── README.md                 # This file
+│   │   ├── App.js                  # Main React component (6100+ lines)
+│   │   ├── App.css                 # Global styles with animations
+│   │   ├── index.js                # React entry point
+│   │   ├── index.css               # Tailwind imports
+│   │   ├── components/
+│   │   │   ├── ui/                 # Shadcn UI components
+│   │   │   ├── AskCura.jsx         # AI Treatment Advisor UI
+│   │   │   ├── AskCura.css         # AskCura styling
+│   │   │   ├── QACommunity.js      # Q&A feature
+│   │   │   ├── Notifications.js    # Notification center
+│   │   │   ├── ChatRoom.js         # Real-time chat
+│   │   │   └── ForumDiscussion.js  # Forum discussions
+│   │   ├── hooks/
+│   │   │   ├── use-toast.js        # Toast notifications
+│   │   │   └── useScrollAnimation.js # Scroll animations
+│   │   └── lib/
+│   │       └── utils.js            # Utility functions
+│   ├── package.json                # Node dependencies
+│   ├── tailwind.config.js          # Tailwind configuration
+│   └── .env                        # Frontend environment variables
+├── tests/                          # Test files
+├── test_result.md                  # Testing documentation
+└── README.md                       # This file
 ```
 
 ---
