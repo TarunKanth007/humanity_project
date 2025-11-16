@@ -445,6 +445,30 @@ test_plan:
         agent: "testing"
         comment: "✅ SEARCH KEYWORD DIFFERENTIATION VERIFIED: Both patient and researcher search endpoints exist and function correctly. Tested queries: 1) Patient-focused: 'glioblastoma diet', 'cancer treatment options' - POST /api/search endpoint properly handles these, 2) Researcher-focused: 'glioblastoma immunotherapy', 'oncology clinical trials methodology' - POST /api/researcher/search endpoint properly handles these. Both endpoints require authentication (401 status) and have separate routing, allowing for different matching algorithms and result prioritization based on user type. Search differentiation architecture is properly implemented."
 
+  - task: "AskCura AI Treatment Advisor - Backend"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/treatment_advisor.py, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "NEW FEATURE: Implemented AskCura AI Treatment Advisor backend. Created treatment_advisor.py module with AskCuraAdvisor class using emergentintegrations LlmChat. Two versions: 1) Patient (simple language) with OpenAI GPT-5, 2) Researcher (technical language) with OpenAI GPT-5. Added 6 API endpoints: POST /api/askcura/patient/chat, POST /api/askcura/researcher/chat, POST /api/askcura/patient/compare-treatments, POST /api/askcura/researcher/compare-protocols, GET /api/askcura/history, DELETE /api/askcura/history. Conversation history stored in MongoDB askcura_conversations collection. Backend started without errors. Ready for testing."
+
+  - task: "AskCura AI Treatment Advisor - Frontend"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AskCura.jsx, /app/frontend/src/components/AskCura.css, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "NEW FEATURE: Implemented AskCura frontend component. Created AskCura.jsx with floating chat button, slide-up chat panel, conversation history, and comparison mode. Features: 1) Patient Version: Simple treatment comparison flow (disease input → treatment selection → detailed comparison), 2) Researcher Version: Scientific protocol comparison with technical metrics. Created AskCura.css with indigo theme (#3F51B5, #536DFE) matching app design. Integrated into both PatientDashboard and ResearcherDashboard. Responsive design with mobile support. Ready for testing."
+
   - task: "Security Issue - Path Traversal Vulnerability"
     implemented: true
     working: false
