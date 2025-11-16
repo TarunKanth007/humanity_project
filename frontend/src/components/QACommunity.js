@@ -36,6 +36,39 @@ export const QACommunity = ({ user, logout }) => {
     parent_id: null
   });
 
+  // Add animated particles background (reduced count for QA Community)
+  useEffect(() => {
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      
+      // Random horizontal position across screen width
+      p.style.left = `${Math.random() * window.innerWidth}px`;
+      
+      // Random size between 8px and 16px
+      const size = 8 + Math.random() * 8;
+      p.style.width = `${size}px`;
+      p.style.height = `${size}px`;
+      
+      // Random opacity between 0.3 and 0.8
+      p.style.opacity = `${0.3 + Math.random() * 0.5}`;
+      
+      // Random duration between 8s and 20s (slower particles)
+      p.style.animationDuration = `${8 + Math.random() * 12}s`;
+      
+      // Random delay to stagger particle appearance
+      p.style.animationDelay = `${Math.random() * 8}s`;
+      
+      document.body.appendChild(p);
+    }
+
+    // Cleanup particles when component unmounts
+    return () => {
+      const particles = document.querySelectorAll('.particle');
+      particles.forEach(p => p.remove());
+    };
+  }, []);
+
   useEffect(() => {
     loadQuestions();
   }, []);
