@@ -134,17 +134,17 @@ class AskCuraAdvisor:
             return {"error": "This method is only available for patient advisors"}
         
         treatments_str = ", ".join(treatments)
-        prompt = f"""I need to compare these treatments for {disease}:
+        prompt = f"""Compare these treatments for {disease} in simple terms:
 {treatments_str}
 
-Please provide a detailed comparison with these sections for each treatment:
-1. Effectiveness: How well does it work?
-2. Side Effects: What are the most common side effects?
-3. Cost: General cost considerations
-4. Lifestyle Impact: How does it affect daily life?
-5. Treatment Duration: How long does treatment typically last?
+For each treatment, briefly explain:
+1. How effective is it?
+2. Common side effects
+3. Cost range
+4. Daily life impact
+5. Treatment duration
 
-Format your response clearly with each treatment as a separate section."""
+Keep response clear and under 400 words."""
 
         response = await self.send_message(prompt)
         
