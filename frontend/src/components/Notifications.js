@@ -29,6 +29,39 @@ export const Notifications = ({ user, logout }) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
 
+  // Add animated particles background (reduced count for Notifications)
+  useEffect(() => {
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      
+      // Random horizontal position across screen width
+      p.style.left = `${Math.random() * window.innerWidth}px`;
+      
+      // Random size between 8px and 16px
+      const size = 8 + Math.random() * 8;
+      p.style.width = `${size}px`;
+      p.style.height = `${size}px`;
+      
+      // Random opacity between 0.15 and 0.35 (more subtle for Notifications)
+      p.style.opacity = `${0.15 + Math.random() * 0.2}`;
+      
+      // Random duration between 8s and 20s (slower particles)
+      p.style.animationDuration = `${8 + Math.random() * 12}s`;
+      
+      // Random delay to stagger particle appearance
+      p.style.animationDelay = `${Math.random() * 8}s`;
+      
+      document.body.appendChild(p);
+    }
+
+    // Cleanup particles when component unmounts
+    return () => {
+      const particles = document.querySelectorAll('.particle');
+      particles.forEach(p => p.remove());
+    };
+  }, []);
+
   useEffect(() => {
     loadData();
     // Poll for new notifications every 10 seconds
