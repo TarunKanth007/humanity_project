@@ -707,11 +707,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Emergent Platform** - Hosting and deployment infrastructure
-- **OpenAI** - AI-powered summarization features
-- **Jitsi** - Video conferencing integration
-- **Shadcn UI** - Beautiful UI components
-- **Unsplash & Pexels** - Testimonial images
+- **Emergent Platform** - Hosting, deployment infrastructure, and LLM integration
+- **OpenAI GPT-4o** - AI-powered features (AskCura, summaries, matching)
+- **ClinicalTrials.gov** - Clinical trials database API
+- **PubMed/NCBI** - Medical publications database
+- **Google OAuth** - Secure authentication
+- **Jitsi** - Video conferencing integration (planned)
+- **Shadcn UI** - Beautiful accessible UI components
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide Icons** - Modern icon library
 
 ---
 
