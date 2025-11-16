@@ -11,7 +11,7 @@ Please follow these steps to help me diagnose the issue:
 
 ## Step 2: Test Login
 1. Open a NEW browser tab
-2. Go to: https://researchportal-2.preview.emergentagent.com
+2. Go to: https://health-matchmaker-1.preview.emergentagent.com
 3. Click "Sign In"
 4. **BEFORE clicking a Google account, take a screenshot of what Google shows you**
 5. Which email options does Google show?

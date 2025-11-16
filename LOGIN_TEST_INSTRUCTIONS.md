@@ -11,7 +11,7 @@
 
 ### Test 1: Fresh Login
 1. Open **incognito/private window**
-2. Go to: https://researchportal-2.preview.emergentagent.com
+2. Go to: https://health-matchmaker-1.preview.emergentagent.com
 3. Click **"Sign In"** button
 4. **EXPECTED:** You should see Google account picker (not auto-login)
 5. Select an account (e.g., tarunmovva1@gmail.com)

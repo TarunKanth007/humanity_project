@@ -16,13 +16,13 @@ import time
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://researchportal-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://health-matchmaker-1.preview.emergentagent.com/api"
 
 # Expected CORS origins
 EXPECTED_CORS_ORIGINS = [
     "http://localhost:3000",
-    "https://researchportal-2.preview.emergentagent.com", 
-    "https://researchportal-2.preview.emergentagent.com"
+    "https://health-matchmaker-1.preview.emergentagent.com", 
+    "https://health-matchmaker-1.preview.emergentagent.com"
 ]
 
 class BackendTester:

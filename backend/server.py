@@ -577,7 +577,7 @@ async def google_login(redirect_to: str = Query(default="/dashboard")):
     Redirects user to Google account selection page
     """
     # Determine callback URL based on environment
-    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://researchportal-2.preview.emergentagent.com')
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://health-matchmaker-1.preview.emergentagent.com')
     callback_url = f"{backend_url}/api/auth/google/callback"
     
     # Store intended redirect in state (for after auth)
@@ -609,7 +609,7 @@ async def google_callback(
         logging.info(f"AUTH: Google callback received with code")
         
         # Step C: Exchange authorization code for tokens
-        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://researchportal-2.preview.emergentagent.com')
+        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://health-matchmaker-1.preview.emergentagent.com')
         callback_url = f"{backend_url}/api/auth/google/callback"
         
         tokens = exchange_code_for_tokens(code, callback_url)
