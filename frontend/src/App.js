@@ -3193,6 +3193,9 @@ const PatientDashboard = ({ user, logout }) => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* AskCura AI Treatment Advisor */}
+      <AskCura userRole="patient" backendUrl={BACKEND_URL} />
     </div>
   );
 };
