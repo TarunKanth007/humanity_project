@@ -4669,7 +4669,7 @@ async def get_treatment_advisor_history(
     
     try:
         history = await db.treatment_advisor_chats.find(
-            {"user_id": user["id"], "session_id": session_id},
+            {"user_id": user.get("id"), "session_id": session_id},
             {"_id": 0}
         ).sort("timestamp", 1).to_list(100)
         
