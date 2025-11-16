@@ -1,0 +1,518 @@
+/* AskCura AI Treatment Advisor Styles */
+/* Color theme: Indigo (#3F51B5, #536DFE) to match app theme */
+
+/* Floating Button */
+.askcura-float-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(63, 81, 181, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.askcura-float-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(63, 81, 181, 0.5);
+}
+
+.askcura-float-button.open {
+  background: linear-gradient(135deg, #536DFE, #3F51B5);
+}
+
+/* Chat Panel */
+.askcura-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 400px;
+  height: 600px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.askcura-panel.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Header */
+.askcura-header {
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.askcura-header-title h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.askcura-header-title p {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.askcura-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.askcura-compare-btn,
+.askcura-clear-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.askcura-compare-btn:hover,
+.askcura-clear-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Messages Area */
+.askcura-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.askcura-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.askcura-messages::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.askcura-messages::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.askcura-messages::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Welcome Screen */
+.askcura-welcome {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.askcura-welcome-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.askcura-welcome h4 {
+  margin: 0 0 12px 0;
+  color: #3F51B5;
+  font-size: 20px;
+}
+
+.askcura-welcome p {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.askcura-quick-actions button {
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+}
+
+.askcura-quick-actions button:hover {
+  transform: translateY(-2px);
+}
+
+/* Message Bubbles */
+.askcura-message {
+  margin-bottom: 16px;
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.askcura-message.user {
+  justify-content: flex-end;
+}
+
+.askcura-message-content {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.askcura-message.user .askcura-message-content {
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.askcura-message.assistant .askcura-message-content {
+  background: white;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-bottom-left-radius: 4px;
+}
+
+/* Typing Indicator */
+.askcura-typing {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px;
+}
+
+.askcura-typing span {
+  width: 8px;
+  height: 8px;
+  background: #3F51B5;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.askcura-typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.askcura-typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Input Area */
+.askcura-input-area {
+  padding: 16px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.askcura-input-area textarea {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.askcura-input-area textarea:focus {
+  border-color: #3F51B5;
+}
+
+.askcura-send-btn {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.askcura-send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.askcura-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.askcura-footer {
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.askcura-footer small {
+  color: #666;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Comparison Mode */
+.askcura-comparison-mode {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.askcura-back-btn {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #3F51B5;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.askcura-back-btn:hover {
+  background: #f8f9fa;
+  border-color: #3F51B5;
+}
+
+.askcura-comparison-step {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.askcura-comparison-step h4 {
+  margin: 0 0 16px 0;
+  color: #3F51B5;
+  font-size: 16px;
+}
+
+.askcura-comparison-step input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.askcura-comparison-step input[type="text"]:focus {
+  border-color: #3F51B5;
+}
+
+.askcura-treatment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.askcura-treatment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.askcura-treatment-option:hover {
+  border-color: #3F51B5;
+  background: #f8f9fa;
+}
+
+.askcura-treatment-option.selected {
+  border-color: #3F51B5;
+  background: linear-gradient(135deg, rgba(63, 81, 181, 0.1), rgba(83, 109, 254, 0.1));
+}
+
+.askcura-treatment-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #3F51B5;
+}
+
+.askcura-treatment-option span {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.askcura-primary-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #3F51B5, #536DFE);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+}
+
+.askcura-primary-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.askcura-primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.askcura-secondary-btn {
+  background: white;
+  color: #3F51B5;
+  border: 1px solid #3F51B5;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.askcura-secondary-btn:hover {
+  background: #f8f9fa;
+}
+
+.askcura-comparison-results {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.askcura-comparison-results h4 {
+  margin: 0 0 16px 0;
+  color: #3F51B5;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.askcura-comparison-content {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #333;
+}
+
+.askcura-comparison-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.askcura-comparison-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.askcura-comparison-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.askcura-comparison-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.askcura-comparison-actions button {
+  flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .askcura-panel {
+    width: calc(100vw - 32px);
+    height: calc(100vh - 48px);
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .askcura-float-button {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .askcura-panel {
+    width: 100vw;
+    height: 100vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+
+  .askcura-float-button {
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+  }
+}
