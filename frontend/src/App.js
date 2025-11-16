@@ -1600,7 +1600,16 @@ const PatientDashboard = ({ user, logout }) => {
 
                   {/* Latest Publications Section */}
                   <div>
-                    <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '16px', color: 'var(--olive)' }}>
+                    <h2 style={{ 
+                      fontSize: '24px', 
+                      fontWeight: '700', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, #3F51B5, #536DFE)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      display: 'inline-block'
+                    }}>
                       Latest Research Publications
                     </h2>
                     {overviewData.latest_publications.length > 0 ? (
