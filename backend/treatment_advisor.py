@@ -267,7 +267,8 @@ Include medical disclaimer and references (PubMed IDs, trial IDs)."""
     async def _get_relevant_trials(self, query: str, max_results: int = 5) -> List[Dict]:
         """Fetch relevant clinical trials"""
         try:
-            trials = await search_clinical_trials(query, max_results=max_results)
+            trials_api = ClinicalTrialsAPI()
+            trials = trials_api.search_and_normalize(query=query, max_results=max_results)
             return trials
         except Exception as e:
             logger.warning(f"Error fetching clinical trials: {e}")
