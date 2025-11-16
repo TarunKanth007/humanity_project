@@ -916,8 +916,8 @@ const PatientDashboard = ({ user, logout }) => {
       p.style.width = `${size}px`;
       p.style.height = `${size}px`;
       
-      // Random opacity between 0.3 and 0.8
-      p.style.opacity = `${0.3 + Math.random() * 0.5}`;
+      // Random opacity between 0.15 and 0.35 (more subtle for dashboard)
+      p.style.opacity = `${0.15 + Math.random() * 0.2}`;
       
       // Random duration between 8s and 20s (slower particles)
       p.style.animationDuration = `${8 + Math.random() * 12}s`;
