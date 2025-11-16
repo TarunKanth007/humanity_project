@@ -560,10 +560,11 @@ const AskCura = ({ userRole, backendUrl }) => {
                   {/* Step 3: Show Comparison Results */}
                   <div className="askcura-comparison-results">
                     <h4>
+                      <span className="askcura-result-icon">📊</span>
                       Comparison Results: {comparisonData.disease || comparisonData.condition}
                     </h4>
                     <div className="askcura-comparison-content">
-                      <p style={{ whiteSpace: 'pre-wrap' }}>{comparisonData.comparison}</p>
+                      <FormattedResponse content={comparisonData.comparison} />
                     </div>
                     <div className="askcura-comparison-actions">
                       <button
