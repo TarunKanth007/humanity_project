@@ -4605,7 +4605,7 @@ async def treatment_advisor_suggest(
         
         # Save to database
         await db.treatment_suggestions.insert_one({
-            "user_id": user.get("id"),
+            "user_id": user.id,
             "session_id": request.session_id,
             "disease": request.disease,
             "suggestions": suggestions,
