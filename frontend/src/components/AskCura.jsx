@@ -324,7 +324,13 @@ const AskCura = ({ userRole, backendUrl }) => {
                     className={`askcura-message ${msg.role}`}
                     data-testid={`message-${msg.role}`}
                   >
-                    <div className="askcura-message-content">{msg.content}</div>
+                    <div className="askcura-message-content">
+                      {msg.role === 'assistant' ? (
+                        <FormattedResponse content={msg.content} />
+                      ) : (
+                        msg.content
+                      )}
+                    </div>
                   </div>
                 ))
               )}
