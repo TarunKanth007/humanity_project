@@ -10,7 +10,7 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 from dotenv import load_dotenv
 import os
 from pubmed_api import search_pubmed
-from clinical_trials_api import search_clinical_trials
+from clinical_trials_api import ClinicalTrialsAPI
 
 load_dotenv()
 
