@@ -2074,21 +2074,29 @@ class BackendTester:
                 )
 
     def run_all_tests(self):
-        """Run all backend tests with focus on authentication fix"""
-        print("🚀 Starting CuraLink Backend Tests - CRITICAL AUTHENTICATION FIX FOCUS")
+        """Run all backend tests with focus on AskCura AI Treatment Advisor"""
+        print("🚀 Starting CuraLink Backend Tests - ASKCURA AI TREATMENT ADVISOR FOCUS")
         print(f"Testing backend at: {BACKEND_URL}")
         print("="*80)
-        print("TESTING AUTHENTICATION BUG FIX:")
-        print("- Duplicate user accounts causing login cross-contamination")
-        print("- Enhanced /auth/session endpoint with consistent sorting")
-        print("- Unique index on email field verification")
-        print("- Session consistency and race condition handling")
+        print("TESTING ASKCURA AI TREATMENT ADVISOR:")
+        print("- POST /api/askcura/patient/chat")
+        print("- POST /api/askcura/researcher/chat")
+        print("- POST /api/askcura/patient/compare-treatments")
+        print("- POST /api/askcura/researcher/compare-protocols")
+        print("- GET /api/askcura/history")
+        print("- DELETE /api/askcura/history")
+        print("- Authentication requirements for all endpoints")
         print("="*80)
         
         # Core connectivity and health
         self.test_backend_health()
         
-        # CRITICAL: Authentication fix testing
+        # AskCura AI Treatment Advisor tests (PRIMARY FOCUS)
+        self.test_askcura_endpoints_comprehensive()
+        self.test_askcura_endpoints_validation()
+        self.test_askcura_endpoints_with_invalid_auth()
+        
+        # Authentication system tests
         self.test_auth_endpoints_comprehensive()
         self.test_auth_session_consistency()
         self.test_auth_header_variations()
