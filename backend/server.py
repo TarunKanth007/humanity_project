@@ -2297,11 +2297,6 @@ async def create_forum(
         # Insert into database - single operation (< 50ms with indexing)
         await db.forums.insert_one(forum_dict)
         
-        # Invalidate cache immediately (this is quick, no need for background task)
-        global forums_cache, forums_cache_time
-        forums_cache = None
-        forums_cache_time = 0
-        
         # Return minimal response immediately (< 1ms serialization) - target 50-100ms total
         return {
             "status": "success",
