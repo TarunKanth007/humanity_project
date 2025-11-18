@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-CuraLink Backend Testing Suite
-Focus: Critical Authentication Fix Testing
-- POST /api/auth/session - Session creation and user retrieval
-- GET /api/auth/me - Current user retrieval from session
-- Verify no duplicate users can be created
-- Database unique constraint verification
+Forum System Rewrite Testing Suite
+Focus: CRITICAL PRIORITY - Forum System Complete Rewrite Testing
+- POST /api/forums/create - Forum creation with optimistic UI
+- DELETE /api/forums/{forum_id} - Forum deletion with background cleanup  
+- GET /api/forums - Forum listing with pagination
+- Performance testing for 50-100ms response times
+- Background task verification
 """
 
 import requests
