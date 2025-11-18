@@ -4681,7 +4681,7 @@ async def askcura_patient_chat(
 
 @api_router.post("/askcura/researcher/chat")
 async def askcura_researcher_chat(
-    chat_msg: ChatMessage,
+    chat_msg: AskCuraChatMessage,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
