@@ -1211,14 +1211,20 @@ const PatientDashboard = ({ user, logout }) => {
 
   const loadForumMemberships = async (forumsList) => {
     try {
+      if (!Array.isArray(forumsList) || forumsList.length === 0) {
+        console.log('[RESEARCHER] loadForumMemberships: No forums to load memberships for');
+        return;
+      }
+      console.log('[RESEARCHER] Loading memberships for', forumsList.length, 'forums');
       const memberships = {};
       for (const forum of forumsList) {
         const res = await api.get(`/forums/${forum.id}/membership`);
         memberships[forum.id] = res.data;
       }
       setForumMemberships(memberships);
+      console.log('[RESEARCHER] Memberships loaded successfully');
     } catch (error) {
-      console.error('Failed to load memberships:', error);
+      console.error('[RESEARCHER] Failed to load memberships:', error);
     }
   };
 
@@ -3627,14 +3633,20 @@ const ResearcherDashboard = ({ user, logout }) => {
 
   const loadForumMemberships = async (forumsList) => {
     try {
+      if (!Array.isArray(forumsList) || forumsList.length === 0) {
+        console.log('[RESEARCHER] loadForumMemberships: No forums to load memberships for');
+        return;
+      }
+      console.log('[RESEARCHER] Loading memberships for', forumsList.length, 'forums');
       const memberships = {};
       for (const forum of forumsList) {
         const res = await api.get(`/forums/${forum.id}/membership`);
         memberships[forum.id] = res.data;
       }
       setForumMemberships(memberships);
+      console.log('[RESEARCHER] Memberships loaded successfully');
     } catch (error) {
-      console.error('Failed to load memberships:', error);
+      console.error('[RESEARCHER] Failed to load memberships:', error);
     }
   };
 
