@@ -272,10 +272,10 @@ export const ChatRoom = ({ user, logout }) => {
 
       {/* Review Dialog */}
       <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
-        <DialogContent>
+        <DialogContent aria-describedby="review-dialog-description">
           <DialogHeader>
             <DialogTitle>Rate Your Experience</DialogTitle>
-            <DialogDescription>
+            <DialogDescription id="review-dialog-description">
               Help others by sharing your experience with this researcher
             </DialogDescription>
           </DialogHeader>
