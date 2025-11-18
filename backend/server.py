@@ -2305,35 +2305,65 @@ async def delete_forum(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Delete a forum (only creator can delete)"""
-    user = await get_current_user(session_token, authorization)
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    # Get forum
-    forum = await db.forums.find_one({"id": forum_id}, {"_id": 0})
-    if not forum:
-        raise HTTPException(status_code=404, detail="Forum not found")
-    
-    # Check if user is the creator
-    if forum.get('created_by') != user.id:
-        raise HTTPException(status_code=403, detail="Only the forum creator can delete this forum")
-    
-    # Delete forum
-    await db.forums.delete_one({"id": forum_id})
-    
-    # Delete all posts in this forum
-    await db.forum_posts.delete_many({"forum_id": forum_id})
-    
-    # Delete all memberships
-    await db.forum_memberships.delete_many({"forum_id": forum_id})
-    
-    # Invalidate forums cache so deleted forum disappears immediately
-    global forums_cache, forums_cache_time
-    forums_cache = None
-    forums_cache_time = 0
-    
-    return {"status": "success", "message": "Forum deleted successfully"}
+    """Delete a forum with complete cascading cleanup (owner only) - REWRITTEN"""
+    try:
+        # Authentication
+        user = await get_current_user(session_token, authorization)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Verify forum exists
+        forum = await db.forums.find_one({"id": forum_id}, {"_id": 0})
+        if not forum:
+            raise HTTPException(status_code=404, detail="Forum not found")
+        
+        # Authorization check
+        if forum['created_by'] != user.id:
+            raise HTTPException(status_code=403, detail="Only the forum creator can delete it")
+        
+        # Cascading delete - delete in specific order
+        logging.info(f"🗑️ Deleting forum: {forum.get('name')} (ID: {forum_id})")
+        
+        # 1. Delete all posts in this forum
+        posts_result = await db.forum_posts.delete_many({"forum_id": forum_id})
+        logging.info(f"  ✅ Deleted {posts_result.deleted_count} forum posts")
+        
+        # 2. Delete all memberships
+        members_result = await db.forum_memberships.delete_many({"forum_id": forum_id})
+        logging.info(f"  ✅ Deleted {members_result.deleted_count} memberships")
+        
+        # 3. Delete the forum itself
+        forum_result = await db.forums.delete_one({"id": forum_id})
+        logging.info(f"  ✅ Deleted forum")
+        
+        # Invalidate ALL related caches
+        global forums_cache, forums_cache_time, forum_posts_cache, forum_posts_cache_time
+        forums_cache = None
+        forums_cache_time = 0
+        
+        # Clear posts cache for this specific forum
+        if forum_id in forum_posts_cache:
+            del forum_posts_cache[forum_id]
+        if forum_id in forum_posts_cache_time:
+            del forum_posts_cache_time[forum_id]
+        
+        logging.info(f"✅ Forum deletion complete: {forum.get('name')}")
+        
+        return {
+            "status": "success",
+            "message": "Forum and all related data deleted successfully",
+            "deleted": {
+                "forum": 1,
+                "posts": posts_result.deleted_count,
+                "memberships": members_result.deleted_count
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"❌ Forum deletion error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to delete forum")
 
 # Old forum creation endpoint removed - replaced with /forums/create
 
