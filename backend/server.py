@@ -1896,7 +1896,7 @@ async def researcher_search(
 # Cache for forums (5 minutes)
 forums_cache = None
 forums_cache_time = 0
-FORUMS_CACHE_TTL = 300  # 5 minutes
+FORUMS_CACHE_TTL = 10  # 10 seconds - short TTL for frequently changing data
 
 @api_router.get("/forums")
 async def get_forums(
