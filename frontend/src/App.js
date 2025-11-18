@@ -3504,9 +3504,12 @@ const ResearcherDashboard = ({ user, logout }) => {
       } else if (activeTab === 'forums') {
         // Add cache-busting timestamp to force fresh data
         const res = await api.get(`/forums?_t=${Date.now()}`);
+        console.log('[RESEARCHER] Forums API Response:', res.data);
         // Handle both old and new API response formats
         const forumsList = res.data.forums || res.data;
+        console.log('[RESEARCHER] Forums list to set:', forumsList, 'Length:', forumsList?.length);
         setForums(forumsList);
+        console.log('[RESEARCHER] Forums state set with', forumsList?.length, 'forums');
         // Load membership status and favorites for each forum
         await loadForumMemberships(forumsList);
         await loadForumFavorites(forumsList);
