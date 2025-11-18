@@ -3279,6 +3279,12 @@ const ResearcherDashboard = ({ user, logout }) => {
   const [collaborators, setCollaborators] = useState([]);
   const [myTrials, setMyTrials] = useState([]);
   const [forums, setForums] = useState([]);
+  
+  // Debug logging for forums state changes (Researcher Dashboard)
+  useEffect(() => {
+    console.log('[RESEARCHER] Forums state changed. Current length:', forums?.length, 'Forums:', forums);
+  }, [forums]);
+  
   const [forumMemberships, setForumMemberships] = useState({});
   const [forumFavorites, setForumFavorites] = useState({});
   const [selectedForum, setSelectedForum] = useState(null);
