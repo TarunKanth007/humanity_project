@@ -2344,12 +2344,8 @@ async def delete_forum(
         await db.forums.delete_one({"id": forum_id})
         logging.info(f"✅ Forum deleted: {forum.get('name')} (ID: {forum_id})")
         
-        # Invalidate forums cache immediately
-        global forums_cache, forums_cache_time, forum_posts_cache, forum_posts_cache_time
-        forums_cache = None
-        forums_cache_time = 0
-        
         # Clear posts cache for this specific forum
+        global forum_posts_cache, forum_posts_cache_time
         if forum_id in forum_posts_cache:
             del forum_posts_cache[forum_id]
         if forum_id in forum_posts_cache_time:
