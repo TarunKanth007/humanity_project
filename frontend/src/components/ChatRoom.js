@@ -94,14 +94,14 @@ export const ChatRoom = ({ user, logout }) => {
     reader.onloadend = async () => {
       try {
         await api.post(`/chat-rooms/${roomId}/messages`, {
-          chat_room_id: roomId,
           message_type: 'image',
           content: reader.result
         });
         loadMessages();
         toast.success('Image sent');
       } catch (error) {
-        toast.error('Failed to send image');
+        console.error('Send image error:', error);
+        toast.error(error.response?.data?.detail || 'Failed to send image');
       }
     };
     reader.readAsDataURL(file);
