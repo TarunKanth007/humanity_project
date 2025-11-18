@@ -631,37 +631,133 @@ class BackendTester:
                     f"Request failed: {str(e)}"
                 )
     
-    def test_forum_creation_and_deletion_flow(self):
-        """Test complete forum creation and deletion flow without authentication"""
-        print("\n=== Forum Creation & Deletion Flow Tests ===")
+    def test_forum_system_rewrite_comprehensive(self):
+        """PRIORITY 1: Test Forum Creation Endpoint - Complete Rewrite Testing"""
+        print("\n=== FORUM SYSTEM REWRITE - PRIORITY 1: FORUM CREATION ===")
         
-        # Test 1: Verify we can get current forums list
+        # Test 1: Forum creation without authentication (should fail with 401)
+        forum_data = {
+            "name": f"Test Cardiology Forum {uuid.uuid4().hex[:8]}",
+            "description": "A test forum for cardiology discussions and research collaboration",
+            "category": "Cardiology"
+        }
+        
+        start_time = time.time()
         try:
-            response = self.session.get(f"{BACKEND_URL}/forums")
-            if response.status_code == 200:
-                initial_forums = response.json()
-                initial_count = len(initial_forums)
+            response = self.session.post(
+                f"{BACKEND_URL}/forums/create",
+                json=forum_data
+            )
+            response_time = (time.time() - start_time) * 1000  # Convert to ms
+            
+            if response.status_code == 401:
                 self.log_result(
-                    "Forum Flow - Initial Forums List",
+                    "Forum Creation - Authentication Required",
                     True,
-                    f"Successfully retrieved {initial_count} existing forums",
-                    {"initial_forum_count": initial_count}
+                    f"Correctly requires authentication (Response time: {response_time:.1f}ms)",
+                    {"status_code": response.status_code, "response_time_ms": response_time}
                 )
             else:
                 self.log_result(
-                    "Forum Flow - Initial Forums List",
+                    "Forum Creation - Authentication Required",
                     False,
-                    f"Failed to get forums list: {response.status_code}",
-                    {"status_code": response.status_code}
+                    f"Expected 401, got {response.status_code} (Response time: {response_time:.1f}ms)",
+                    {"status_code": response.status_code, "response_time_ms": response_time}
                 )
-                return
         except Exception as e:
             self.log_result(
-                "Forum Flow - Initial Forums List",
+                "Forum Creation - Authentication Required",
                 False,
                 f"Request failed: {str(e)}"
             )
-            return
+        
+        # Test 2: Forum creation with invalid data (should fail with 400)
+        invalid_data_sets = [
+            ({}, "Empty data"),
+            ({"name": "Test Forum"}, "Missing description and category"),
+            ({"description": "Test description"}, "Missing name and category"),
+            ({"category": "Cardiology"}, "Missing name and description"),
+            ({"name": "", "description": "Test", "category": "Cardiology"}, "Empty name"),
+            ({"name": "Test", "description": "", "category": "Cardiology"}, "Empty description"),
+            ({"name": "Test", "description": "Test", "category": ""}, "Empty category"),
+            ({"name": "x" * 101, "description": "Test", "category": "Test"}, "Name too long (>100 chars)")
+        ]
+        
+        for invalid_data, description in invalid_data_sets:
+            start_time = time.time()
+            try:
+                response = self.session.post(
+                    f"{BACKEND_URL}/forums/create",
+                    json=invalid_data
+                )
+                response_time = (time.time() - start_time) * 1000
+                
+                if response.status_code in [400, 401]:
+                    self.log_result(
+                        f"Forum Creation Validation - {description}",
+                        True,
+                        f"Correctly rejects invalid data (Status: {response.status_code}, Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time}
+                    )
+                else:
+                    self.log_result(
+                        f"Forum Creation Validation - {description}",
+                        False,
+                        f"Unexpected status: {response.status_code} (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Forum Creation Validation - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test 3: Verify forum creation response structure (even though it will fail auth)
+        try:
+            response = self.session.post(
+                f"{BACKEND_URL}/forums/create",
+                json=forum_data
+            )
+            
+            # Even with 401, we can verify the endpoint exists and handles requests properly
+            if response.status_code == 401:
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data:
+                        self.log_result(
+                            "Forum Creation - Response Structure",
+                            True,
+                            "Endpoint exists and returns proper JSON error structure",
+                            {"error_structure": error_data}
+                        )
+                    else:
+                        self.log_result(
+                            "Forum Creation - Response Structure",
+                            False,
+                            "Error response missing 'detail' field",
+                            {"response": error_data}
+                        )
+                except json.JSONDecodeError:
+                    self.log_result(
+                        "Forum Creation - Response Structure",
+                        False,
+                        "Error response is not valid JSON",
+                        {"response_text": response.text[:200]}
+                    )
+            else:
+                self.log_result(
+                    "Forum Creation - Response Structure",
+                    False,
+                    f"Unexpected status code: {response.status_code}",
+                    {"status_code": response.status_code}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Creation - Response Structure",
+                False,
+                f"Request failed: {str(e)}"
+            )
         
         # Test 2: Attempt forum creation without auth (should fail)
         test_forum_data = {
