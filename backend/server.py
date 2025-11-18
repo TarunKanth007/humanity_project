@@ -508,7 +508,6 @@ class NotificationRead(BaseModel):
     notification_id: str
 
 class ChatMessageCreate(BaseModel):
-    chat_room_id: str
     message_type: str  # 'text' or 'image'
     content: str
 
