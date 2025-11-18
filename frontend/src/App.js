@@ -5247,20 +5247,59 @@ const ResearcherDashboard = ({ user, logout }) => {
                         </DialogHeader>
                         <form onSubmit={async (e) => {
                           e.preventDefault();
+                          
+                          // Generate temporary ID for optimistic update
+                          const tempId = `temp-${Date.now()}`;
+                          
+                          // Create optimistic forum object
+                          const optimisticForum = {
+                            id: tempId,
+                            name: newForum.name,
+                            description: newForum.description,
+                            category: newForum.category,
+                            created_by: user?.id,
+                            created_by_name: user?.name,
+                            created_at: new Date().toISOString(),
+                            post_count: 0,
+                            _optimistic: true,  // Mark as optimistic for UI indication
+                            _creating: true     // Show creating state
+                          };
+                          
+                          // 1. IMMEDIATELY add to UI (optimistic update)
+                          setForums(prev => [optimisticForum, ...prev]);
+                          setShowCreateForum(false);
+                          const formData = { ...newForum };  // Save form data in case of error
+                          setNewForum({ name: '', description: '', category: '' });
+                          setForumFilter('all');  // Reset filter to show new forum
+                          
                           try {
-                            await api.post('/forums/create', {
-                              name: newForum.name,
-                              description: newForum.description,
-                              category: newForum.category
+                            // 2. Send to backend (async)
+                            const response = await api.post('/forums/create', {
+                              name: formData.name,
+                              description: formData.description,
+                              category: formData.category
                             });
+                            
+                            // 3. Replace temp with real data from server
+                            setForums(prev => prev.map(f => 
+                              f.id === tempId ? { 
+                                ...response.data.forum, 
+                                _optimistic: false,
+                                _creating: false 
+                              } : f
+                            ));
+                            
+                            // 4. Success toast
                             toast.success('Forum created successfully!');
-                            setShowCreateForum(false);
-                            setNewForum({ name: '', description: '', category: '' });
-                            // Reset filter to 'all' to show newly created forum
-                            setForumFilter('all');
-                            loadData();
+                            
                           } catch (error) {
-                            toast.error(error.response?.data?.detail || 'Failed to create forum');
+                            // 5. Rollback on error - remove the optimistic forum
+                            setForums(prev => prev.filter(f => f.id !== tempId));
+                            
+                            // 6. Show error and reopen dialog with data
+                            toast.error(error.response?.data?.detail || 'Failed to create forum. Please try again.');
+                            setNewForum(formData);  // Restore form data
+                            setShowCreateForum(true);  // Reopen dialog
                           }
                         }}>
                           <Input
