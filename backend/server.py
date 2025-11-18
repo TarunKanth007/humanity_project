@@ -2314,14 +2314,10 @@ async def create_forum(
         # Insert into database - single operation (< 50ms with indexing)
         await db.forums.insert_one(forum_dict)
         
-        # Async cache invalidation (fire and forget - non-blocking)
-        import asyncio
-        from background_tasks import invalidate_forum_caches
-        
-        # Create cache refs for background task
-        cache_ref = {'data': forums_cache}
-        time_ref = {'time': forums_cache_time}
-        asyncio.create_task(invalidate_forum_caches(cache_ref, time_ref))
+        # Invalidate cache immediately (this is quick, no need for background task)
+        global forums_cache, forums_cache_time
+        forums_cache = None
+        forums_cache_time = 0
         
         # Return minimal response immediately (< 1ms serialization) - target 50-100ms total
         return {
