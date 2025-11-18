@@ -3742,11 +3742,11 @@ async def get_chat_messages(
 @api_router.post("/chat-rooms/{room_id}/messages")
 async def send_chat_message(
     room_id: str,
-    message_data: ChatMessageCreate,
+    message_data: dict,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Send chat message"""
+    """Send chat message - simplified like collaboration chat"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -3762,22 +3762,32 @@ async def send_chat_message(
     if room["status"] != "active":
         raise HTTPException(status_code=400, detail="Chat room is closed")
     
-    # Create message
+    # Create message - simplified approach like collaboration chat
     user_role = "researcher" if "researcher" in user.roles else "patient"
     message = ChatMessage(
         chat_room_id=room_id,
         sender_id=user.id,
         sender_name=user.name,
         sender_role=user_role,
-        message_type=message_data.message_type,
-        content=message_data.content
+        message_type=message_data.get("message_type", "text"),
+        content=message_data.get("content", "")
     )
     
-    msg_dict = message.model_dump()
+    msg_dict = message.dict()
     msg_dict['created_at'] = msg_dict['created_at'].isoformat()
     await db.chat_messages.insert_one(msg_dict)
     
-    return {"status": "success", "message": msg_dict}
+    # Return clean response without _id
+    return {
+        "id": msg_dict["id"],
+        "chat_room_id": msg_dict["chat_room_id"],
+        "sender_id": msg_dict["sender_id"],
+        "sender_name": msg_dict["sender_name"],
+        "sender_role": msg_dict["sender_role"],
+        "message_type": msg_dict["message_type"],
+        "content": msg_dict["content"],
+        "created_at": msg_dict["created_at"]
+    }
 
 @api_router.post("/chat-rooms/{room_id}/close")
 async def close_chat_room(
