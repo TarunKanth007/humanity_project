@@ -2306,6 +2306,11 @@ async def delete_forum(
     # Delete all memberships
     await db.forum_memberships.delete_many({"forum_id": forum_id})
     
+    # Invalidate forums cache so deleted forum disappears immediately
+    global forums_cache, forums_cache_time
+    forums_cache = None
+    forums_cache_time = 0
+    
     return {"status": "success", "message": "Forum deleted successfully"}
 
 # Old forum creation endpoint removed - replaced with /forums/create
