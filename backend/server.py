@@ -2366,21 +2366,30 @@ async def delete_forum(
         await db.forums.delete_one({"id": forum_id})
         logging.info(f"✅ Forum deleted: {forum.get('name')} (ID: {forum_id})")
         
-        # Async cleanup - run in background (non-blocking)
-        import asyncio
-        from background_tasks import cleanup_forum_data
+        # Invalidate forums cache immediately
+        global forums_cache, forums_cache_time, forum_posts_cache, forum_posts_cache_time
+        forums_cache = None
+        forums_cache_time = 0
         
-        # Create cache refs for background task
-        cache_ref = {'data': forums_cache}
-        time_ref = {'time': forums_cache_time}
-        asyncio.create_task(cleanup_forum_data(db, forum_id, cache_ref, time_ref))
-        
-        # Clear posts cache immediately for this specific forum (quick operation)
-        global forum_posts_cache, forum_posts_cache_time
+        # Clear posts cache for this specific forum
         if forum_id in forum_posts_cache:
             del forum_posts_cache[forum_id]
         if forum_id in forum_posts_cache_time:
             del forum_posts_cache_time[forum_id]
+        
+        # Async cleanup for related data - run in background (non-blocking)
+        import asyncio
+        
+        async def cleanup_related_data():
+            """Background cleanup of posts and memberships"""
+            try:
+                posts_result = await db.forum_posts.delete_many({"forum_id": forum_id})
+                members_result = await db.forum_memberships.delete_many({"forum_id": forum_id})
+                logging.info(f"🧹 Background cleanup complete: {posts_result.deleted_count} posts, {members_result.deleted_count} members")
+            except Exception as e:
+                logging.error(f"❌ Background cleanup error for forum {forum_id}: {str(e)}")
+        
+        asyncio.create_task(cleanup_related_data())
         
         # Return success immediately (target: 10-30ms total response time)
         return {
