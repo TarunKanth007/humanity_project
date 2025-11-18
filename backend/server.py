@@ -4630,7 +4630,7 @@ def get_or_create_advisor(user_id: str, user_role: str, provider: str = "openai"
 
 @api_router.post("/askcura/patient/chat")
 async def askcura_patient_chat(
-    chat_msg: ChatMessage,
+    chat_msg: AskCuraChatMessage,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
