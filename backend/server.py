@@ -2247,40 +2247,49 @@ async def create_forum(
     authorization: Optional[str] = Header(None)
 ):
     """Create a new forum (researchers only)"""
-    user = await get_current_user(session_token, authorization)
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    if "researcher" not in user.roles:
-        raise HTTPException(status_code=403, detail="Only researchers can create forums")
-    
-    # Validate required fields
-    if not all(k in forum_data for k in ['name', 'description', 'category']):
-        raise HTTPException(status_code=400, detail="Missing required fields")
-    
-    # Create forum
-    forum = Forum(
-        name=forum_data['name'],
-        description=forum_data['description'],
-        category=forum_data['category'],
-        created_by=user.id,
-        created_by_name=user.name
-    )
-    
-    forum_dict = forum.model_dump()
-    forum_dict['created_at'] = forum_dict['created_at'].isoformat()
-    
-    # Insert forum into database
-    await db.forums.insert_one(forum_dict)
-    logging.info(f"Forum created: {forum_dict['name']} (ID: {forum_dict['id']})")
-    
-    # Invalidate forums cache so new forum shows immediately
-    global forums_cache, forums_cache_time
-    forums_cache = None
-    forums_cache_time = 0
-    logging.info("Forums cache invalidated after forum creation")
-    
-    return {"status": "success", "forum": forum_dict}
+    try:
+        user = await get_current_user(session_token, authorization)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        if "researcher" not in user.roles:
+            raise HTTPException(status_code=403, detail="Only researchers can create forums")
+        
+        # Validate required fields
+        if not all(k in forum_data for k in ['name', 'description', 'category']):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        # Create forum
+        forum = Forum(
+            name=forum_data['name'],
+            description=forum_data['description'],
+            category=forum_data['category'],
+            created_by=user.id,
+            created_by_name=user.name
+        )
+        
+        forum_dict = forum.model_dump()
+        forum_dict['created_at'] = forum_dict['created_at'].isoformat()
+        
+        # Insert forum into database
+        await db.forums.insert_one(forum_dict)
+        logging.info(f"✅ Forum created successfully: {forum_dict['name']} (ID: {forum_dict['id']})")
+        
+        # Invalidate forums cache so new forum shows immediately
+        global forums_cache, forums_cache_time
+        forums_cache = None
+        forums_cache_time = 0
+        logging.info("✅ Forums cache invalidated after forum creation")
+        
+        response = {"status": "success", "forum": forum_dict}
+        logging.info(f"✅ Returning success response for forum creation")
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"❌ Error creating forum: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to create forum: {str(e)}")
 
 @api_router.delete("/forums/{forum_id}")
 async def delete_forum(
