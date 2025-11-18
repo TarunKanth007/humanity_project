@@ -1047,10 +1047,12 @@ const PatientDashboard = ({ user, logout }) => {
         await loadFavoriteStatuses(res.data, 'publication');
       } else if (activeTab === 'forums') {
         const res = await api.get('/forums');
-        setForums(res.data);
+        // Handle both old and new API response formats
+        const forumsList = res.data.forums || res.data;
+        setForums(forumsList);
         // Load membership status and favorites for each forum
-        await loadForumMemberships(res.data);
-        await loadForumFavorites(res.data);
+        await loadForumMemberships(forumsList);
+        await loadForumFavorites(forumsList);
       } else if (activeTab === 'favorites') {
         const res = await api.get('/favorites');
         setFavorites(res.data);
@@ -3497,10 +3499,12 @@ const ResearcherDashboard = ({ user, logout }) => {
         setPublications(pubsRes.data);
       } else if (activeTab === 'forums') {
         const res = await api.get('/forums');
-        setForums(res.data);
+        // Handle both old and new API response formats
+        const forumsList = res.data.forums || res.data;
+        setForums(forumsList);
         // Load membership status and favorites for each forum
-        await loadForumMemberships(res.data);
-        await loadForumFavorites(res.data);
+        await loadForumMemberships(forumsList);
+        await loadForumFavorites(forumsList);
       } else if (activeTab === 'favorites') {
         const res = await api.get('/favorites');
         setFavorites(res.data);
