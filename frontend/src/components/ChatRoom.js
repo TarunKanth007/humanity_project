@@ -74,14 +74,14 @@ export const ChatRoom = ({ user, logout }) => {
 
     try {
       await api.post(`/chat-rooms/${roomId}/messages`, {
-        chat_room_id: roomId,
         message_type: 'text',
         content: newMessage
       });
       setNewMessage('');
       loadMessages();
     } catch (error) {
-      toast.error('Failed to send message');
+      console.error('Send message error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to send message');
     }
   };
 
