@@ -203,10 +203,10 @@ export const ChatRoom = ({ user, logout }) => {
                   End Session
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent aria-describedby="close-dialog-description">
                 <DialogHeader>
                   <DialogTitle>End Session?</DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription id="close-dialog-description">
                     This will close the chat and permanently delete all messages. This action cannot be undone.
                   </DialogDescription>
                 </DialogHeader>
