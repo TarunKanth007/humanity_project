@@ -1905,22 +1905,10 @@ async def get_forums(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Get forums with pagination and optimized field projection - OPTIMIZED v2"""
-    global forums_cache, forums_cache_time
-    
+    """Get forums with pagination and optimized field projection - OPTIMIZED v2 (NO CACHE)"""
     user = await get_current_user(session_token, authorization)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    # For initial load (skip=0), check cache
-    if skip == 0 and forums_cache and (time.time() - forums_cache_time < FORUMS_CACHE_TTL):
-        logging.info(f"Returning cached forums (count: {len(forums_cache)})")
-        return {
-            "forums": forums_cache,
-            "skip": 0,
-            "limit": len(forums_cache),
-            "has_more": False
-        }
     
     # Project only needed fields for list view (50% less data)
     projection = {
@@ -1935,7 +1923,7 @@ async def get_forums(
         "post_count": 1
     }
     
-    # Efficient query with index on created_at (needs DB index for optimal performance)
+    # Efficient query with index on created_at - ALWAYS fetch fresh data to avoid cache issues
     forums = await db.forums.find(
         {},
         projection
@@ -1943,12 +1931,7 @@ async def get_forums(
     
     logging.info(f"Fetched {len(forums)} forums from database (skip={skip}, limit={limit})")
     
-    # Cache result only for initial load
-    if skip == 0:
-        forums_cache = forums
-        forums_cache_time = time.time()
-    
-    # Return paginated response (target: 20-50ms)
+    # Return paginated response (target: 20-50ms with indexes)
     return {
         "forums": forums,
         "skip": skip,
