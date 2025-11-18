@@ -4601,7 +4601,7 @@ async def get_researcher_details(
 from treatment_advisor import AskCuraAdvisor, create_patient_advisor, create_researcher_advisor
 
 # Pydantic models for AskCura
-class ChatMessage(BaseModel):
+class AskCuraChatMessage(BaseModel):
     message: str
     
 class TreatmentComparisonRequest(BaseModel):
