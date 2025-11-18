@@ -2246,60 +2246,58 @@ async def create_forum(
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None)
 ):
-    """Create a new forum (researchers only)"""
+    """Create a new forum (researchers only) - REWRITTEN"""
     try:
-        logging.info(f"📝 Forum creation request received: {forum_data.get('name', 'N/A')}")
-        
+        # Authentication
         user = await get_current_user(session_token, authorization)
         if not user:
-            logging.warning("❌ Forum creation failed: Not authenticated")
             raise HTTPException(status_code=401, detail="Not authenticated")
         
-        logging.info(f"✅ User authenticated: {user.email} (Roles: {user.roles})")
-        
         if "researcher" not in user.roles:
-            logging.warning(f"❌ Forum creation failed: User {user.email} is not a researcher")
             raise HTTPException(status_code=403, detail="Only researchers can create forums")
         
         # Validate required fields
-        if not all(k in forum_data for k in ['name', 'description', 'category']):
-            logging.warning(f"❌ Forum creation failed: Missing required fields")
-            raise HTTPException(status_code=400, detail="Missing required fields")
+        required_fields = ['name', 'description', 'category']
+        if not all(k in forum_data for k in required_fields):
+            missing = [k for k in required_fields if k not in forum_data]
+            raise HTTPException(status_code=400, detail=f"Missing required fields: {', '.join(missing)}")
         
-        # Create forum
+        # Validate data
+        if not forum_data['name'].strip():
+            raise HTTPException(status_code=400, detail="Forum name cannot be empty")
+        if len(forum_data['name']) > 100:
+            raise HTTPException(status_code=400, detail="Forum name too long (max 100 characters)")
+        
+        # Create forum object
         forum = Forum(
-            name=forum_data['name'],
-            description=forum_data['description'],
+            name=forum_data['name'].strip(),
+            description=forum_data['description'].strip(),
             category=forum_data['category'],
             created_by=user.id,
             created_by_name=user.name
         )
-        logging.info(f"✅ Forum object created: {forum.name}")
         
+        # Convert to dict and serialize datetime
         forum_dict = forum.model_dump()
         forum_dict['created_at'] = forum_dict['created_at'].isoformat()
-        logging.info(f"✅ Forum dict prepared with {len(forum_dict)} fields")
         
-        # Insert forum into database
-        result = await db.forums.insert_one(forum_dict)
-        logging.info(f"✅ Forum inserted into database: {forum_dict['name']} (ID: {forum_dict['id']}, MongoDB ID: {result.inserted_id})")
+        # Insert into database
+        await db.forums.insert_one(forum_dict)
+        logging.info(f"✅ Forum created: {forum_dict['name']} (ID: {forum_dict['id']})")
         
-        # Invalidate forums cache so new forum shows immediately
+        # Invalidate ALL related caches
         global forums_cache, forums_cache_time
         forums_cache = None
         forums_cache_time = 0
-        logging.info("✅ Forums cache invalidated")
         
-        response = {"status": "success", "forum": forum_dict}
-        logging.info(f"✅ Sending success response: {response['status']}")
-        return response
+        # Return success
+        return {"status": "success", "forum": forum_dict}
         
-    except HTTPException as he:
-        logging.error(f"❌ HTTP Exception in forum creation: {he.status_code} - {he.detail}")
+    except HTTPException:
         raise
     except Exception as e:
-        logging.error(f"❌ Unexpected error creating forum: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to create forum: {str(e)}")
+        logging.error(f"❌ Forum creation error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to create forum")
 
 @api_router.delete("/forums/{forum_id}")
 async def delete_forum(
