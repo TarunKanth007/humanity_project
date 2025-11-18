@@ -1046,7 +1046,8 @@ const PatientDashboard = ({ user, logout }) => {
         // Load favorite statuses for publications
         await loadFavoriteStatuses(res.data, 'publication');
       } else if (activeTab === 'forums') {
-        const res = await api.get('/forums');
+        // Add cache-busting timestamp to force fresh data
+        const res = await api.get(`/forums?_t=${Date.now()}`);
         // Handle both old and new API response formats
         const forumsList = res.data.forums || res.data;
         setForums(forumsList);
@@ -3498,7 +3499,8 @@ const ResearcherDashboard = ({ user, logout }) => {
         setMyTrials(trialsRes.data);
         setPublications(pubsRes.data);
       } else if (activeTab === 'forums') {
-        const res = await api.get('/forums');
+        // Add cache-busting timestamp to force fresh data
+        const res = await api.get(`/forums?_t=${Date.now()}`);
         // Handle both old and new API response formats
         const forumsList = res.data.forums || res.data;
         setForums(forumsList);
