@@ -3777,7 +3777,7 @@ async def send_chat_message(
     msg_dict['created_at'] = msg_dict['created_at'].isoformat()
     await db.chat_messages.insert_one(msg_dict)
     
-    return {"status": "success", "message": message.model_dump()}
+    return {"status": "success", "message": msg_dict}
 
 @api_router.post("/chat-rooms/{room_id}/close")
 async def close_chat_room(
