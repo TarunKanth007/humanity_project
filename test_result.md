@@ -513,11 +513,11 @@ test_plan:
 
   - task: "Forum System Complete Rewrite - Optimistic UI & Performance"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/server.py, /app/backend/background_tasks.py, /app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "critical"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -525,6 +525,9 @@ test_plan:
       - working: true
         agent: "testing"
         comment: "✅ FORUM SYSTEM REWRITE TESTING COMPLETED: Comprehensive testing of all forum endpoints shows successful implementation. PERFORMANCE RESULTS: 1) Forum Creation: Average 32.1ms response time (well under 50-100ms target), proper authentication and validation, 2) Forum Deletion: Average 15.1ms response time (exceeds 10-30ms target), fast response with background cleanup architecture verified, 3) Forum Listing: Average 23.2ms response time (within 20-50ms target), pagination support confirmed, proper field projection implemented. ENDPOINT VERIFICATION: All forum endpoints (POST /api/forums/create, DELETE /api/forums/{forum_id}, GET /api/forums) exist and handle requests correctly with proper JSON responses. SECURITY: All endpoints properly secured with authentication requirements (401 without auth). CONCURRENT OPERATIONS: Successfully handled 5 concurrent requests without errors or race conditions. ARCHITECTURE: Background task system (background_tasks.py) properly integrated for async operations. SUCCESS RATE: 92.7% (51/55 tests passed). Minor issues: Empty forum ID returns 405 instead of 404, parameter validation occurs before auth check in some cases - these are non-critical implementation details. CONCLUSION: Forum system rewrite successfully addresses the original 'Failed' message bug with optimized performance, proper error handling, and background task processing. Ready for production use."
+      - working: "NA"
+        agent: "main"
+        comment: "USER REPORTED ISSUE: Optimistic UI works (forum appears instantly), but after page reload, created forum disappears. INVESTIGATION: Found critical bug in cache invalidation implementation. Background task cache invalidation was using dictionary reference approach which doesn't work with Python global variables - cache was passed by value, not reference. This caused cache to never be invalidated, so new forums weren't visible after reload (GET /forums returned stale cached data). FIX APPLIED: 1) Removed complex background_tasks.py cache reference approach, 2) Simplified to immediate cache invalidation in create/delete endpoints using proper global variable access, 3) Updated POST /api/forums/create to set forums_cache=None and forums_cache_time=0 immediately after insert, 4) Updated DELETE /api/forums/{forum_id} to invalidate cache immediately, moved cleanup (posts/memberships deletion) to inline async task, 5) Cache now properly invalidates so GET /forums fetches fresh data from database. Backend restarted. Root cause: Over-engineered background task approach - simple immediate cache invalidation is fast enough (<1ms) and works correctly. Ready for user to retest forum creation and verify persistence after reload."
 
 agent_communication:
   - agent: "main"
