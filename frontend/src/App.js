@@ -1166,14 +1166,20 @@ const PatientDashboard = ({ user, logout }) => {
   };
   const loadForumFavorites = async (forumsList) => {
     try {
+      if (!Array.isArray(forumsList) || forumsList.length === 0) {
+        console.log('[RESEARCHER] loadForumFavorites: No forums to load favorites for');
+        return;
+      }
+      console.log('[RESEARCHER] Loading favorites for', forumsList.length, 'forums');
       const favStatus = {};
       for (const forum of forumsList) {
         const res = await api.get(`/favorites/check/forum/${forum.id}`);
         favStatus[forum.id] = res.data;
       }
       setForumFavorites(favStatus);
+      console.log('[RESEARCHER] Favorites loaded successfully');
     } catch (error) {
-      console.error('Failed to load forum favorites:', error);
+      console.error('[RESEARCHER] Failed to load forum favorites:', error);
     }
   };
 
@@ -3742,14 +3748,20 @@ const ResearcherDashboard = ({ user, logout }) => {
 
   const loadForumFavorites = async (forumsList) => {
     try {
+      if (!Array.isArray(forumsList) || forumsList.length === 0) {
+        console.log('[RESEARCHER] loadForumFavorites: No forums to load favorites for');
+        return;
+      }
+      console.log('[RESEARCHER] Loading favorites for', forumsList.length, 'forums');
       const favStatus = {};
       for (const forum of forumsList) {
         const res = await api.get(`/favorites/check/forum/${forum.id}`);
         favStatus[forum.id] = res.data;
       }
       setForumFavorites(favStatus);
+      console.log('[RESEARCHER] Favorites loaded successfully');
     } catch (error) {
-      console.error('Failed to load forum favorites:', error);
+      console.error('[RESEARCHER] Failed to load forum favorites:', error);
     }
   };
 
