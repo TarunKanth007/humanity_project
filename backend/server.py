@@ -2333,7 +2333,7 @@ async def delete_forum(
         logging.info(f"  ✅ Deleted {members_result.deleted_count} memberships")
         
         # 3. Delete the forum itself
-        forum_result = await db.forums.delete_one({"id": forum_id})
+        await db.forums.delete_one({"id": forum_id})
         logging.info(f"  ✅ Deleted forum")
         
         # Invalidate ALL related caches
