@@ -1912,11 +1912,12 @@ async def get_forums(
     
     # Check cache
     if forums_cache and (time.time() - forums_cache_time < FORUMS_CACHE_TTL):
-        logging.info("Returning cached forums")
+        logging.info(f"Returning cached forums (count: {len(forums_cache)})")
         return forums_cache
     
     # Fetch forums (limit to 100 most recent)
     forums = await db.forums.find({}, {"_id": 0}).sort("created_at", -1).limit(100).to_list(100)
+    logging.info(f"Fetched {len(forums)} forums from database")
     
     # Cache result
     forums_cache = forums
