@@ -2462,27 +2462,43 @@ class BackendTester:
                     f"Request failed for query '{query}': {str(e)}"
                 )
 
-    def run_all_tests(self):
-        """Run all backend tests with focus on AskCura AI Treatment Advisor"""
-        print("🚀 Starting CuraLink Backend Tests - ASKCURA AI TREATMENT ADVISOR FOCUS")
-        print(f"Testing backend at: {BACKEND_URL}")
-        print("="*80)
-        print("TESTING ASKCURA AI TREATMENT ADVISOR:")
-        print("- POST /api/askcura/patient/chat")
-        print("- POST /api/askcura/researcher/chat")
-        print("- POST /api/askcura/patient/compare-treatments")
-        print("- POST /api/askcura/researcher/compare-protocols")
-        print("- GET /api/askcura/history")
-        print("- DELETE /api/askcura/history")
-        print("- Authentication requirements for all endpoints")
-        print("="*80)
+    def run_forum_system_tests(self):
+        """Run comprehensive forum system rewrite tests"""
+        print("🚀 Starting Forum System Rewrite Testing Suite")
+        print(f"Backend URL: {BACKEND_URL}")
+        print("=" * 80)
+        print("TESTING FOCUS: Forum System Complete Architectural Rewrite")
+        print("- Optimistic UI updates with instant feedback")
+        print("- Background task processing for cleanup")
+        print("- Performance targets: Create 50-100ms, Delete 10-30ms, List 20-50ms")
+        print("- Database indexing for 10x performance improvement")
+        print("=" * 80)
         
-        # Core connectivity and health
+        # Test backend health first
         self.test_backend_health()
         
-        # AskCura AI Treatment Advisor tests (PRIMARY FOCUS)
-        self.test_askcura_endpoints_comprehensive()
-        self.test_askcura_endpoints_validation()
+        # PRIORITY 1: Forum Creation Endpoint Testing
+        self.test_forum_system_rewrite_comprehensive()
+        
+        # PRIORITY 2: Forum Deletion Endpoint Testing  
+        self.test_forum_deletion_endpoint()
+        
+        # PRIORITY 3: Forum Listing Endpoint Testing
+        self.test_forum_listing_endpoint()
+        
+        # PRIORITY 4: Performance Testing
+        self.test_forum_performance_benchmarks()
+        
+        # Additional comprehensive tests
+        self.test_forum_api_structure()
+        self.test_forum_role_based_access_simulation()
+        
+        # Print summary
+        self.print_summary()
+    
+    def run_all_tests(self):
+        """Run all backend tests (now focuses on forum system rewrite)"""
+        self.run_forum_system_tests()
         self.test_askcura_endpoints_with_invalid_auth()
         
         # Authentication system tests
