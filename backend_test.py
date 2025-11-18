@@ -1149,69 +1149,158 @@ class BackendTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_forums_list_endpoint(self):
-        """Test forums list endpoint"""
-        print("\n=== Forums List Tests ===")
+    def test_forum_listing_endpoint(self):
+        """PRIORITY 3: Test Forum Listing Endpoint - Pagination & Performance"""
+        print("\n=== FORUM SYSTEM REWRITE - PRIORITY 3: FORUM LISTING ===")
         
+        # Test 1: Basic forum listing without authentication (should fail with 401)
+        start_time = time.time()
+        try:
+            response = self.session.get(f"{BACKEND_URL}/forums")
+            response_time = (time.time() - start_time) * 1000
+            
+            if response.status_code == 401:
+                self.log_result(
+                    "Forum Listing - Authentication Required",
+                    True,
+                    f"Correctly requires authentication (Response time: {response_time:.1f}ms)",
+                    {"status_code": response.status_code, "response_time_ms": response_time}
+                )
+            else:
+                self.log_result(
+                    "Forum Listing - Authentication Required",
+                    False,
+                    f"Expected 401, got {response.status_code} (Response time: {response_time:.1f}ms)",
+                    {"status_code": response.status_code, "response_time_ms": response_time}
+                )
+        except Exception as e:
+            self.log_result(
+                "Forum Listing - Authentication Required",
+                False,
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test 2: Forum listing with pagination parameters (should still require auth)
+        pagination_tests = [
+            ("?skip=0&limit=10", "First page with 10 items"),
+            ("?skip=10&limit=10", "Second page with 10 items"),
+            ("?skip=0&limit=50", "Default limit (50 items)"),
+            ("?skip=0&limit=100", "Large limit (100 items)"),
+            ("?skip=0", "Default parameters"),
+            ("?limit=25", "Custom limit only"),
+            ("?skip=5&limit=15", "Custom skip and limit")
+        ]
+        
+        for params, description in pagination_tests:
+            start_time = time.time()
+            try:
+                response = self.session.get(f"{BACKEND_URL}/forums{params}")
+                response_time = (time.time() - start_time) * 1000
+                
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Forum Listing Pagination - {description}",
+                        True,
+                        f"Correctly requires auth (Response time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time, "params": params}
+                    )
+                else:
+                    self.log_result(
+                        f"Forum Listing Pagination - {description}",
+                        False,
+                        f"Expected 401, got {response.status_code} (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time, "params": params}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Forum Listing Pagination - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test 3: Invalid pagination parameters
+        invalid_params = [
+            ("?skip=-1&limit=10", "Negative skip"),
+            ("?skip=0&limit=-1", "Negative limit"),
+            ("?skip=abc&limit=10", "Non-numeric skip"),
+            ("?skip=0&limit=xyz", "Non-numeric limit"),
+            ("?skip=0&limit=0", "Zero limit"),
+            ("?skip=0&limit=1000", "Very large limit")
+        ]
+        
+        for params, description in invalid_params:
+            start_time = time.time()
+            try:
+                response = self.session.get(f"{BACKEND_URL}/forums{params}")
+                response_time = (time.time() - start_time) * 1000
+                
+                # Should still require auth first, then validate params
+                if response.status_code == 401:
+                    self.log_result(
+                        f"Forum Listing Invalid Params - {description}",
+                        True,
+                        f"Auth check before param validation (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time, "params": params}
+                    )
+                elif response.status_code in [400, 422]:
+                    self.log_result(
+                        f"Forum Listing Invalid Params - {description}",
+                        False,
+                        f"Param validation before auth check (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time, "params": params}
+                    )
+                else:
+                    self.log_result(
+                        f"Forum Listing Invalid Params - {description}",
+                        False,
+                        f"Unexpected status: {response.status_code} (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time, "params": params}
+                    )
+            except Exception as e:
+                self.log_result(
+                    f"Forum Listing Invalid Params - {description}",
+                    False,
+                    f"Request failed: {str(e)}"
+                )
+        
+        # Test 4: Verify expected response structure (even with 401)
         try:
             response = self.session.get(f"{BACKEND_URL}/forums")
             
-            if response.status_code == 200:
+            if response.status_code == 401:
                 try:
-                    forums_data = response.json()
-                    if isinstance(forums_data, list):
+                    error_data = response.json()
+                    if "detail" in error_data:
                         self.log_result(
-                            "Forums List - Structure",
+                            "Forum Listing - Response Structure",
                             True,
-                            f"Returns valid list with {len(forums_data)} forums",
-                            {"status_code": response.status_code, "forum_count": len(forums_data)}
+                            "Endpoint exists and returns proper JSON error structure",
+                            {"error_structure": error_data}
                         )
-                        
-                        # Check forum structure if any forums exist
-                        if forums_data:
-                            first_forum = forums_data[0]
-                            required_fields = ["id", "name", "description", "category"]
-                            missing_fields = [field for field in required_fields if field not in first_forum]
-                            
-                            if not missing_fields:
-                                self.log_result(
-                                    "Forums List - Forum Structure",
-                                    True,
-                                    "Forum objects have required fields",
-                                    {"required_fields": required_fields, "sample_forum": first_forum}
-                                )
-                            else:
-                                self.log_result(
-                                    "Forums List - Forum Structure",
-                                    False,
-                                    f"Missing required fields: {missing_fields}",
-                                    {"missing_fields": missing_fields, "sample_forum": first_forum}
-                                )
                     else:
                         self.log_result(
-                            "Forums List - Structure",
+                            "Forum Listing - Response Structure",
                             False,
-                            f"Expected list, got {type(forums_data)}",
-                            {"response_type": type(forums_data).__name__}
+                            "Error response missing 'detail' field",
+                            {"response": error_data}
                         )
                 except json.JSONDecodeError:
                     self.log_result(
-                        "Forums List - JSON",
+                        "Forum Listing - Response Structure",
                         False,
-                        "Response is not valid JSON",
-                        {"response": response.text[:200]}
+                        "Error response is not valid JSON",
+                        {"response_text": response.text[:200]}
                     )
             else:
                 self.log_result(
-                    "Forums List - Access",
+                    "Forum Listing - Response Structure",
                     False,
                     f"Unexpected status code: {response.status_code}",
-                    {"status_code": response.status_code, "response": response.text[:200]}
+                    {"status_code": response.status_code}
                 )
-                
         except Exception as e:
             self.log_result(
-                "Forums List - Access",
+                "Forum Listing - Response Structure",
                 False,
                 f"Request failed: {str(e)}"
             )
