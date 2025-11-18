@@ -2268,14 +2268,18 @@ async def create_forum(
     
     forum_dict = forum.model_dump()
     forum_dict['created_at'] = forum_dict['created_at'].isoformat()
+    
+    # Insert forum into database
     await db.forums.insert_one(forum_dict)
+    logging.info(f"Forum created: {forum_dict['name']} (ID: {forum_dict['id']})")
     
     # Invalidate forums cache so new forum shows immediately
     global forums_cache, forums_cache_time
     forums_cache = None
     forums_cache_time = 0
+    logging.info("Forums cache invalidated after forum creation")
     
-    return {"status": "success", "forum": forum.model_dump()}
+    return {"status": "success", "forum": forum_dict}
 
 @api_router.delete("/forums/{forum_id}")
 async def delete_forum(
