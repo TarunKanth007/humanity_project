@@ -3683,11 +3683,29 @@ const ResearcherDashboard = ({ user, logout }) => {
   };
 
   const handleDeleteForum = async (forumId) => {
+    // 1. Optimistic removal - remove immediately from UI
+    const forumBackup = forums.find(f => f.id === forumId);
+    setForums(prev => prev.filter(f => f.id !== forumId));
+    
+    // 2. Show deleting indicator (brief toast)
+    toast.info('Deleting forum...', { duration: 1000 });
+    
     try {
+      // 3. Send delete request to backend
       await api.delete(`/forums/${forumId}`);
+      
+      // 4. Success toast
       toast.success('Forum deleted successfully');
-      loadData();
+      
     } catch (error) {
+      // 5. Rollback on error - restore the forum
+      if (forumBackup) {
+        setForums(prev => [forumBackup, ...prev].sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        ));
+      }
+      
+      // 6. Show error
       toast.error(error.response?.data?.detail || 'Failed to delete forum');
     }
   };
