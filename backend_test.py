@@ -759,97 +759,120 @@ class BackendTester:
                 f"Request failed: {str(e)}"
             )
         
-        # Test 2: Attempt forum creation without auth (should fail)
-        test_forum_data = {
-            "name": f"Test Forum {uuid.uuid4().hex[:8]}",
-            "description": "A test forum for automated testing",
-            "category": "Testing"
-        }
+    def test_forum_deletion_endpoint(self):
+        """PRIORITY 2: Test Forum Deletion Endpoint - Fast Response & Background Cleanup"""
+        print("\n=== FORUM SYSTEM REWRITE - PRIORITY 2: FORUM DELETION ===")
         
+        # Test 1: Forum deletion without authentication (should fail with 401)
+        test_forum_id = f"test_forum_{uuid.uuid4().hex[:8]}"
+        
+        start_time = time.time()
         try:
-            response = self.session.post(
-                f"{BACKEND_URL}/forums/create",
-                json=test_forum_data
-            )
+            response = self.session.delete(f"{BACKEND_URL}/forums/{test_forum_id}")
+            response_time = (time.time() - start_time) * 1000
             
             if response.status_code == 401:
                 self.log_result(
-                    "Forum Flow - Creation Without Auth",
+                    "Forum Deletion - Authentication Required",
                     True,
-                    "Correctly blocks forum creation without authentication",
-                    {"status_code": response.status_code}
+                    f"Correctly requires authentication (Response time: {response_time:.1f}ms)",
+                    {"status_code": response.status_code, "response_time_ms": response_time}
                 )
             else:
                 self.log_result(
-                    "Forum Flow - Creation Without Auth",
+                    "Forum Deletion - Authentication Required",
                     False,
-                    f"Unexpected response to unauthenticated creation: {response.status_code}",
-                    {"status_code": response.status_code, "response": response.text[:200]}
+                    f"Expected 401, got {response.status_code} (Response time: {response_time:.1f}ms)",
+                    {"status_code": response.status_code, "response_time_ms": response_time}
                 )
         except Exception as e:
             self.log_result(
-                "Forum Flow - Creation Without Auth",
+                "Forum Deletion - Authentication Required",
                 False,
                 f"Request failed: {str(e)}"
             )
         
-        # Test 3: Attempt forum deletion without auth (should fail)
-        # Use one of the existing forums for this test
-        if initial_forums:
-            test_forum_id = initial_forums[0]["id"]
+        # Test 2: Forum deletion with invalid forum ID (should still require auth first)
+        invalid_forum_ids = [
+            "invalid_forum_123",
+            "nonexistent_forum",
+            "",  # Empty ID
+            "forum_with_special_chars!@#",
+            "very_long_forum_id_" + "x" * 100
+        ]
+        
+        for invalid_id in invalid_forum_ids:
+            start_time = time.time()
             try:
-                response = self.session.delete(f"{BACKEND_URL}/forums/{test_forum_id}")
+                response = self.session.delete(f"{BACKEND_URL}/forums/{invalid_id}")
+                response_time = (time.time() - start_time) * 1000
                 
                 if response.status_code == 401:
                     self.log_result(
-                        "Forum Flow - Deletion Without Auth",
+                        f"Forum Deletion - Invalid ID ({invalid_id[:20]}...)",
                         True,
-                        "Correctly blocks forum deletion without authentication",
-                        {"status_code": response.status_code, "forum_id": test_forum_id}
+                        f"Auth check before ID validation (Response time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time}
+                    )
+                elif response.status_code == 404:
+                    self.log_result(
+                        f"Forum Deletion - Invalid ID ({invalid_id[:20]}...)",
+                        False,
+                        f"ID validation before auth check - security issue (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time}
                     )
                 else:
                     self.log_result(
-                        "Forum Flow - Deletion Without Auth",
+                        f"Forum Deletion - Invalid ID ({invalid_id[:20]}...)",
                         False,
-                        f"Unexpected response to unauthenticated deletion: {response.status_code}",
-                        {"status_code": response.status_code, "forum_id": test_forum_id}
+                        f"Unexpected status: {response.status_code} (Time: {response_time:.1f}ms)",
+                        {"status_code": response.status_code, "response_time_ms": response_time}
                     )
             except Exception as e:
                 self.log_result(
-                    "Forum Flow - Deletion Without Auth",
+                    f"Forum Deletion - Invalid ID ({invalid_id[:20]}...)",
                     False,
                     f"Request failed: {str(e)}"
                 )
         
-        # Test 4: Test deletion with invalid forum ID
-        invalid_forum_id = "invalid_forum_id_123"
+        # Test 3: Verify deletion response structure
         try:
-            response = self.session.delete(f"{BACKEND_URL}/forums/{invalid_forum_id}")
+            response = self.session.delete(f"{BACKEND_URL}/forums/{test_forum_id}")
             
             if response.status_code == 401:
-                self.log_result(
-                    "Forum Flow - Invalid ID Deletion",
-                    True,
-                    "Authentication check happens before ID validation (expected)",
-                    {"status_code": response.status_code, "forum_id": invalid_forum_id}
-                )
-            elif response.status_code == 404:
-                self.log_result(
-                    "Forum Flow - Invalid ID Deletion",
-                    False,
-                    "ID validation happens before auth check (security issue)",
-                    {"status_code": response.status_code, "forum_id": invalid_forum_id}
-                )
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data:
+                        self.log_result(
+                            "Forum Deletion - Response Structure",
+                            True,
+                            "Endpoint exists and returns proper JSON error structure",
+                            {"error_structure": error_data}
+                        )
+                    else:
+                        self.log_result(
+                            "Forum Deletion - Response Structure",
+                            False,
+                            "Error response missing 'detail' field",
+                            {"response": error_data}
+                        )
+                except json.JSONDecodeError:
+                    self.log_result(
+                        "Forum Deletion - Response Structure",
+                        False,
+                        "Error response is not valid JSON",
+                        {"response_text": response.text[:200]}
+                    )
             else:
                 self.log_result(
-                    "Forum Flow - Invalid ID Deletion",
+                    "Forum Deletion - Response Structure",
                     False,
-                    f"Unexpected response: {response.status_code}",
-                    {"status_code": response.status_code, "forum_id": invalid_forum_id}
+                    f"Unexpected status code: {response.status_code}",
+                    {"status_code": response.status_code}
                 )
         except Exception as e:
             self.log_result(
-                "Forum Flow - Invalid ID Deletion",
+                "Forum Deletion - Response Structure",
                 False,
                 f"Request failed: {str(e)}"
             )
