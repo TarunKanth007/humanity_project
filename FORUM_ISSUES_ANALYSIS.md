@@ -4,7 +4,7 @@
 
 ### Issue 1: Frontend-Backend URL Mismatch (CRITICAL)
 **Problem:**
-- Frontend `.env`: `REACT_APP_BACKEND_URL=https://health-matchmaker-1.preview.emergentagent.com`
+- Frontend `.env`: `REACT_APP_BACKEND_URL=https://medisync-34.preview.emergentagent.com`
 - Backend `.env`: `REACT_APP_BACKEND_URL=https://medmatch-7.emergent.host`
 - **Frontend is calling OLD URL, backend is on NEW URL!**
 

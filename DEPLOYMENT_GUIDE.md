@@ -21,7 +21,7 @@ REACT_APP_AUTH_URL=https://auth.emergentagent.com
 ```env
 MONGO_URL="mongodb://localhost:27017"
 DB_NAME="test_database"
-CORS_ORIGINS="http://localhost:3000,https://health-matchmaker-1.preview.emergentagent.com,https://medmatch-7.emergent.host"
+CORS_ORIGINS="http://localhost:3000,https://medisync-34.preview.emergentagent.com,https://medmatch-7.emergent.host"
 REACT_APP_BACKEND_URL="https://medmatch-7.emergent.host"
 EMERGENT_LLM_KEY=sk-emergent-11bC96bFcBb370c626
 EMERGENT_AUTH_BACKEND_URL=https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data
@@ -55,7 +55,7 @@ You **MUST** update your Google Cloud Console OAuth settings for authentication 
 
 **Current Redirect URIs** (these should already be configured):
 - `http://localhost:8001/api/auth/google/callback`
-- `https://health-matchmaker-1.preview.emergentagent.com/api/auth/google/callback`
+- `https://medisync-34.preview.emergentagent.com/api/auth/google/callback`
 
 **New Production URI** (add this):
 - `https://medmatch-7.emergent.host/api/auth/google/callback`
