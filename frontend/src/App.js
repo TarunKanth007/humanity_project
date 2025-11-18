@@ -5409,7 +5409,12 @@ const ResearcherDashboard = ({ user, logout }) => {
                             <CardHeader onClick={() => setSelectedForum(forum)}>
                               <CardTitle className="item-title">
                                 {forum.name}
-                                {isOwner && (
+                                {forum._creating && (
+                                  <Badge variant="secondary" style={{marginLeft: '8px', fontSize: '10px', background: '#FFB74D', color: 'white'}}>
+                                    Creating...
+                                  </Badge>
+                                )}
+                                {isOwner && !forum._creating && (
                                   <Badge variant="secondary" style={{marginLeft: '8px', fontSize: '10px'}}>
                                     Owner
                                   </Badge>
