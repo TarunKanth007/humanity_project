@@ -2270,6 +2270,11 @@ async def create_forum(
     forum_dict['created_at'] = forum_dict['created_at'].isoformat()
     await db.forums.insert_one(forum_dict)
     
+    # Invalidate forums cache so new forum shows immediately
+    global forums_cache, forums_cache_time
+    forums_cache = None
+    forums_cache_time = 0
+    
     return {"status": "success", "forum": forum.model_dump()}
 
 @api_router.delete("/forums/{forum_id}")
