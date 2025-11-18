@@ -1048,9 +1048,12 @@ const PatientDashboard = ({ user, logout }) => {
       } else if (activeTab === 'forums') {
         // Add cache-busting timestamp to force fresh data
         const res = await api.get(`/forums?_t=${Date.now()}`);
+        console.log('Forums API Response:', res.data);
         // Handle both old and new API response formats
         const forumsList = res.data.forums || res.data;
+        console.log('Forums list to set:', forumsList, 'Length:', forumsList.length);
         setForums(forumsList);
+        console.log('Forums state after setForums');
         // Load membership status and favorites for each forum
         await loadForumMemberships(forumsList);
         await loadForumFavorites(forumsList);
