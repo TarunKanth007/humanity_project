@@ -1,4 +1,4 @@
-# CuraLink - Healthcare Research Platform
+# MedAtlas - Healthcare Research Platform
 
 <div align="center">
 
