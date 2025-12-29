@@ -39,7 +39,7 @@
 
 ## 🎯 About
 
-CuraLink is a comprehensive healthcare research platform that bridges the gap between patients seeking treatments and researchers advancing medical science. The platform enables:
+MedAtlas is a comprehensive healthcare research platform that bridges the gap between patients seeking treatments and researchers advancing medical science. The platform enables:
 
 - **Patients/Caregivers** to discover clinical trials, connect with health experts, and access cutting-edge research
 - **Researchers** to manage trials, find collaborators, and engage directly with the patient community
@@ -736,7 +736,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - Initial work - [YourGitHub](https://github.com/yourusername)
+- **Your Name** - Initial work - [YourGitHub](https://github.com/TarunKanth007)
 
 ---
 
@@ -756,7 +756,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@curalink.com or join our Slack channel.
+For support, email tarunkanthmovva007@gmail.com .
 
 ---
 
