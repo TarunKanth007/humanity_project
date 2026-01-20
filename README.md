@@ -44,6 +44,17 @@ MedAtlas is a comprehensive healthcare research platform that bridges the gap be
 - **Patients/Caregivers** to discover clinical trials, connect with health experts, and access cutting-edge research
 - **Researchers** to manage trials, find collaborators, and engage directly with the patient community
 
+---
+
+## 🎥This is First version of this project
+You can download and watch the full video demonstration [First Version](https://drive.google.com/file/d/1TjooBmTzaiiJK1bXJ-VMV_oZj2zRDlh3/view?usp=sharing).
+
+
+## 🎬This is the Second and Final version of the project
+You can download and watch the full video demonstration [Second Version](https://drive.google.com/file/d/1TC5P0bmb2kSjHEPmtpqv_ZfBoW6tAO56/view?usp=sharing).
+
+---
+
 ## ✨ Features
 
 ### 🤖 AskCura AI Treatment Advisor (NEW!)
